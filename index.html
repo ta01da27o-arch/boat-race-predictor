@@ -1,1 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>競艇展開予想アプリ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="main-screen">
+    <h1>競艇 展開予想</h1>
+    <div id="venues-container"></div>
+</div>
 
+<div id="race-screen" class="hidden">
+    <button onclick="goBack('main')">戻る</button>
+    <h2 id="venue-name"></h2>
+    <div id="races-container"></div>
+</div>
+
+<div id="entry-screen" class="hidden">
+    <button onclick="goBack('race')">戻る</button>
+    <h3 id="race-name"></h3>
+    <div id="entries-container"></div>
+    <div id="decision">決まり手: <span id="decision-text"></span></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
