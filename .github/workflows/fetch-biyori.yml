@@ -1,0 +1,39 @@
+name: Fetch BoatRace Biyori Today Data
+
+on:
+  schedule:
+    - cron: '0 23 * * *'  # JST 08:00頃
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: リポジトリチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Node.jsセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 依存関係インストール
+        run: npm install
+
+      - name: 出走表取得
+        run: npm run fetch
+
+      - name: 出走表JSON保存
+        uses: actions/upload-artifact@v4
+        with:
+          name: today_biyori_data
+          path: data/data.json
+
+      - name: data.jsonをコミット
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/data.json
+          git commit -m "update: 本日の出走表を更新" || echo "No changes"
+          git push
