@@ -6,7 +6,7 @@ export default function App() {
   const [stadium, setStadium] = useState(null);
 
   return (
-    <div style={{ padding: 12 }}>
+    <div style={{ padding: 12, fontFamily: "sans-serif" }}>
       {!stadium ? (
         <StadiumGrid onSelect={setStadium} />
       ) : (
