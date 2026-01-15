@@ -2,45 +2,13 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>ボートレース展開予測</title>
+  <title>競艇 24場</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div id="stadiumGrid"></div>
 
-<header>
-  <h1 id="appTitle">ボートレース展開予測</h1>
-</header>
-
-<main>
-
-  <!-- 画面A：24場一覧 -->
-  <section id="stadiumView" class="view active">
-    <h2>開催場を選択</h2>
-    <div id="stadiumGrid" class="grid"></div>
-  </section>
-
-  <!-- 画面B：予測入力 -->
-  <section id="predictView" class="view">
-    <button id="backBtn">← 戻る</button>
-    <h2 id="stadiumName"></h2>
-
-    <div class="table">
-      <div class="row header">
-        <div>コース</div><div>階</div><div>F</div><div>全</div>
-        <div>当</div><div>決</div><div>MT</div><div>平ST</div><div>今ST</div>
-      </div>
-      <div id="courseRows"></div>
-    </div>
-
-    <div class="result">
-      <h3>入着率（仮）</h3>
-      <div id="arrivalRate">未計算</div>
-    </div>
-  </section>
-
-</main>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

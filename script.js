@@ -8,10 +8,8 @@ const stadiums = [
 const grid = document.getElementById("stadiumGrid");
 
 stadiums.forEach(name => {
-  const div = document.createElement("div");
-  div.textContent = name;
-  div.style.border = "1px solid #333";
-  div.style.padding = "10px";
-  div.style.background = "#fff";
-  grid.appendChild(div);
+  const card = document.createElement("div");
+  card.className = "stadium-card";
+  card.textContent = name;
+  grid.appendChild(card);
 });
