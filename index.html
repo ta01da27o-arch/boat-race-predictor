@@ -2,20 +2,39 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>競艇 24場</title>
+  <title>競艇予想</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- 見出し欄（今は空。後で文字を入れる） -->
-  <div id="headerArea"></div>
+  <!-- ===== 画面①：24場 ===== -->
+  <div id="screen-stadium">
+    <div id="headerArea"></div>
+    <div id="spacer"></div>
+    <div id="stadiumGrid"></div>
+  </div>
 
-  <!-- 見出しと24場の間のスペース -->
-  <div id="spacer"></div>
+  <!-- ===== 画面②：場詳細 ===== -->
+  <div id="screen-detail" class="hidden">
+    <div id="detailHeader"></div>
 
-  <!-- 24場 -->
-  <div id="stadiumGrid"></div>
+    <div class="section">
+      <div class="month-label">月を選択</div>
+      <select id="monthSelect">
+        <option value="1">1月</option>
+        <option value="2">2月</option>
+        <option value="3">3月</option>
+      </select>
+    </div>
+
+    <div class="section" id="stadiumDescription"></div>
+
+    <div class="section">
+      <div class="month-label">選手番号入力</div>
+      <input type="number" class="player-input" placeholder="選手番号を入力">
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
