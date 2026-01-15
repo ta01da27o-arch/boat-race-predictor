@@ -5,19 +5,37 @@ body {
   background: #f2f2f2;
 }
 
+/* 見出し欄 */
+#headerArea {
+  background: #ffffff;
+  border-radius: 14px;
+  height: 72px;                 /* 各場枠と同じ高さ */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* 見出しと場選択の間隔（ボタン1つ分） */
+#spacer {
+  height: 72px;
+}
+
 /* 24場グリッド */
 #stadiumGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* スマホ想定 */
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
 
 /* 各場ボタン */
 .stadium-card {
   background: #ffffff;
-  border-radius: 14px;           /* ③ 角丸 */
-  height: 72px;                  /* ④ 縦を少し長く（約1.2倍） */
-  display: flex;                 /* ② 中央固定 */
+  border-radius: 14px;
+  height: 72px;
+  display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
