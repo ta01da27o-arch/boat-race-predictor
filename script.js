@@ -5,53 +5,13 @@ const stadiums = [
   "下関","若松","芦屋","福岡","唐津","大村"
 ];
 
-const stadiumView = document.getElementById("stadiumView");
-const predictView = document.getElementById("predictView");
 const grid = document.getElementById("stadiumGrid");
-const stadiumName = document.getElementById("stadiumName");
-const courseRows = document.getElementById("courseRows");
-const backBtn = document.getElementById("backBtn");
-const arrivalRate = document.getElementById("arrivalRate");
 
-// 24場生成
 stadiums.forEach(name => {
   const div = document.createElement("div");
-  div.className = "card";
   div.textContent = name;
-  div.onclick = () => openPredict(name);
+  div.style.border = "1px solid #333";
+  div.style.padding = "10px";
+  div.style.background = "#fff";
   grid.appendChild(div);
 });
-
-function openPredict(name) {
-  stadiumName.textContent = name;
-  stadiumView.classList.remove("active");
-  predictView.classList.add("active");
-  generateRows();
-}
-
-backBtn.onclick = () => {
-  predictView.classList.remove("active");
-  stadiumView.classList.add("active");
-};
-
-// コース行生成
-function generateRows() {
-  courseRows.innerHTML = "";
-  for (let i = 1; i <= 6; i++) {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML = `
-      <div>${i}</div>
-      <div><select><option>A1</option><option>A2</option><option>B1</option><option>B2</option></select></div>
-      <div><select><option>0</option><option>1</option><option>2</option></select></div>
-      <div><input></div>
-      <div><input></div>
-      <div class="decision">決</div>
-      <div><input></div>
-      <div><input></div>
-      <div><input></div>
-    `;
-    courseRows.appendChild(row);
-  }
-  arrivalRate.textContent = "1着:33% / 2着:33% / 3着:34%";
-}
