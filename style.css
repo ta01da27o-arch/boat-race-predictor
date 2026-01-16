@@ -1,97 +1,110 @@
+/* ===== 全体 ===== */
 body {
   margin: 0;
   padding: 12px;
   font-family: sans-serif;
   background: #eaeaea;
+  overflow-x: hidden;
 }
 
 .hidden { display: none; }
 
-/* 見出し */
+/* ===== 見出し ===== */
 #headerArea, #detailHeader {
   background: #00B4D8;
   color: #000;
-  border-radius: 14px;
+  border-radius: 16px;
   height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 20px;
   font-weight: bold;
 }
 
 #spacer { height: 72px; }
 
-/* 24場 */
+/* ===== 24場（縦画面用） ===== */
 #stadiumGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
 .stadium-card {
   background: #CAF0F8;
-  border-radius: 14px;
-  height: 72px;
+  border-radius: 16px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 18px;
   font-weight: bold;
   box-shadow: 0 2px 6px rgba(0,0,0,.25);
 }
 
-/* 詳細 */
+/* ===== 詳細 ===== */
 #backBtn {
-  margin: 10px 0;
-  padding: 8px;
-  border-radius: 10px;
+  margin: 12px 0;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 16px;
   border: none;
 }
 
 #stadiumDescription {
   background: #fff;
-  border-radius: 12px;
-  padding: 10px;
-  margin-bottom: 12px;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 14px;
+  font-size: 16px;
 }
 
-/* 枠 */
+/* ===== 枠 ===== */
 #lanes {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .lane {
   background: #fff;
-  border-radius: 14px;
-  padding: 10px;
+  border-radius: 16px;
+  padding: 12px;
 }
 
 .lane-title {
+  font-size: 17px;
   font-weight: bold;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .lane input {
   width: 100%;
-  margin-bottom: 6px;
+  padding: 8px;
+  font-size: 16px;
+  margin-bottom: 8px;
 }
 
-/* 決まり手 */
+/* ===== 決まり手 ===== */
 .finish-row {
   display: flex;
-  font-size: 13px;
   align-items: center;
+  font-size: 15px;
+  margin-bottom: 4px;
 }
 
-.finish-label { width: 72px; }
+.finish-label {
+  width: 80px;
+}
 
 .finish-bar-bg {
   flex: 1;
-  height: 10px;
+  height: 12px;
   background: #ddd;
   border-radius: 6px;
   overflow: hidden;
+  margin-right: 6px;
 }
 
 .finish-bar {
@@ -99,16 +112,22 @@ body {
   background: #48CAE4;
 }
 
-/* ⭐ 展開解析 */
+/* ===== 展開解析 ===== */
 #analysisBox {
   background: #ffffff;
-  border-radius: 14px;
-  padding: 12px;
-  margin-top: 16px;
+  border-radius: 16px;
+  padding: 14px;
+  margin-top: 18px;
   box-shadow: 0 2px 6px rgba(0,0,0,.25);
 }
 
 .analysis-title {
+  font-size: 18px;
   font-weight: bold;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+#analysisResult {
+  font-size: 16px;
+  line-height: 1.5;
 }
