@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>競艇 展開予想</title>
+  <title>競艇 展開予想AI</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="screen-stadium">
-  <div id="headerArea">開催場選択</div>
+  <div id="headerArea">競艇 展開予想AI</div>
   <div id="spacer"></div>
   <div id="stadiumGrid"></div>
 </div>
@@ -22,16 +22,21 @@
 
   <div id="lanes"></div>
 
-  <!-- 入着率 -->
-  <div id="rankBox">
-    <div class="analysis-title">⭐ 入着率（期待値）</div>
-    <div id="rankBars"></div>
-  </div>
+  <div id="rankBars"></div>
 
-  <!-- 展開解析 -->
   <div id="analysisBox">
     <div class="analysis-title">⭐ 展開解析</div>
-    <div id="analysisResult">選手番号を入力してください</div>
+    <div id="analysisResult"></div>
+  </div>
+
+  <div id="buyBox">
+    <div class="analysis-title">⭐ 3連単 買い目</div>
+    <div id="buyResult"></div>
+  </div>
+
+  <div id="trustBox">
+    <div class="analysis-title">⭐ 信頼度</div>
+    <div id="trustResult"></div>
   </div>
 </div>
 

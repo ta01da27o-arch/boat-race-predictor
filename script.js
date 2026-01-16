@@ -1,4 +1,3 @@
-/* ===== 既存部分そのまま ===== */
 const stadiums = [
   "桐生","戸田","江戸川","平和島","多摩川","浜名湖",
   "蒲郡","常滑","津","三国","びわこ","住之江",
@@ -12,8 +11,10 @@ const screenDetail = document.getElementById("screen-detail");
 const detailHeader = document.getElementById("detailHeader");
 const desc = document.getElementById("stadiumDescription");
 const lanesDiv = document.getElementById("lanes");
-const analysisResult = document.getElementById("analysisResult");
 const rankBars = document.getElementById("rankBars");
+const analysisResult = document.getElementById("analysisResult");
+const buyResult = document.getElementById("buyResult");
+const trustResult = document.getElementById("trustResult");
 
 document.getElementById("backBtn").onclick = () => {
   screenDetail.classList.add("hidden");
@@ -34,10 +35,12 @@ function openDetail(name) {
   screenStadium.classList.add("hidden");
   screenDetail.classList.remove("hidden");
   detailHeader.textContent = name;
-  desc.innerHTML = "イン有利傾向<br>冬季は捲り控えめ";
+  desc.innerHTML = "イン有利傾向 / 冬季は捲り控えめ";
   lanesDiv.innerHTML = "";
   rankBars.innerHTML = "";
-  analysisResult.innerHTML = "選手番号を入力してください";
+  analysisResult.innerHTML = "";
+  buyResult.innerHTML = "";
+  trustResult.innerHTML = "";
   laneData = [];
 
   for (let i = 1; i <= 6; i++) {
@@ -49,111 +52,61 @@ function openDetail(name) {
       <div class="finish"></div>
     `;
     const input = lane.querySelector("input");
-    const finish = lane.querySelector(".finish");
-
     input.oninput = () => {
       if (!input.value) return;
-      const rates = dummyRates(i, Number(input.value));
-      laneData[i-1] = { lane: i, rates };
-      finish.innerHTML = finishHTML(i, rates);
-      updateRanks();
-      updateFinishPrediction();
+      laneData[i-1] = calcPower(i, Number(input.value));
+      renderAll();
     };
-
     lanesDiv.appendChild(lane);
   }
 }
 
-/* ===== 仮データ ===== */
-function dummyRates(lane, n) {
+function calcPower(lane, n) {
+  let score;
   if (lane === 1) {
-    return {
-      escape: 40 + n % 25,
-      diffed: 15,
-      makurare: 15,
-      makuriDiffed: 10
-    };
+    score = 45 + n % 20 - 20;
+  } else {
+    score = 20 + n % 40;
   }
-  return {
-    diff: 15 + n % 15,
-    makuri: 20 + n % 20,
-    makuriDiff: 10 + n % 10
-  };
+  return { lane, score: Math.max(5, score) };
 }
 
-/* ===== 決まり手表示 ===== */
-function finishHTML(lane, f) {
-  if (lane === 1) {
-    return row("逃げ", f.escape)
-      + row("差され", f.diffed)
-      + row("捲られ", f.makurare)
-      + row("捲り差され", f.makuriDiffed);
-  }
-  return row("差し", f.diff)
-    + row("捲り", f.makuri)
-    + row("捲り差し", f.makuriDiff);
-}
-
-function row(label, v) {
-  return `
-    <div class="finish-row">
-      <div class="finish-label">${label}</div>
-      <div class="finish-bar-bg">
-        <div class="finish-bar" style="width:${v}%"></div>
-      </div>${v}%
-    </div>
-  `;
-}
-
-/* ===== 入着期待値 ===== */
-function updateRanks() {
+function renderAll() {
   if (laneData.filter(Boolean).length < 6) return;
+
+  laneData.sort((a,b)=>b.score-a.score);
+  const total = laneData.reduce((s,d)=>s+d.score,0);
+
   rankBars.innerHTML = "";
-
-  laneData.forEach(d => {
-    let value;
-    if (d.lane === 1) {
-      value = d.rates.escape -
-        (d.rates.diffed + d.rates.makurare + d.rates.makuriDiffed) / 2;
-    } else {
-      value = Math.max(...Object.values(d.rates));
-    }
-    value = Math.max(5, Math.min(95, Math.round(value)));
-
-    d.power = value;
-
+  laneData.forEach((d,i)=>{
+    const kill = i>=4;
     rankBars.innerHTML += `
-      <div class="rank-row">
-        <div class="rank-label">${d.lane}コース</div>
+      <div class="rank-row ${kill?"kill":""}">
+        <div class="rank-label">${d.lane}C</div>
         <div class="rank-bar-bg">
-          <div class="rank-bar" style="width:${value}%"></div>
-        </div>${value}%
+          <div class="rank-bar" style="width:${d.score}%"></div>
+        </div>${d.score}%
       </div>
     `;
   });
-}
 
-/* ===== ⭐ 1〜3着率算出 ===== */
-function updateFinishPrediction() {
-  if (laneData.filter(Boolean).length < 6) return;
+  const main = laneData[0];
+  const sub = laneData[1];
+  const third = laneData[2];
 
-  const total = laneData.reduce((s, d) => s + d.power, 0);
+  analysisResult.innerHTML =
+    `主導権は${main.lane}コース。<br>
+     ${sub.lane}コースが追走、${third.lane}コースが展開待ち。`;
 
-  const rates = laneData.map(d => ({
-    lane: d.lane,
-    rate1: Math.round((d.power / total) * 100),
-  }));
-
-  rates.sort((a, b) => b.rate1 - a.rate1);
-
-  const first = rates[0];
-  const second = rates[1];
-  const third = rates[2];
-
-  analysisResult.innerHTML = `
-    <strong>⭐ 1〜3着率（最終予測）</strong><br><br>
-    1着：${first.lane}コース ${first.rate1}%<br>
-    2着：${second.lane}コース ${Math.round(first.rate1 * 0.65)}%<br>
-    3着：${third.lane}コース ${Math.round(first.rate1 * 0.45)}%
+  buyResult.innerHTML = `
+    ${main.lane}-${sub.lane}-${third.lane}<br>
+    ${sub.lane}-${main.lane}-${third.lane}<br>
+    ${main.lane}-${third.lane}-${sub.lane}<br>
+    ${sub.lane}-${third.lane}-${main.lane}
   `;
+
+  const topRate = (main.score+sub.score)/total*100;
+  trustResult.innerHTML =
+    topRate>65 ? "A（堅い）" :
+    topRate>55 ? "B（標準）" : "C（荒れ注意）";
 }
