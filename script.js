@@ -6,89 +6,95 @@ const stadiums = [
 ];
 
 const grid = document.getElementById("stadiumGrid");
-const screenStadium = document.getElementById("screen-stadium");
-const screenDetail = document.getElementById("screen-detail");
-const headerDetail = document.getElementById("headerDetail");
-const lanesDiv = document.getElementById("lanes");
-const kimariteDiv = document.getElementById("kimarite");
-const analysisDiv = document.getElementById("analysis");
-const buysDiv = document.getElementById("buys");
+const detail = document.getElementById("detail");
 
-document.getElementById("backBtn").onclick = () => {
-  screenDetail.classList.add("hidden");
-  screenStadium.classList.remove("hidden");
-};
-
-stadiums.forEach(s => {
+stadiums.forEach(name => {
   const d = document.createElement("div");
   d.className = "stadium";
-  d.textContent = s;
-  d.onclick = () => openDetail(s);
+  d.textContent = name;
+  d.onclick = () => openDetail(name);
   grid.appendChild(d);
 });
 
-let scores = [];
-
 function openDetail(name) {
-  screenStadium.classList.add("hidden");
-  screenDetail.classList.remove("hidden");
-  headerDetail.textContent = name;
-  lanesDiv.innerHTML = "";
-  kimariteDiv.innerHTML = "";
-  analysisDiv.innerHTML = "";
-  buysDiv.innerHTML = "";
-  scores = [];
+  grid.style.display = "none";
+  detail.classList.remove("hidden");
+  document.getElementById("stadiumName").textContent = name;
+  renderPlayers();
+}
+
+function back() {
+  detail.classList.add("hidden");
+  grid.style.display = "grid";
+}
+
+function renderPlayers() {
+  const wrap = document.getElementById("players");
+  wrap.innerHTML = "";
 
   for (let i = 1; i <= 6; i++) {
-    const l = document.createElement("div");
-    l.className = "lane";
-    l.innerHTML = `
-      ${i}コース
-      <input type="number" placeholder="選手番号">
+    const div = document.createElement("div");
+    div.className = "player";
+    div.innerHTML = `
+      <label>${i}コース</label>
+      <input placeholder="選手番号" oninput="update(${i})" />
+      <div id="bars${i}"></div>
     `;
-    l.querySelector("input").oninput = e => {
-      scores[i-1] = calc(i, Number(e.target.value));
-      if (scores.filter(Boolean).length === 6) render();
-    };
-    lanesDiv.appendChild(l);
+    wrap.appendChild(div);
   }
 }
 
-function calc(lane, num) {
-  return {
-    lane,
-    start: (num % 10),
-    power: 40 + num % 40
-  };
-}
+function update(course) {
+  const bars = document.getElementById(`bars${course}`);
+  bars.innerHTML = "";
 
-function render() {
-  kimariteDiv.innerHTML = "";
-  scores.forEach(s => {
-    kimariteDiv.innerHTML += `
-      ${s.lane}コース
-      <div class="bar-bg">
-        <div class="bar" style="width:${s.power}%"></div>
-      </div>
+  const patterns = ["逃げ","差し","捲り","捲り差し"];
+  patterns.forEach(p => {
+    if (p === "逃げ" && course !== 1) return;
+
+    const val = Math.floor(Math.random() * 50) + 10;
+    const row = document.createElement("div");
+    row.className = "bar";
+    row.innerHTML = `
+      <div class="bar-fill" style="width:${val}%;"></div>
+      <div class="bar-text">${p} ${val}%</div>
     `;
+    bars.appendChild(row);
   });
 
-  const sorted = [...scores].sort((a,b)=>b.power-a.power);
-  const attacker = sorted[0];
-  const cut = sorted[5].lane;
+  analyze();
+}
 
-  analysisDiv.innerHTML =
-    `1・2コースのスタートに不安あり。<br>
-     ${attacker.lane}コースの機力・実績が高く、頭を叩く展開。<br>
-     外の${attacker.lane+1}・${attacker.lane+2}コースが追従。<br>
-     ${attacker.lane}コース頭から。`;
+function analyze() {
+  const nums = [1,2,3,4,5,6];
+  const cut = Math.floor(Math.random()*6)+1;
 
-  const buys = [
-    `${attacker.lane}-5-6`,
-    `${attacker.lane}-6-5`,
-    `5-${attacker.lane}-3`,
-    `5-${attacker.lane}-6`
-  ].filter(b => !b.includes(cut));
+  const text = `
+${cut}コースに不安あり。
+4・5コース中心の攻め。
+内側は抵抗弱く展開は外。
+  `;
+  document.getElementById("analysis").textContent = text;
 
-  buysDiv.innerHTML = buys.join("<br>");
+  generateBets(cut);
+}
+
+function generateBets(cut) {
+  const bets = document.getElementById("bets");
+  bets.innerHTML = "買い目<br>";
+
+  const nums = [1,2,3,4,5,6].filter(n => n !== cut);
+  let count = 0;
+
+  for (let a of nums) {
+    for (let b of nums) {
+      for (let c of nums) {
+        if (a !== b && b !== c && a !== c) {
+          bets.innerHTML += `${a}-${b}-${c}<br>`;
+          count++;
+          if (count >= 6) return;
+        }
+      }
+    }
+  }
 }

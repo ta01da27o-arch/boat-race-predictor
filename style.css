@@ -1,19 +1,23 @@
 body {
   margin: 0;
   font-family: sans-serif;
-  background: #f4f6f9;
+  background: #f5f7fa;
+  color: #000;
 }
 
-.hidden { display: none; }
-
-#header, #headerDetail {
-  background: #c7f000;
-  padding: 14px;
+.header {
+  background: #9acd32; /* 黄緑 */
   text-align: center;
+  padding: 16px;
+  font-size: 20px;
   font-weight: bold;
 }
 
-#stadiumGrid {
+.spacer {
+  height: 80px; /* 場ボタン1枠分 */
+}
+
+.grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
@@ -21,37 +25,52 @@ body {
 }
 
 .stadium {
-  background: #6ec6ff;
-  padding: 20px 0;
-  text-align: center;
+  background: #87ceeb;
   border-radius: 12px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-weight: bold;
 }
 
-.box {
-  background: #fff;
-  margin: 10px;
-  padding: 10px;
-  border-radius: 8px;
+.hidden {
+  display: none;
 }
 
-.lane {
-  margin: 6px 10px;
+.back {
+  margin: 10px;
+}
+
+#players .player {
+  margin: 8px 0;
 }
 
 input {
   width: 100%;
   padding: 6px;
-}
-
-.bar-bg {
-  background: #ddd;
-  height: 8px;
-  border-radius: 4px;
+  font-size: 14px;
 }
 
 .bar {
-  height: 8px;
-  background: #4caf50;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.bar-fill {
+  height: 14px;
+  background: orange;
+}
+
+.bar-text {
+  margin-left: 6px;
+  font-size: 12px;
+}
+
+.analysis, .bets {
+  margin-top: 12px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 8px;
 }
