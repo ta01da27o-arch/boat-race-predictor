@@ -1,17 +1,22 @@
-/* ===== 仮・場データ ===== */
-const stadiumData = {
-  default: {
-    1: ["イン有利傾向", "展開次第で差し"]
-  }
-};
-
 /* ===== 仮・選手データ ===== */
 function getDummyPlayerData(number) {
   return {
     grade: ["A1","A2","B1","B2"][number % 4],
     win: (5.0 + (number % 30) * 0.1).toFixed(2),
     local: (4.5 + (number % 20) * 0.1).toFixed(2),
-    st: (0.10 + (number % 5) * 0.02).toFixed(2)
+    st: (0.10 + (number % 5) * 0.02).toFixed(2),
+    finish: getDummyFinishRates(number)
+  };
+}
+
+/* ===== 仮・決まり手 ===== */
+function getDummyFinishRates(num) {
+  const base = num % 40;
+  return {
+    escape: 30 + (base % 20),       // 逃げ
+    diff: 15 + (base % 15),         // 差し
+    makuri: 20 + (base % 20),       // 捲り
+    makuriDiff: 10 + (base % 10)    // 捲り差し
   };
 }
 
@@ -28,7 +33,6 @@ const screenDetail = document.getElementById("screen-detail");
 
 const detailHeader = document.getElementById("detailHeader");
 const description = document.getElementById("stadiumDescription");
-const monthSelect = document.getElementById("monthSelect");
 const backBtn = document.getElementById("backBtn");
 const lanes = document.getElementById("lanes");
 
@@ -41,13 +45,13 @@ stadiums.forEach(name => {
   grid.appendChild(card);
 });
 
-/* ===== 詳細 ===== */
+/* ===== 詳細画面 ===== */
 function openDetail(name) {
   screenStadium.classList.add("hidden");
   screenDetail.classList.remove("hidden");
 
   detailHeader.textContent = name;
-  description.innerHTML = stadiumData.default[1].join("<br>");
+  description.innerHTML = "イン有利傾向<br>展開次第で差し";
 
   lanes.innerHTML = "";
 
@@ -59,24 +63,52 @@ function openDetail(name) {
       <div class="lane-title">${i}枠</div>
       <input type="number" placeholder="選手番号">
       <div class="player-data">番号入力で仮データ表示</div>
+      <div class="finish"></div>
     `;
 
     const input = lane.querySelector("input");
     const dataDiv = lane.querySelector(".player-data");
+    const finishDiv = lane.querySelector(".finish");
 
     input.oninput = () => {
       if (!input.value) {
         dataDiv.textContent = "番号入力で仮データ表示";
+        finishDiv.innerHTML = "";
         return;
       }
+
       const d = getDummyPlayerData(Number(input.value));
+
       dataDiv.innerHTML =
         `階級：${d.grade} / 全勝率：${d.win}<br>` +
         `当地勝率：${d.local} / 平ST：${d.st}`;
+
+      finishDiv.innerHTML = createFinishHTML(d.finish);
     };
 
     lanes.appendChild(lane);
   }
+}
+
+function createFinishHTML(f) {
+  return `
+    ${finishRow("逃げ", f.escape)}
+    ${finishRow("差し", f.diff)}
+    ${finishRow("捲り", f.makuri)}
+    ${finishRow("捲り差し", f.makuriDiff)}
+  `;
+}
+
+function finishRow(label, value) {
+  return `
+    <div class="finish-row">
+      <div class="finish-label">${label}</div>
+      <div class="finish-bar-bg">
+        <div class="finish-bar" style="width:${value}%"></div>
+      </div>
+      &nbsp;${value}%
+    </div>
+  `;
 }
 
 backBtn.onclick = () => {
