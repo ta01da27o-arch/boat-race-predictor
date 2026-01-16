@@ -1,3 +1,4 @@
+/* ===== 既存部分そのまま ===== */
 const stadiums = [
   "桐生","戸田","江戸川","平和島","多摩川","浜名湖",
   "蒲郡","常滑","津","三国","びわこ","住之江",
@@ -36,6 +37,7 @@ function openDetail(name) {
   desc.innerHTML = "イン有利傾向<br>冬季は捲り控えめ";
   lanesDiv.innerHTML = "";
   rankBars.innerHTML = "";
+  analysisResult.innerHTML = "選手番号を入力してください";
   laneData = [];
 
   for (let i = 1; i <= 6; i++) {
@@ -55,18 +57,19 @@ function openDetail(name) {
       laneData[i-1] = { lane: i, rates };
       finish.innerHTML = finishHTML(i, rates);
       updateRanks();
+      updateFinishPrediction();
     };
 
     lanesDiv.appendChild(lane);
   }
 }
 
-/* 仮データ */
+/* ===== 仮データ ===== */
 function dummyRates(lane, n) {
   if (lane === 1) {
     return {
-      escape: 45 + n % 20,
-      diffed: 20,
+      escape: 40 + n % 25,
+      diffed: 15,
       makurare: 15,
       makuriDiffed: 10
     };
@@ -78,7 +81,7 @@ function dummyRates(lane, n) {
   };
 }
 
-/* 決まり手表示 */
+/* ===== 決まり手表示 ===== */
 function finishHTML(lane, f) {
   if (lane === 1) {
     return row("逃げ", f.escape)
@@ -102,7 +105,7 @@ function row(label, v) {
   `;
 }
 
-/* ⭐ 入着率（期待値） */
+/* ===== 入着期待値 ===== */
 function updateRanks() {
   if (laneData.filter(Boolean).length < 6) return;
   rankBars.innerHTML = "";
@@ -110,11 +113,14 @@ function updateRanks() {
   laneData.forEach(d => {
     let value;
     if (d.lane === 1) {
-      value = d.rates.escape - d.rates.diffed;
+      value = d.rates.escape -
+        (d.rates.diffed + d.rates.makurare + d.rates.makuriDiffed) / 2;
     } else {
       value = Math.max(...Object.values(d.rates));
     }
-    value = Math.max(5, Math.min(95, value));
+    value = Math.max(5, Math.min(95, Math.round(value)));
+
+    d.power = value;
 
     rankBars.innerHTML += `
       <div class="rank-row">
@@ -125,4 +131,29 @@ function updateRanks() {
       </div>
     `;
   });
+}
+
+/* ===== ⭐ 1〜3着率算出 ===== */
+function updateFinishPrediction() {
+  if (laneData.filter(Boolean).length < 6) return;
+
+  const total = laneData.reduce((s, d) => s + d.power, 0);
+
+  const rates = laneData.map(d => ({
+    lane: d.lane,
+    rate1: Math.round((d.power / total) * 100),
+  }));
+
+  rates.sort((a, b) => b.rate1 - a.rate1);
+
+  const first = rates[0];
+  const second = rates[1];
+  const third = rates[2];
+
+  analysisResult.innerHTML = `
+    <strong>⭐ 1〜3着率（最終予測）</strong><br><br>
+    1着：${first.lane}コース ${first.rate1}%<br>
+    2着：${second.lane}コース ${Math.round(first.rate1 * 0.65)}%<br>
+    3着：${third.lane}コース ${Math.round(first.rate1 * 0.45)}%
+  `;
 }
