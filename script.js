@@ -1,12 +1,16 @@
 const stadiums = [
-  "桐生","戸田","江戸川","平和島","多摩川","浜名湖",
-  "蒲郡","常滑","津","三国","びわこ","住之江",
-  "尼崎","鳴門","丸亀","児島","宮島","徳山",
-  "下関","若松","芦屋","福岡","唐津","大村"
+"桐生","戸田","江戸川","平和島","多摩川","浜名湖",
+"蒲郡","常滑","津","三国","びわこ","住之江",
+"尼崎","鳴門","丸亀","児島","宮島","徳山",
+"下関","若松","芦屋","福岡","唐津","大村"
 ];
 
 const grid = document.getElementById("stadiumGrid");
+const header = document.getElementById("headerText");
 const detail = document.getElementById("detail");
+
+let candidateCount = Math.floor(Math.random()*6)+8;
+header.textContent = `候補レース数 ${candidateCount}R`;
 
 stadiums.forEach(name => {
   const d = document.createElement("div");
@@ -32,69 +36,49 @@ function renderPlayers() {
   const wrap = document.getElementById("players");
   wrap.innerHTML = "";
 
-  for (let i = 1; i <= 6; i++) {
+  for (let c=1;c<=6;c++) {
     const div = document.createElement("div");
-    div.className = "player";
-    div.innerHTML = `
-      <label>${i}コース</label>
-      <input placeholder="選手番号" oninput="update(${i})" />
-      <div id="bars${i}"></div>
-    `;
+    div.className="player";
+    div.innerHTML=`<strong>${c}コース</strong><div id="bars${c}"></div>`;
     wrap.appendChild(div);
+    renderBars(c);
   }
-}
-
-function update(course) {
-  const bars = document.getElementById(`bars${course}`);
-  bars.innerHTML = "";
-
-  const patterns = ["逃げ","差し","捲り","捲り差し"];
-  patterns.forEach(p => {
-    if (p === "逃げ" && course !== 1) return;
-
-    const val = Math.floor(Math.random() * 50) + 10;
-    const row = document.createElement("div");
-    row.className = "bar";
-    row.innerHTML = `
-      <div class="bar-fill" style="width:${val}%;"></div>
-      <div class="bar-text">${p} ${val}%</div>
-    `;
-    bars.appendChild(row);
-  });
-
   analyze();
 }
 
-function analyze() {
-  const nums = [1,2,3,4,5,6];
-  const cut = Math.floor(Math.random()*6)+1;
+function renderBars(c) {
+  const bars=document.getElementById(`bars${c}`);
+  bars.innerHTML="";
+  let patterns=[];
 
-  const text = `
-${cut}コースに不安あり。
-4・5コース中心の攻め。
-内側は抵抗弱く展開は外。
-  `;
-  document.getElementById("analysis").textContent = text;
+  if(c===1) patterns=["逃げ","差され","捲られ","捲り差され"];
+  else if(c===2) patterns=["逃がし","差し","捲り"];
+  else patterns=["差し","捲り","捲り差し"];
 
-  generateBets(cut);
+  patterns.forEach(p=>{
+    const v=Math.floor(Math.random()*40)+10;
+    bars.innerHTML+=`
+      <div class="bar">
+        <div class="bar-fill" style="width:${v}%"></div>
+        <div class="bar-text">${p} ${v}%</div>
+      </div>`;
+  });
 }
 
-function generateBets(cut) {
-  const bets = document.getElementById("bets");
-  bets.innerHTML = "買い目<br>";
+function analyze(){
+  const attack=[4,5];
+  const head=attack[Math.floor(Math.random()*attack.length)];
+  const second=2;
+  const thirds=[1,3,6].filter(n=>n!==head);
 
-  const nums = [1,2,3,4,5,6].filter(n => n !== cut);
-  let count = 0;
+  document.getElementById("analysisText").textContent=
+    `${attack.join("・")}コースが攻めの中心。
+内側は抵抗弱く、${second}コースの差しが有力。
+展開は外寄り。`;
 
-  for (let a of nums) {
-    for (let b of nums) {
-      for (let c of nums) {
-        if (a !== b && b !== c && a !== c) {
-          bets.innerHTML += `${a}-${b}-${c}<br>`;
-          count++;
-          if (count >= 6) return;
-        }
-      }
-    }
-  }
+  let bets="";
+  thirds.slice(0,3).forEach(t=>{
+    bets+=`${head}-${second}-${t}<br>`;
+  });
+  document.getElementById("betsText").innerHTML=bets;
 }

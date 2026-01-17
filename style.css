@@ -1,61 +1,63 @@
 body {
   margin: 0;
   font-family: sans-serif;
-  background: #f5f7fa;
-  color: #000;
+  background: #f4f6fa;
 }
 
 .header {
-  background: #9acd32; /* 黄緑 */
+  background: #9acd32;
+  padding: 14px;
   text-align: center;
-  padding: 16px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
 }
 
 .spacer {
-  height: 80px; /* 場ボタン1枠分 */
+  height: 70px;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  padding: 10px;
+  gap: 12px;
+  padding: 12px;
 }
 
 .stadium {
-  background: #87ceeb;
-  border-radius: 12px;
+  background: #aee4ff;
+  border-radius: 14px;
   height: 90px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
 .hidden {
   display: none;
 }
 
-.back {
-  margin: 10px;
+.detail-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: #9acd32;
+  font-weight: bold;
 }
 
-#players .player {
-  margin: 8px 0;
+.detail-header button {
+  margin-right: 10px;
 }
 
-input {
-  width: 100%;
-  padding: 6px;
-  font-size: 14px;
+.player {
+  padding: 8px;
 }
 
 .bar {
   display: flex;
   align-items: center;
-  margin-top: 4px;
+  margin: 4px 0;
 }
 
 .bar-fill {
@@ -69,8 +71,13 @@ input {
 }
 
 .analysis, .bets {
-  margin-top: 12px;
-  padding: 8px;
+  margin: 10px;
+  padding: 10px;
   background: #fff;
-  border-radius: 8px;
+  border-radius: 10px;
+}
+
+.analysis-title {
+  font-weight: bold;
+  margin-bottom: 6px;
 }

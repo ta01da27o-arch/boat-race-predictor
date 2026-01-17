@@ -1,48 +1,38 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>競艇展開予想</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>競艇展開予想</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- 見出し -->
-  <div class="header">本日の競艇場</div>
+<div class="header" id="headerText"></div>
 
-  <!-- 見出しと場の間（1枠分） -->
-  <div class="spacer"></div>
+<div class="spacer"></div>
 
-  <!-- 24場 -->
-  <div id="stadiumGrid" class="grid"></div>
+<div id="stadiumGrid" class="grid"></div>
 
-  <!-- 遷移後画面 -->
-  <div id="detail" class="hidden">
-    <button class="back" onclick="back()">← 戻る</button>
-
-    <h2 id="stadiumName"></h2>
-
-    <!-- 月選択 -->
-    <select id="monthSelect">
-      <option>1月</option><option>2月</option><option>3月</option>
-      <option>4月</option><option>5月</option><option>6月</option>
-      <option>7月</option><option>8月</option><option>9月</option>
-      <option>10月</option><option>11月</option><option>12月</option>
-    </select>
-
-    <div id="feature" class="feature"></div>
-
-    <!-- 選手入力 -->
-    <div id="players"></div>
-
-    <!-- 展開解析 -->
-    <div id="analysis" class="analysis"></div>
-
-    <!-- 買い目 -->
-    <div id="bets" class="bets"></div>
+<div id="detail" class="hidden">
+  <div class="detail-header">
+    <button onclick="back()">←</button>
+    <div id="stadiumName"></div>
   </div>
 
-  <script src="script.js"></script>
+  <div id="players"></div>
+
+  <div class="analysis">
+    <div class="analysis-title">⭐ 展開解析</div>
+    <div id="analysisText"></div>
+  </div>
+
+  <div class="bets">
+    <div class="analysis-title">買い目</div>
+    <div id="betsText"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
