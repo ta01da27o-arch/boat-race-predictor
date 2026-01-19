@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>レース分析</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="raceHeader">
+  <button onclick="history.back()">← 戻る</button>
+  <span id="raceTitle">◯◯競艇場 4R</span>
+</header>
+
+<section class="section">
+  <h3>選手番号入力</h3>
+  <div class="inputRow">
+    <input placeholder="1">
+    <input placeholder="2">
+    <input placeholder="3">
+    <input placeholder="4">
+    <input placeholder="5">
+    <input placeholder="6">
+  </div>
+</section>
+
+<section class="section">
+  <h3>各コース決まり手</h3>
+  <div id="kimarite"></div>
+</section>
+
+<section class="section">
+  <h3>各コース入着期待値</h3>
+  <div id="expect"></div>
+</section>
+
+<section class="section">
+  <h3>⭐展開解析</h3>
+  <p>
+    1コースはスタートに不安。<br>
+    4・5コースが機力優勢で捲り攻め。<br>
+    2コースは差し残し注意。
+  </p>
+</section>
+
+<section class="section">
+  <h3>買い目</h3>
+  <ul>
+    <li>4-5-2</li>
+    <li>5-4-2</li>
+    <li>4-2-5</li>
+  </ul>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>

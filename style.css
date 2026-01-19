@@ -8,13 +8,24 @@ body {
   background: #f4fbff;
 }
 
-/* 見出し */
+/* 共通ヘッダ */
 header {
   padding: 12px;
   text-align: center;
   font-size: 18px;
   font-weight: bold;
-  background: #ccff90; /* 黄緑 */
+  background: #ccff90;
+}
+
+/* レース画面用 */
+.raceHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.raceHeader button {
+  font-size: 14px;
 }
 
 /* 24場グリッド */
@@ -36,45 +47,39 @@ header {
 }
 
 .stadium.good {
-  background: #ff8fb1; /* ピンク */
+  background: #ff8fb1;
 }
 
-/* 下部詳細 */
-#detailArea {
-  padding: 12px;
+/* セクション */
+.section {
+  padding: 10px;
 }
 
-.hint {
-  text-align: center;
-  color: #666;
-}
-
-/* 入力欄 */
+/* 入力 */
 .inputRow {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 6px;
-  margin-bottom: 10px;
 }
 
 .inputRow input {
-  height: 36px;
+  height: 34px;
   text-align: center;
   font-size: 14px;
 }
 
-/* 枠共通 */
+/* 枠 */
 .box {
   border: 1px solid #333;
   background: #e0f7fa;
   padding: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 /* グラフ */
 .bar {
   height: 18px;
-  margin: 4px 0;
+  margin-top: 4px;
 }
 
 /* コース色 */
