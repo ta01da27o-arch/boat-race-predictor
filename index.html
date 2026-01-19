@@ -1,56 +1,54 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>競艇展開予想</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>競艇展開予想</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- ① 場一覧 -->
-<div id="stadiumView">
-  <div class="header" id="stadiumHeader"></div>
-  <div class="grid" id="stadiumGrid"></div>
-</div>
+  <!-- 見出し -->
+  <div class="header" id="headerText"></div>
 
-<!-- ② レース番号画面 -->
-<div id="raceView" class="hidden">
-  <div class="header">
-    <button onclick="backToStadium()">←</button>
-    <span id="raceHeader"></span>
+  <!-- 見出しとグリッドの間隔 -->
+  <div class="spacer"></div>
+
+  <!-- 24場グリッド -->
+  <div id="stadiumGrid" class="grid"></div>
+
+  <!-- 詳細画面 -->
+  <div id="detail" class="hidden">
+
+    <!-- 場名＋戻る -->
+    <div class="detail-header">
+      <button onclick="back()">←</button>
+      <div id="stadiumName"></div>
+    </div>
+
+    <!-- 選手番号入力＋決まり手グラフ -->
+    <div id="players"></div>
+
+    <!-- ★ 新規追加：各コース入着期待値 -->
+    <div class="analysis">
+      <div class="analysis-title">各コース入着期待値</div>
+      <div id="expectation"></div>
+    </div>
+
+    <!-- 展開解析 -->
+    <div class="analysis">
+      <div class="analysis-title">⭐ 展開解析</div>
+      <div id="analysisText"></div>
+    </div>
+
+    <!-- 買い目 -->
+    <div class="bets">
+      <div class="analysis-title">買い目</div>
+      <div id="betsText"></div>
+    </div>
+
   </div>
-  <div class="race-grid" id="raceGrid"></div>
-</div>
 
-<!-- ③ 詳細画面 -->
-<div id="detailView" class="hidden">
-  <div class="header">
-    <button onclick="backToRace()">←</button>
-    <span id="detailHeader"></span>
-  </div>
-
-  <div id="players"></div>
-
-  <!-- ④ コース期待値 -->
-  <div class="section">
-    <div class="section-title">各コース入着期待値</div>
-    <div id="expectation"></div>
-  </div>
-
-  <!-- ⑤ 展開解析 -->
-  <div class="section">
-    <div class="section-title">⭐ 展開解析</div>
-    <div id="analysisText"></div>
-  </div>
-
-  <!-- ⑥ 買い目 -->
-  <div class="section">
-    <div class="section-title">買い目</div>
-    <div id="betsText"></div>
-  </div>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
