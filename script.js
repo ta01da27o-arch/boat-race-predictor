@@ -2,10 +2,12 @@ const stadiums = [
   { name: "桐生", good: true },
   { name: "戸田", good: false },
   { name: "江戸川", good: true },
-  { name: "平和島", good: false }
+  { name: "平和島", good: false },
+  { name: "蒲郡", good: false },
+  { name: "住之江", good: true }
 ];
 
-const courseColors = [
+const colors = [
   "#ffffff", // 1
   "#000000", // 2
   "#f44336", // 3
@@ -15,86 +17,69 @@ const courseColors = [
 ];
 
 const grid = document.getElementById("stadiumGrid");
+const detail = document.getElementById("detailArea");
 
+/* 24場生成（常時） */
 stadiums.forEach(s => {
-  const div = document.createElement("div");
-  div.className = "stadium" + (s.good ? " good" : "");
-  div.textContent = s.name;
-  div.onclick = () => openRaces(s.name);
-  grid.appendChild(div);
+  const d = document.createElement("div");
+  d.className = "stadium" + (s.good ? " good" : "");
+  d.textContent = s.name;
+  d.onclick = () => loadStadium(s.name);
+  grid.appendChild(d);
 });
 
-function openRaces(name) {
-  grid.classList.add("hidden");
-  document.getElementById("raceScreen").classList.remove("hidden");
-  document.getElementById("stadiumName").textContent = name;
+function loadStadium(name) {
+  detail.innerHTML = `
+    <h3>${name} 4R</h3>
 
-  const raceBtns = document.getElementById("raceButtons");
-  raceBtns.innerHTML = "";
+    <h4>各コース決まり手</h4>
+    ${makeBars()}
 
-  for (let i = 1; i <= 12; i++) {
-    const b = document.createElement("button");
-    b.className = "race-btn" + (i === 4 || i === 8 ? " good" : "");
-    b.textContent = i + "R";
-    b.onclick = () => openPredict(name, i);
-    raceBtns.appendChild(b);
-  }
-}
+    <h4>各コース入着期待値</h4>
+    ${makeExpect()}
 
-function openPredict(name, race) {
-  document.getElementById("raceScreen").classList.add("hidden");
-  document.getElementById("predictScreen").classList.remove("hidden");
-  document.getElementById("raceTitle").textContent = `${name} ${race}R`;
+    <h4>⭐展開解析</h4>
+    <p>
+      1コースはスタート不安。<br>
+      4・5コースが機力優勢で捲り攻め。<br>
+      2コースは差し残し注意。
+    </p>
 
-  // 決まり手
-  const k = document.getElementById("kimarite");
-  k.innerHTML = "";
-  for (let i = 0; i < 6; i++) {
-    const box = document.createElement("div");
-    box.className = "kimarite-box";
-    box.innerHTML = `<strong>${i+1}コース</strong>`;
-    const bar = document.createElement("div");
-    bar.className = "bar";
-    bar.style.width = (30 + i * 8) + "%";
-    bar.style.background = courseColors[i];
-    box.appendChild(bar);
-    box.innerHTML += ` ${(30 + i * 8)}%`;
-    k.appendChild(box);
-  }
-
-  // 期待値
-  const e = document.getElementById("expectation");
-  e.innerHTML = "";
-  for (let i = 0; i < 6; i++) {
-    const box = document.createElement("div");
-    box.className = "expect-box";
-    const bar = document.createElement("div");
-    bar.className = "expect-bar";
-    bar.style.width = (40 + i * 6) + "%";
-    bar.style.background = courseColors[i];
-    bar.textContent = `${i+1}コース`;
-    box.appendChild(bar);
-    e.appendChild(box);
-  }
-
-  // 展開
-  document.getElementById("analysis").textContent =
-    "1コースのスタートに不安。4・5コースが機力優勢で捲り攻め。2コースは差し残し注意。";
-
-  // 買い目（重複なし）
-  document.getElementById("bets").innerHTML = `
-    <li>4-5-2</li>
-    <li>5-4-2</li>
-    <li>4-2-5</li>
+    <h4>買い目</h4>
+    <ul>
+      <li>4-5-2</li>
+      <li>5-4-2</li>
+      <li>4-2-5</li>
+    </ul>
   `;
 }
 
-function backToGrid() {
-  document.getElementById("raceScreen").classList.add("hidden");
-  grid.classList.remove("hidden");
+function makeBars() {
+  let html = "";
+  for (let i = 0; i < 6; i++) {
+    const v = 30 + i * 7;
+    html += `
+      <div class="box">
+        ${i+1}コース
+        <div class="bar" style="width:${v}%;background:${colors[i]}"></div>
+        ${v}%
+      </div>
+    `;
+  }
+  return html;
 }
 
-function backToRace() {
-  document.getElementById("predictScreen").classList.add("hidden");
-  document.getElementById("raceScreen").classList.remove("hidden");
+function makeExpect() {
+  let html = "";
+  for (let i = 0; i < 6; i++) {
+    const v = 40 + i * 6;
+    html += `
+      <div class="box">
+        <div class="bar" style="width:${v}%;background:${colors[i]}">
+          ${i+1}コース
+        </div>
+      </div>
+    `;
+  }
+  return html;
 }

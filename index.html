@@ -7,51 +7,18 @@
 </head>
 <body>
 
-<h1 id="title">候補レース数 11R</h1>
+<!-- 見出し -->
+<header>
+  候補レース数 <span id="raceCount">11</span>R
+</header>
 
-<!-- ① 24場 -->
-<div id="stadiumGrid" class="grid"></div>
+<!-- 24場グリッド（固定） -->
+<section id="stadiumGrid"></section>
 
-<!-- ② レース番号 -->
-<div id="raceScreen" class="hidden">
-  <h2 id="stadiumName"></h2>
-  <div id="raceButtons" class="race-grid"></div>
-  <button onclick="backToGrid()">戻る</button>
-</div>
-
-<!-- ③〜⑦ 解析画面 -->
-<div id="predictScreen" class="hidden">
-
-  <h2 id="raceTitle"></h2>
-
-  <!-- 選手番号入力 -->
-  <div class="inputs">
-    <input placeholder="1コース 選手番号">
-    <input placeholder="2コース 選手番号">
-    <input placeholder="3コース 選手番号">
-    <input placeholder="4コース 選手番号">
-    <input placeholder="5コース 選手番号">
-    <input placeholder="6コース 選手番号">
-  </div>
-
-  <!-- ④ 決まり手 -->
-  <h3>各コース決まり手</h3>
-  <div id="kimarite"></div>
-
-  <!-- ⑤ 期待値 -->
-  <h3>各コース入着期待値</h3>
-  <div id="expectation"></div>
-
-  <!-- ⑥ 展開 -->
-  <h3>⭐展開解析</h3>
-  <p id="analysis"></p>
-
-  <!-- ⑦ 買い目 -->
-  <h3>買い目</h3>
-  <ul id="bets"></ul>
-
-  <button onclick="backToRace()">戻る</button>
-</div>
+<!-- 下部可変エリア -->
+<section id="detailArea">
+  <p class="hint">場を選択してください</p>
+</section>
 
 <script src="script.js"></script>
 </body>
