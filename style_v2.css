@@ -1,5 +1,5 @@
 /* =========================
-   全体リセット・基本設定
+   全体
 ========================= */
 * {
   box-sizing: border-box;
@@ -8,31 +8,28 @@
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: sans-serif;
   background: #f5f7fa;
-  overflow-x: hidden;   /* 横スクロール完全禁止 */
-  touch-action: pan-y;  /* 縦スクロールのみ */
+  overflow-x: hidden;
+  touch-action: pan-y;
 }
 
 /* =========================
-   見出し（24場グリッド）
+   見出し
 ========================= */
 .title {
-  width: 100%;
   text-align: center;
   font-size: 1.3rem;
   font-weight: bold;
   color: #000;
-  background: #e6f4b5; /* 薄い黄緑 */
+  background: #e6f4b5;
   padding: 14px 0;
   margin: 0;
 }
 
-/* 見出しとグリッドの間の余白 */
+/* 見出しとグリッドの間隔（ボタン高さの1/2） */
 #stadiumScreen {
-  padding-bottom: 12px;
+  padding-bottom: 35px;
 }
 
 /* =========================
@@ -40,160 +37,98 @@ html, body {
 ========================= */
 .stadium-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 横4固定 */
-  grid-template-rows: repeat(6, auto);   /* 縦6固定 */
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  padding: 12px;
+  padding: 0 12px;
 }
 
-/* =========================
-   各場ボタン
-========================= */
 .stadium {
-  height: 70px; /* 縦サイズ：完成形 */
+  height: 70px;
   border-radius: 14px;
-  background: linear-gradient(180deg, #5fa9ff, #2f6fd6);
-  color: #000;
-  font-size: 0.95rem;
+  background: linear-gradient(#8fc0ff, #5a8fe6); /* 少し薄く */
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
 
-  /* 3Dボタン感 */
   box-shadow:
-    0 4px 0 #1f4fa3,
+    0 4px 0 #3e6fc2,
     0 6px 10px rgba(0,0,0,0.2);
 
-  cursor: pointer;
   user-select: none;
-  transition: transform 0.1s, box-shadow 0.1s;
 }
 
-/* 押した時 */
 .stadium:active {
   transform: translateY(3px);
   box-shadow:
-    0 1px 0 #1f4fa3,
+    0 1px 0 #3e6fc2,
     0 3px 6px rgba(0,0,0,0.2);
 }
 
-/* 候補場（ピンク強調） */
+/* 候補場 */
 .stadium.candidate {
-  background: linear-gradient(180deg, #ff9ecf, #ff5fa2);
-  box-shadow:
-    0 4px 0 #c94b7e,
-    0 6px 10px rgba(0,0,0,0.25);
+  background: linear-gradient(#ffb2d6, #ff6fae);
 }
 
 /* =========================
    レース番号画面
 ========================= */
-#raceScreen {
-  padding: 12px;
-}
-
 .hidden {
   display: none;
 }
 
-/* ヘッダー */
 .race-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  padding: 10px 12px;
 }
 
 #raceTitle {
   font-size: 1.2rem;
   font-weight: bold;
   margin: 0;
-  color: #000;
 }
 
-/* 戻るボタン */
 #backBtn {
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 6px 14px;
+  border-radius: 10px;
   border: none;
-  font-weight: bold;
   background: #ddd;
+  font-weight: bold;
   box-shadow: 0 2px 0 #aaa;
 }
 
-/* =========================
-   レース番号グリッド
-========================= */
+/* レース番号グリッド */
 .race-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 1R〜12R */
-  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 12px;
 }
 
-/* レース番号ボタン */
 .race-btn {
   height: 60px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #5fa9ff, #2f6fd6);
-  color: #000;
+  border-radius: 14px;
+  background: linear-gradient(#8fc0ff, #5a8fe6);
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
 
   box-shadow:
-    0 4px 0 #1f4fa3,
+    0 4px 0 #3e6fc2,
     0 6px 10px rgba(0,0,0,0.2);
 }
 
 .race-btn:active {
   transform: translateY(3px);
   box-shadow:
-    0 1px 0 #1f4fa3,
+    0 1px 0 #3e6fc2,
     0 3px 6px rgba(0,0,0,0.2);
 }
 
 /* 候補レース */
 .race-btn.candidate {
-  background: linear-gradient(180deg, #ff9ecf, #ff5fa2);
-}
-
-/* =========================
-   未来拡張エリア（安全枠）
-========================= */
-
-/* 決まり手グラフ */
-.kimarite-area {
-  margin-top: 16px;
-  padding: 10px;
-  background: #eaf6ff;
-  border-radius: 12px;
-}
-
-/* 入着期待値 */
-.expect-area {
-  margin-top: 16px;
-  padding: 10px;
-  background: #eaf6ff;
-  border-radius: 12px;
-}
-
-/* 展開解析 */
-.analysis-area {
-  margin-top: 16px;
-  padding: 12px;
-  background: #fff;
-  border-radius: 12px;
-  font-size: 0.95rem;
-}
-
-/* 買い目 */
-.bet-area {
-  margin-top: 12px;
-  padding: 12px;
-  background: #fff;
-  border-radius: 12px;
-  font-weight: bold;
+  background: linear-gradient(#ffb2d6, #ff6fae);
 }
