@@ -1,164 +1,124 @@
 /* =========================
-   強制反映テスト用CSS
-   ========================= */
-
-/* --- 全体 --- */
+   全体リセット
+========================= */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
 }
 
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  background: #eef6ff; /* ← これが出なければCSS未反映 */
-  overflow-x: hidden;
+  background: #eef7fb;
+  min-height: 100vh;
 }
 
 /* =========================
-   見出し
-   ========================= */
+   共通
+========================= */
+.hidden {
+  display: none;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+}
+
+/* =========================
+   24場グリッド画面
+========================= */
+#stadiumScreen {
+  padding: 12px 12px 0; /* ← 下の余白を完全カット */
+}
+
+/* 見出し */
 .title {
-  text-align: center;               /* ← 中央固定 */
-  background: #d9f2c7;               /* ← 薄い黄緑 */
-  color: #000;
-  font-size: 22px;
+  text-align: center;
+  font-size: 20px;
   font-weight: bold;
-  padding: 14px 0;
-  margin: 0;
-  border-bottom: 4px solid #7cb342;  /* ← 視認用 */
+  background: #dff3cc;
+  border-bottom: 4px solid #8bc34a;
+  padding: 10px 0;
+  margin-bottom: 12px;
 }
 
-/* 見出しとグリッドの間（強制確認用） */
-#stadiumScreen::after {
-  content: "";
-  display: block;
-  height: 30px;                      /* ← 空白が見えたらOK */
-  background: #b3e5fc;               /* ← 水色の帯 */
-}
-
-/* =========================
-   24場グリッド
-   ========================= */
+/* グリッド */
 .stadium-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4×6固定 */
-  gap: 10px;
-  padding: 10px;
-  max-width: 100vw;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding-bottom: 0; /* ← 水色帯の原因を遮断 */
 }
 
-/* 各場ボタン */
-.stadium {
-  height: 90px;                      /* ← 縦サイズ確認 */
-  background: linear-gradient(
-    to bottom,
-    #64b5f6,
-    #1e88e5
-  );                                  /* ← 青系3D */
+/* 場ボタン */
+.stadium-btn {
+  background: linear-gradient(#5bb2f2, #1f86d8);
   color: #fff;
   font-size: 16px;
   font-weight: bold;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  box-shadow:
-    0 4px 0 #1565c0,
-    0 6px 12px rgba(0,0,0,0.3);
-
-  cursor: pointer;
-  user-select: none;
+  border-radius: 14px;
+  height: 70px;
+  box-shadow: 0 5px 0 #1669a8;
 }
 
-/* 押した感 */
-.stadium:active {
-  transform: translateY(3px);
-  box-shadow:
-    0 1px 0 #1565c0,
-    0 3px 6px rgba(0,0,0,0.3);
-}
-
-/* 候補場（ピンク強調） */
-.stadium.candidate {
-  background: linear-gradient(
-    to bottom,
-    #ff8acb,
-    #e91e63
-  );
-  box-shadow:
-    0 4px 0 #ad1457,
-    0 6px 12px rgba(0,0,0,0.35);
+.stadium-btn.active {
+  background: linear-gradient(#ff8ab8, #e91e63);
+  box-shadow: 0 5px 0 #b0003a;
 }
 
 /* =========================
    レース番号画面
-   ========================= */
+========================= */
 #raceScreen {
-  padding: 10px;
+  padding: 12px;
 }
 
 /* ヘッダー */
 .race-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 70px 1fr 70px;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
-/* 戻るボタン */
+/* 戻る */
 #backBtn {
-  background: linear-gradient(#eeeeee, #bdbdbd);
-  border: none;
+  background: #e0e0e0;
   border-radius: 10px;
-  padding: 8px 14px;
+  padding: 8px;
   font-size: 14px;
-  box-shadow: 0 3px 0 #9e9e9e;
 }
 
-#backBtn:active {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 #9e9e9e;
-}
-
-/* 場名 */
+/* 場名（中央固定） */
 #raceTitle {
-  font-size: 20px;
+  text-align: center;
+  font-size: 22px;
   font-weight: bold;
-  color: #000;
 }
 
-/* レース番号グリッド */
+/* =========================
+   レース番号グリッド
+========================= */
 .race-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  background: #e3f2fd;               /* ← ここが出れば確実 */
-  padding: 12px;
-  border-radius: 12px;
+  gap: 14px;
 }
 
 /* レース番号ボタン */
-.race {
-  height: 60px;
-  background: linear-gradient(#ffffff, #cfd8dc);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: bold;
-  box-shadow: 0 3px 0 #90a4ae;
-}
-
-/* 候補レース（ピンク） */
-.race.candidate {
-  background: linear-gradient(#ffb6d9, #e91e63);
+.race-btn {
+  background: linear-gradient(#5bb2f2, #1f86d8); /* ← 青色復活 */
   color: #fff;
-  box-shadow: 0 3px 0 #ad1457;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 14px;
+  height: 72px;
+  box-shadow: 0 5px 0 #1669a8;
 }
 
-/* 非表示制御 */
-.hidden {
-  display: none;
+/* 選択済み */
+.race-btn.active {
+  background: linear-gradient(#ff8ab8, #e91e63);
+  box-shadow: 0 5px 0 #b0003a;
 }
