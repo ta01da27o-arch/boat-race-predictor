@@ -1,145 +1,190 @@
-/* ===== 全体共通 ===== */
+/* ===============================
+   全体リセット・基本設定
+=============================== */
 * {
   box-sizing: border-box;
-}
-
-body {
   margin: 0;
   padding: 0;
-  font-family: "Arial", sans-serif;
-  background: #f5faff;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;          /* 横スクロール・ピンチ防止 */
+  font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  background: #f2f6f9;
   color: #000;
-  overflow-x: hidden; /* 横スクロール禁止 */
 }
 
-/* ===== 見出し ===== */
-.header {
-  background: #e6f5b0; /* 薄い黄緑 */
-  text-align: center;
-  font-size: 18px;
+/* ===============================
+   共通
+=============================== */
+.hidden {
+  display: none;
+}
+
+/* ===============================
+   24場グリッド画面
+=============================== */
+#stadiumScreen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 見出し */
+.title {
+  text-align: center;                 /* 中央固定 */
+  font-size: 1.2rem;
+  padding: 10px 0;
+  background: #e6f4d7;               /* 薄い黄緑 */
+  border-bottom: 1px solid #c9e2b3;
   font-weight: bold;
-  padding: 12px 0;
-  margin-bottom: 12px;
 }
 
-/* ===== 24場グリッド ===== */
+/* グリッド */
 .stadium-grid {
+  flex: 1;
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 横4固定 */
-  grid-template-rows: repeat(6, auto);  /* 縦6 */
-  gap: 10px;
-  padding: 10px;
+  grid-template-columns: repeat(4, 1fr);  /* 横4 */
+  grid-template-rows: repeat(6, 1fr);     /* 縦6 */
+  gap: 6px;
+  padding: 8px;
 }
 
+/* 各場ボタン */
 .stadium {
-  height: 70px; /* 縦サイズ（完成形） */
-  background: linear-gradient(to bottom, #e8f4ff, #bcdcff);
-  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  font-size: 0.95rem;
   font-weight: bold;
+  text-align: center;
+
+  background: linear-gradient(to bottom, #5aa9e6, #2f7fd3);
+  color: #fff;
+
+  border-radius: 10px;
+  border: 1px solid #1f5fa8;
+
   box-shadow:
-    0 4px 0 #8bb8dd,
-    0 6px 8px rgba(0,0,0,0.25);
-  cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.1s;
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    0 4px 0 #1f5fa8,
+    0 6px 10px rgba(0,0,0,0.25);
+
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
+/* 押し感 */
 .stadium:active {
   transform: translateY(3px);
   box-shadow:
-    0 1px 0 #8bb8dd,
-    0 3px 5px rgba(0,0,0,0.25);
+    inset 0 1px 0 rgba(255,255,255,0.4),
+    0 1px 0 #1f5fa8,
+    0 3px 6px rgba(0,0,0,0.25);
 }
 
-/* 勝負できそうな場（ピンク） */
+/* 候補場（ピンク強調） */
 .stadium.hot {
-  background: linear-gradient(to bottom, #ffd6e8, #ff9fc6);
+  background: linear-gradient(to bottom, #ff7aa2, #e04478);
+  border-color: #b8325a;
   box-shadow:
-    0 4px 0 #d97aa3,
-    0 6px 8px rgba(0,0,0,0.25);
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    0 4px 0 #b8325a,
+    0 6px 10px rgba(0,0,0,0.25);
 }
 
-/* ===== レース番号画面 ===== */
-.race-section {
-  margin-top: 16px;
+/* ===============================
+   レース番号画面
+=============================== */
+#raceScreen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ヘッダー */
+.race-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px;
+  background: #e6f4d7;               /* 薄黄緑で統一 */
+  border-bottom: 1px solid #c9e2b3;
+}
+
+/* 戻るボタン */
+#backBtn {
+  padding: 6px 12px;
+  font-weight: bold;
+  background: linear-gradient(to bottom, #cccccc, #999999);
+  border: 1px solid #777;
+  border-radius: 6px;
+  box-shadow: 0 2px 0 #777;
+}
+
+#backBtn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 #777;
+}
+
+/* 場名見出し */
+#raceTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* レース番号グリッド */
+.race-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 8px;
   padding: 10px;
 }
 
-.race-title {
-  text-align: center;
-  font-size: 17px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.race-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
+/* レース番号ボタン */
 .race-button {
-  height: 55px;
-  background: linear-gradient(to bottom, #e8f4ff, #bcdcff);
-  border-radius: 12px;
-  font-weight: bold;
-  box-shadow:
-    0 4px 0 #8bb8dd,
-    0 6px 8px rgba(0,0,0,0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+
+  font-size: 1rem;
+  font-weight: bold;
+
+  background: linear-gradient(to bottom, #5aa9e6, #2f7fd3);
+  color: #fff;
+
+  border-radius: 10px;
+  border: 1px solid #1f5fa8;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    0 4px 0 #1f5fa8,
+    0 6px 10px rgba(0,0,0,0.25);
+
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
+.race-button:active {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.4),
+    0 1px 0 #1f5fa8,
+    0 3px 6px rgba(0,0,0,0.25);
+}
+
+/* 候補R（ピンク強調） */
 .race-button.hot {
-  background: linear-gradient(to bottom, #ffd6e8, #ff9fc6);
+  background: linear-gradient(to bottom, #ff7aa2, #e04478);
+  border-color: #b8325a;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    0 4px 0 #b8325a,
+    0 6px 10px rgba(0,0,0,0.25);
 }
-
-/* ===== 選手番号入力 ===== */
-#playerSection {
-  margin-top: 20px;
-  padding: 10px;
-}
-
-.section-title {
-  text-align: center;
-  font-size: 17px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.player-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
-.player-box {
-  background: #e6f7ff; /* 水色 */
-  border-radius: 12px;
-  padding: 10px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.player-box label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 6px;
-}
-
-.player-box input {
-  width: 100%;
-  font-size: 16px;
-  padding: 6px;
-}
-
-/* ===== コース別カラー（今後グラフと完全連動） ===== */
-.course1 { border: 2px solid #ffffff; }
-.course2 { border: 2px solid #000000; }
-.course3 { border: 2px solid red; }
-.course4 { border: 2px solid blue; }
-.course5 { border: 2px solid gold; }
-.course6 { border: 2px solid green; }
