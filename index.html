@@ -4,37 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>競艇 展開予想</title>
+
+  <!-- ★ 確定CSS -->
   <link rel="stylesheet" href="style_v2.css" />
 </head>
 <body>
 
-<!-- ===================== -->
-<!-- 24場グリッド画面 -->
-<!-- ===================== -->
-<div id="stadiumScreen">
-  <h1 class="title">候補レース数 11R</h1>
+  <!-- ===================== -->
+  <!-- 24場グリッド画面 -->
+  <!-- ===================== -->
+  <div id="stadiumScreen">
 
-  <div class="stadium-grid">
-    <!-- JSで24場生成 -->
-  </div>
-</div>
+    <!-- 見出し -->
+    <h1 class="title">候補レース数 11R</h1>
 
-<!-- ===================== -->
-<!-- レース番号画面 -->
-<!-- ===================== -->
-<div id="raceScreen" class="hidden">
+    <!-- 24場グリッド -->
+    <div class="stadium-grid">
+      <!-- script.js で 24場生成 -->
+    </div>
 
-  <div class="race-header">
-    <button id="backBtn">戻る</button>
-    <h2 id="raceTitle">下関</h2>
   </div>
 
-  <div class="race-grid">
-    <!-- JSで1R〜12R生成 -->
+  <!-- ===================== -->
+  <!-- レース番号画面 -->
+  <!-- ===================== -->
+  <div id="raceScreen" class="hidden">
+
+    <div class="race-header">
+      <button id="backBtn">戻る</button>
+      <h2 id="raceTitle"></h2>
+    </div>
+
+    <div class="race-grid">
+      <!-- 1R〜12R を script.js で生成 -->
+    </div>
+
   </div>
 
-</div>
+  <!-- ===================== -->
+  <!-- Script -->
+  <!-- ===================== -->
+  <script src="script.js"></script>
 
-<script src="script.js"></script>
 </body>
 </html>
