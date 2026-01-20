@@ -29,14 +29,20 @@ html, body {
 .stadium-grid {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
+
+  /* 👇 見出し＋空白分を引く */
   height: calc(100vh - 56px);
-  gap: 6px;              /* ← 縮小 */
-  padding: 6px;          /* ← 縮小 */
+
+  gap: 6px;
+  padding: 6px;
   box-sizing: border-box;
+
+  /* 👇 見出し下に「1枠分」の空白を作る */
+  margin-top: calc((100vh - 56px) / 6);
 }
 
 /* =========================
-   各場枠（縦を縮小）
+   各場ボタン
 ========================= */
 .stadium {
   background: #87ceeb;
@@ -46,13 +52,15 @@ html, body {
   align-items: center;
   justify-content: center;
 
-  font-size: 15px;       /* ← 少し縮小 */
+  font-size: 15px;
   font-weight: bold;
   color: #000;
   text-align: center;
 
-  height: 100%;
-  padding: 4px 2px;      /* ← 縦を削る（ここが肝） */
+  /* 👇 縦サイズを 25% 短く */
+  height: 75%;
+
+  padding: 2px;
 }
 
 /* 勝負候補 */
