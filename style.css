@@ -1,55 +1,197 @@
 /* =========================
-   選手番号入力欄
+   全体
 ========================= */
-.player-input-area {
-  margin: 16px 10px;
-  padding: 12px;
-  background: #eaf6ff;
-  border-radius: 12px;
+* {
+  box-sizing: border-box;
 }
 
-.section-title {
-  margin: 0 0 10px;
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Hiragino Kaku Gothic ProN",
+               "Noto Sans JP", sans-serif;
+  background: #f5f7f8;
+  color: #000;
+}
+
+/* =========================
+   見出し（保険対応）
+========================= */
+header,
+.header,
+h1,
+h2 {
+  width: 100%;
+  margin: 0;
+  padding: 14px 0;
   text-align: center;
+  font-size: 1.3rem;
   font-weight: bold;
+  background: #e6f5c9;
+  color: #000;
 }
 
-.player-input-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.player-row {
-  display: flex;
-  align-items: center;
+/* =========================
+   24場グリッド
+========================= */
+.stadium-grid,
+.grid,
+.stadiums {
+  width: 100%;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  padding: 8px;
-  border-radius: 10px;
-  background: #ffffff;
 }
 
-.course-label {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+/* =========================
+   競艇場ボタン
+========================= */
+.stadium,
+.stadium-btn,
+button {
+  height: 90px;
+  border-radius: 14px;
   font-weight: bold;
+  font-size: 1rem;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  background: linear-gradient(
+    to bottom,
+    #eaf6ff 0%,
+    #b8dcff 100%
+  );
+
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.8),
+    inset 0 -2px 0 rgba(0,0,0,0.15),
+    0 4px 6px rgba(0,0,0,0.3);
+
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
-/* コース別色 */
-.course1 .course-label { background: #fff; border: 1px solid #ccc; }
-.course2 .course-label { background: #000; color: #fff; }
-.course3 .course-label { background: #d32f2f; color: #fff; }
-.course4 .course-label { background: #1976d2; color: #fff; }
-.course5 .course-label { background: #fbc02d; }
-.course6 .course-label { background: #388e3c; color: #fff; }
+/* 押し感 */
+.stadium:active,
+.stadium-btn:active,
+button:active {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -1px 0 rgba(0,0,0,0.25),
+    0 2px 3px rgba(0,0,0,0.3);
+}
 
-.player-row input {
-  flex: 1;
-  height: 36px;
+/* =========================
+   候補レース（ピンク）
+========================= */
+.candidate,
+.selected {
+  background: linear-gradient(
+    to bottom,
+    #ffd6e7 0%,
+    #ff9fc5 100%
+  );
+}
+
+/* =========================
+   レース番号画面
+========================= */
+.race-grid,
+.races {
+  width: 100%;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.race-btn,
+.race {
+  height: 60px;
+  border-radius: 12px;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(
+    to bottom,
+    #eaf6ff 0%,
+    #b8dcff 100%
+  );
+
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.8),
+    inset 0 -2px 0 rgba(0,0,0,0.15),
+    0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* =========================
+   非表示
+========================= */
+.hidden {
+  display: none;
+}
+
+/* =====================================================
+   ↓↓↓ ここから安全追加ゾーン（既存には一切触らない）
+===================================================== */
+
+/* =========================
+   選手番号入力エリア
+========================= */
+.player-input-area {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  background: #eef7ff;
+}
+
+/* 見出し */
+.player-input-title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* 6艇入力グリッド */
+.player-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+/* 各選手入力枠 */
+.player-box {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 8px;
+  box-shadow: inset 0 0 0 2px #b8dcff;
+}
+
+/* コース表示 */
+.player-course {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+/* 入力欄 */
+.player-box input {
+  width: 100%;
+  padding: 6px;
   font-size: 1rem;
-  padding: 0 8px;
+  text-align: center;
+  border-radius: 6px;
+  border: 1px solid #aaa;
 }
