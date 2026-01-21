@@ -8,65 +8,79 @@
 </head>
 <body>
 
-<!-- ===================== -->
-<!-- 24場グリッド画面 -->
-<!-- ===================== -->
-<div id="stadiumScreen">
-  <h1 class="title">候補レース数 11R</h1>
-  <div class="stadium-grid"></div>
-</div>
-
-<!-- ===================== -->
-<!-- レース番号画面 -->
-<!-- ===================== -->
-<div id="raceScreen" class="hidden">
-
-  <div class="race-header">
-    <button id="backBtn">戻る</button>
-    <h2 id="raceTitle"></h2>
+  <!-- ===================== -->
+  <!-- 24場グリッド画面 -->
+  <!-- ===================== -->
+  <div id="stadiumScreen">
+    <h1 class="title">候補レース数 11R</h1>
+    <div class="stadium-grid"></div>
   </div>
 
-  <div class="race-grid"></div>
+  <!-- ===================== -->
+  <!-- レース番号画面 -->
+  <!-- ===================== -->
+  <div id="raceScreen">
+    <div class="race-grid"></div>
+  </div>
 
   <!-- ===================== -->
   <!-- 選手番号入力欄 -->
   <!-- ===================== -->
-  <div class="player-input-area">
+  <div class="player-input">
+    <h2>選手番号入力</h2>
+    <div class="player-grid">
+      <input type="number" placeholder="1コース">
+      <input type="number" placeholder="2コース">
+      <input type="number" placeholder="3コース">
+      <input type="number" placeholder="4コース">
+      <input type="number" placeholder="5コース">
+      <input type="number" placeholder="6コース">
+    </div>
+  </div>
 
-    <h3 class="section-title">選手番号入力</h3>
+  <!-- ===================== -->
+  <!-- ③ 決まり手グラフ -->
+  <!-- ===================== -->
+  <div class="kimarite-section">
+    <h2>各コース 決まり手</h2>
 
-    <div class="player-input-list">
-      <!-- 1〜6コース -->
-      <div class="player-row course1">
-        <span class="course-label">1</span>
-        <input type="number" placeholder="選手番号" />
-      </div>
-      <div class="player-row course2">
-        <span class="course-label">2</span>
-        <input type="number" placeholder="選手番号" />
-      </div>
-      <div class="player-row course3">
-        <span class="course-label">3</span>
-        <input type="number" placeholder="選手番号" />
-      </div>
-      <div class="player-row course4">
-        <span class="course-label">4</span>
-        <input type="number" placeholder="選手番号" />
-      </div>
-      <div class="player-row course5">
-        <span class="course-label">5</span>
-        <input type="number" placeholder="選手番号" />
-      </div>
-      <div class="player-row course6">
-        <span class="course-label">6</span>
-        <input type="number" placeholder="選手番号" />
-      </div>
+    <div class="kimarite-row c1">
+      <span class="label">1コース</span>
+      <div class="bar"><div style="width:65%"></div></div>
+      <span class="value">65%</span>
+    </div>
+
+    <div class="kimarite-row c2">
+      <span class="label">2コース</span>
+      <div class="bar"><div style="width:40%"></div></div>
+      <span class="value">40%</span>
+    </div>
+
+    <div class="kimarite-row c3">
+      <span class="label">3コース</span>
+      <div class="bar"><div style="width:55%"></div></div>
+      <span class="value">55%</span>
+    </div>
+
+    <div class="kimarite-row c4">
+      <span class="label">4コース</span>
+      <div class="bar"><div style="width:70%"></div></div>
+      <span class="value">70%</span>
+    </div>
+
+    <div class="kimarite-row c5">
+      <span class="label">5コース</span>
+      <div class="bar"><div style="width:60%"></div></div>
+      <span class="value">60%</span>
+    </div>
+
+    <div class="kimarite-row c6">
+      <span class="label">6コース</span>
+      <div class="bar"><div style="width:30%"></div></div>
+      <span class="value">30%</span>
     </div>
 
   </div>
 
-</div>
-
-<script src="script.js"></script>
 </body>
 </html>
