@@ -18,42 +18,37 @@ html, body {
 }
 
 /* =========================
-   見出し（保険対応）
+   見出し
 ========================= */
-/* headerクラスが無くても効かせる */
-header,
-.header,
-h1,
-h2 {
+h1, h2 {
   width: 100%;
   margin: 0;
   padding: 14px 0;
-  text-align: center;           /* ← 中央固定 */
+  text-align: center;
   font-size: 1.3rem;
   font-weight: bold;
-  background: #e6f5c9;          /* 薄い黄緑 */
+  background: #e6f5c9;
   color: #000;
 }
 
 /* =========================
    24場グリッド
 ========================= */
-.stadium-grid,
-.grid,
-.stadiums {
+.stadium-grid {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
 
 /* =========================
-   競艇場ボタン
+   ボタン共通
 ========================= */
+button,
 .stadium,
 .stadium-btn,
-button {
+.race-btn {
   height: 90px;
   border-radius: 14px;
   font-weight: bold;
@@ -74,15 +69,13 @@ button {
     inset 0 -2px 0 rgba(0,0,0,0.15),
     0 4px 6px rgba(0,0,0,0.3);
 
+  border: none;
   cursor: pointer;
   user-select: none;
-  border: none;
   transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
-/* 押し感（重要） */
-.stadium:active,
-.stadium-btn:active,
+/* 押し感 */
 button:active {
   transform: translateY(2px);
   box-shadow:
@@ -92,49 +85,31 @@ button:active {
 }
 
 /* =========================
-   候補レース（ピンク）
+   レース番号グリッド
 ========================= */
-.candidate,
-.selected {
-  background: linear-gradient(
-    to bottom,
-    #ffd6e7 0%,
-    #ff9fc5 100%
-  );
-}
-
-/* =========================
-   レース番号画面
-========================= */
-.race-grid,
-.races {
+.race-grid {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
 
-.race-btn,
-.race {
+.race-btn {
   height: 60px;
-  border-radius: 12px;
-  font-weight: bold;
+  font-size: 1rem;
+}
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
+/* =========================
+   ★ 候補レース（必ず一番下）
+========================= */
+.race-btn.candidate,
+.stadium.candidate {
   background: linear-gradient(
     to bottom,
-    #eaf6ff 0%,
-    #b8dcff 100%
-  );
-
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.8),
-    inset 0 -2px 0 rgba(0,0,0,0.15),
-    0 4px 6px rgba(0,0,0,0.3);
+    #ffd6e7 0%,
+    #ff9fc5 100%
+  ) !important;
 }
 
 /* =========================
