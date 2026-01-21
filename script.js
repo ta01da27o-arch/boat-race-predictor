@@ -1,30 +1,15 @@
-console.log("script.js は動いています");
-
 // =====================
-// 画面取得
+// 初期DOM取得
 // =====================
 const stadiumScreen = document.getElementById("stadiumScreen");
 const raceScreen = document.getElementById("raceScreen");
-const analysisScreen = document.getElementById("analysisScreen");
+const stadiumGrid = document.querySelector(".stadium-grid");
+const raceGrid = document.querySelector(".race-grid");
+const raceTitle = document.getElementById("raceTitle");
+const backBtn = document.getElementById("backBtn");
 
 // =====================
-// 共通：画面切り替え
-// =====================
-function showScreen(screen) {
-  stadiumScreen.classList.add("hidden");
-  raceScreen.classList.add("hidden");
-  analysisScreen.classList.add("hidden");
-
-  screen.classList.remove("hidden");
-}
-
-// =====================
-// 初期表示
-// =====================
-showScreen(stadiumScreen);
-
-// =====================
-// 24場生成
+// 24場データ
 // =====================
 const stadiums = [
   "桐生","戸田","江戸川","平和島",
@@ -35,41 +20,52 @@ const stadiums = [
   "芦屋","福岡","唐津","大村"
 ];
 
-const stadiumGrid = document.querySelector(".stadium-grid");
+// =====================
+// 初期表示（24場生成）
+// =====================
+function createStadiumGrid() {
+  stadiumGrid.innerHTML = "";
 
-stadiums.forEach(name => {
-  const btn = document.createElement("button");
-  btn.className = "stadium-btn";
-  btn.textContent = name;
+  stadiums.forEach(name => {
+    const btn = document.createElement("button");
+    btn.className = "stadium-btn";
+    btn.textContent = name;
 
-  btn.addEventListener("click", () => {
-    document.getElementById("raceTitle").textContent = name;
-    showScreen(raceScreen);
+    btn.addEventListener("click", () => {
+      showRaceScreen(name);
+    });
+
+    stadiumGrid.appendChild(btn);
   });
-
-  stadiumGrid.appendChild(btn);
-});
+}
 
 // =====================
-// レース番号生成
+// レース番号画面表示
 // =====================
-const raceGrid = document.querySelector(".race-grid");
+function showRaceScreen(stadiumName) {
+  stadiumScreen.classList.add("hidden");
+  raceScreen.classList.remove("hidden");
 
-for (let i = 1; i <= 12; i++) {
-  const btn = document.createElement("button");
-  btn.className = "race-btn";
-  btn.textContent = `${i}R`;
+  raceTitle.textContent = stadiumName + " レース番号";
 
-  btn.addEventListener("click", () => {
-    showScreen(analysisScreen);
-  });
-
-  raceGrid.appendChild(btn);
+  raceGrid.innerHTML = "";
+  for (let i = 1; i <= 12; i++) {
+    const btn = document.createElement("button");
+    btn.className = "race-btn";
+    btn.textContent = i + "R";
+    raceGrid.appendChild(btn);
+  }
 }
 
 // =====================
 // 戻るボタン
 // =====================
-document.getElementById("backBtn").addEventListener("click", () => {
-  showScreen(stadiumScreen);
+backBtn.addEventListener("click", () => {
+  raceScreen.classList.add("hidden");
+  stadiumScreen.classList.remove("hidden");
 });
+
+// =====================
+// 起動
+// =====================
+createStadiumGrid();
