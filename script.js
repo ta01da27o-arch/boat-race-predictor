@@ -1,7 +1,6 @@
 // ===============================
 // 要素取得
 // ===============================
-alert("script.js は動いています");
 const stadiumScreen = document.getElementById("stadiumScreen");
 const raceScreen = document.getElementById("raceScreen");
 
@@ -94,4 +93,4 @@ if (backBtn) {
     if (playerInput) playerInput.classList.add("hidden");
     if (kimariteSection) kimariteSection.classList.add("hidden");
   });
-                                         }
+}
