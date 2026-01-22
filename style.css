@@ -48,7 +48,8 @@ h1, h2 {
 .stadium,
 .stadium-btn,
 .race,
-.race-btn {
+.race-btn,
+.back-btn {
   height: 90px;
   border-radius: 14px;
   font-weight: bold;
@@ -75,11 +76,20 @@ h1, h2 {
   transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
+/* ★ 戻るボタンだけ大きく（指定変更点） */
+.back-btn {
+  height: 64px;
+  font-size: 1.2rem;
+  border-radius: 16px;
+  margin: 10px;
+}
+
 /* 押し感 */
 .stadium:active,
 .stadium-btn:active,
 .race:active,
-.race-btn:active {
+.race-btn:active,
+.back-btn:active {
   transform: translateY(2px);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.6),
@@ -90,7 +100,6 @@ h1, h2 {
 /* =========================
    ★ 候補レース（最優先）
 ========================= */
-/* race / stadium の背景を完全に上書き */
 .stadium.candidate,
 .stadium-btn.candidate,
 .race.candidate,
