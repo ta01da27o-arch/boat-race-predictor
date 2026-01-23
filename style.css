@@ -1,0 +1,134 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Hiragino Kaku Gothic ProN",
+               "Noto Sans JP", sans-serif;
+  background: #f5f7f8;
+  overflow-y: auto;
+}
+
+h1, h2 {
+  margin: 0;
+  padding: 14px 0;
+  text-align: center;
+  background: #e6f5c9;
+}
+
+.stadium-grid,
+.race-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 10px;
+}
+
+.stadium,
+.race,
+.back-btn {
+  height: 90px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  background: #cfe8ff;
+  cursor: pointer;
+}
+
+.candidate {
+  background: #ffb6d5;
+}
+
+.race-header {
+  display: flex;
+  align-items: center;
+  background: #e6f5c9;
+  padding: 10px;
+}
+
+#raceTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.player-grid {
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.course-box {
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.course-box span {
+  width: 30px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.course-box input {
+  flex: 1;
+  height: 48px;
+}
+
+/* コース色 */
+.c1 { background: #fff; }
+.c2 { background: #eee; }
+.c3 { background: #ffe5e5; }
+.c4 { background: #e5f0ff; }
+.c5 { background: #fff7cc; }
+.c6 { background: #e5ffe5; }
+
+/* 決まり手 */
+.kimarite-course {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.course-label {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.kimarite-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.kimarite-item .bar {
+  flex: 1;
+  height: 14px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 7px;
+}
+
+.comment-box {
+  margin: 10px;
+  padding: 12px;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.bet-block {
+  margin: 10px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.hidden {
+  display: none;
+}
