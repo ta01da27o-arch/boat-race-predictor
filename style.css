@@ -1,6 +1,3 @@
-/* =========================
-   全体
-========================= */
 * {
   box-sizing: border-box;
 }
@@ -8,175 +5,105 @@
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  overflow-x: hidden;
   font-family: -apple-system, BlinkMacSystemFont,
                "Hiragino Kaku Gothic ProN",
                "Noto Sans JP", sans-serif;
   background: #f5f7f8;
-  color: #000;
 }
 
-/* =========================
-   見出し共通（場選択・選手番号入力と同色）
-========================= */
 h1, h2 {
-  width: 100%;
   margin: 0;
   padding: 14px 0;
   text-align: center;
-  font-size: 1.3rem;
-  font-weight: bold;
-  background: #e6f5c9;
-  color: #000;
+  background: #dff3d6;
+}
+
+.hidden {
+  display: none;
 }
 
 /* =========================
    24場グリッド
 ========================= */
 .stadium-grid {
-  width: 100%;
-  padding: 10px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-}
-
-/* =========================
-   レース番号グリッド
-========================= */
-.race-grid {
-  width: 100%;
   padding: 10px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
 }
 
-/* =========================
-   各場名ヘッダー（戻るボタン含む）
-   ★ 場選択・選手番号入力と完全同色
-========================= */
-.race-header {
-  margin: 10px;
-  padding: 10px;
-  border-radius: 12px;
-
-  display: flex;
-  align-items: center;
-
-  background: #e6f5c9;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-}
-
-#raceTitle {
-  flex: 1;
-  text-align: center;
-  font-size: 1.3rem;
-  font-weight: bold;
-}
-
-/* =========================
-   ボタン共通（完成形）
-========================= */
-.stadium,
-.stadium-btn,
-.race,
-.race-btn,
-.back-btn {
+.stadium {
   height: 90px;
   border-radius: 14px;
+  background: linear-gradient(#eaf6ff, #b8dcff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-weight: bold;
-  font-size: 1rem;
+}
 
+/* =========================
+   レース番号
+========================= */
+.race-header {
+  background: #dff3d6;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background: linear-gradient(
-    to bottom,
-    #eaf6ff 0%,
-    #b8dcff 100%
-  );
-
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.8),
-    inset 0 -2px 0 rgba(0,0,0,0.15),
-    0 4px 6px rgba(0,0,0,0.3);
-
-  cursor: pointer;
-  user-select: none;
-  border: none;
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  position: relative;
 }
 
-/* ★ 戻るボタン（押しやすく大きめ） */
 .back-btn {
-  height: 64px;
-  font-size: 1.2rem;
-  border-radius: 16px;
-  padding: 0 18px;
+  position: absolute;
+  left: 10px;
+  height: 60px;
+  width: 80px;
+  border-radius: 12px;
 }
 
-/* 押し感 */
-.stadium:active,
-.stadium-btn:active,
-.race:active,
-.race-btn:active,
-.back-btn:active {
-  transform: translateY(2px);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.6),
-    inset 0 -1px 0 rgba(0,0,0,0.25),
-    0 2px 3px rgba(0,0,0,0.3);
-}
-
-/* =========================
-   候補レース（ピンク）
-========================= */
-.stadium.candidate,
-.stadium-btn.candidate,
-.race.candidate,
-.race-btn.candidate {
-  background: linear-gradient(
-    to bottom,
-    #ffd6e7 0%,
-    #ff9fc5 100%
-  ) !important;
-}
-
-/* =========================
-   選手番号入力欄（縦並び）
-========================= */
-.player-grid {
+.race-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
   padding: 10px;
 }
 
-.player-grid input {
-  height: 52px;
-  font-size: 1.1rem;
-  text-align: center;
-  border-radius: 10px;
-  border: 1px solid #aaa;
+.race {
+  height: 80px;
+  border-radius: 12px;
+  background: linear-gradient(#eaf6ff, #b8dcff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
 }
 
 /* =========================
-   各コース配色
+   選手番号入力
 ========================= */
-.c1 { background: #ffffff; }
-.c2 { background: #eeeeee; }
-.c3 { background: #ffe5e5; }
-.c4 { background: #e5f0ff; }
-.c5 { background: #fff7cc; }
-.c6 { background: #e5ffe5; }
+.player-grid {
+  padding: 10px;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 6px;
+  border-radius: 10px;
+}
+
+.player-row input {
+  margin-left: 10px;
+  flex: 1;
+  font-size: 1.1rem;
+}
 
 /* =========================
-   決まり手グラフ
+   決まり手・期待値共通
 ========================= */
-.kimarite-row {
+.kimarite-row,
+.expectation-row {
   display: flex;
   align-items: center;
   padding: 8px;
@@ -184,33 +111,56 @@ h1, h2 {
   border-radius: 10px;
 }
 
-.kimarite-row .label {
-  width: 70px;
-  font-weight: bold;
-}
-
 .bar {
   flex: 1;
-  height: 14px;
-  background: #ddd;
-  border-radius: 7px;
+  height: 16px;
+  background: #eee;
+  margin: 0 8px;
+  border-radius: 8px;
   overflow: hidden;
-  margin: 0 10px;
 }
 
 .bar div {
   height: 100%;
-  background: #4caf50;
-}
-
-.value {
-  width: 50px;
-  text-align: right;
+  background: #666;
 }
 
 /* =========================
-   非表示
+   展開解析
 ========================= */
-.hidden {
-  display: none;
+.analysis-box {
+  margin: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #fff;
+  line-height: 1.6;
+}
+
+/* =========================
+   買い目
+========================= */
+.bet-box {
+  margin: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.bet-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bet-box li {
+  padding: 4px 0;
+  font-weight: bold;
+}
+
+.bet-box.main {
+  border-left: 6px solid #ff6fa5;
+}
+
+.bet-box.sub {
+  border-left: 6px solid #6fa8ff;
 }
