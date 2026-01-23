@@ -1,0 +1,181 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Hiragino Kaku Gothic ProN",
+               "Noto Sans JP", sans-serif;
+  background: #f5f7f8;
+  color: #000;
+  overflow-y: auto;
+}
+
+/* 見出し共通 */
+h1, h2 {
+  width: 100%;
+  margin: 0;
+  padding: 14px 0;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  background: #e6f5c9;
+}
+
+/* 24場 */
+.stadium-grid {
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+/* レース */
+.race-grid {
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.race-header {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  background: #e6f5c9;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+#raceTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+/* ボタン */
+.stadium, .race, .back-btn {
+  height: 90px;
+  border-radius: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #eaf6ff, #b8dcff);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.8),
+    inset 0 -2px 0 rgba(0,0,0,0.15),
+    0 4px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+
+.back-btn {
+  height: 64px;
+  font-size: 1.2rem;
+  padding: 0 18px;
+}
+
+/* 候補 */
+.stadium.candidate,
+.race.candidate {
+  background: linear-gradient(to bottom, #ffd6e7, #ff9fc5) !important;
+}
+
+/* 選手入力 */
+.player-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 10px;
+}
+
+.course-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.course-box span {
+  width: 32px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.player-grid input {
+  flex: 1;
+  height: 52px;
+  font-size: 1.1rem;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #aaa;
+}
+
+/* コース色 */
+.c1 { background: #ffffff; }
+.c2 { background: #eeeeee; }
+.c3 { background: #ffe5e5; }
+.c4 { background: #e5f0ff; }
+.c5 { background: #fff7cc; }
+.c6 { background: #e5ffe5; }
+
+/* =========================
+   ④ 決まり手 専用
+========================= */
+.kimarite-section {
+  padding: 10px;
+}
+
+.kimarite-course {
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.course-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.kimarite-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.kimarite-row .label {
+  width: 60px;
+  font-weight: bold;
+}
+
+.bar {
+  flex: 1;
+  height: 14px;
+  background: #ddd;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.bar div {
+  height: 100%;
+  width: 0%;
+  background: #4caf50;
+}
+
+.value {
+  width: 40px;
+  text-align: right;
+}
+
+/* 非表示 */
+.hidden {
+  display: none;
+  }
