@@ -178,4 +178,94 @@ h1, h2 {
 /* 非表示 */
 .hidden {
   display: none;
-  }
+}
+/* =========================
+   ⑤ 各コース入着期待値
+========================= */
+
+#expectationSection {
+  margin-top: 14px;
+}
+
+/* 一覧 */
+.expectation-list {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 1行 */
+.expectation-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 8px;
+  border-radius: 10px;
+}
+
+/* コース番号 */
+.course-no {
+  width: 32px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* バー外枠 */
+.expectation-bar {
+  flex: 1;
+  height: 16px;
+  background: #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* バー中身 */
+.expectation-fill {
+  height: 100%;
+  border-radius: 8px;
+}
+
+/* %表示 */
+.expectation-value {
+  width: 48px;
+  text-align: right;
+  font-weight: bold;
+}
+
+/* =========================
+   コース別カラー指定（指定通り）
+========================= */
+
+/* 1コース：白 */
+.c1 .expectation-fill {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px #aaa;
+}
+
+/* 2コース：黒 */
+.c2 .expectation-fill {
+  background: #000000;
+}
+
+/* 3コース：赤 */
+.c3 .expectation-fill {
+  background: #e53935;
+}
+
+/* 4コース：青 */
+.c4 .expectation-fill {
+  background: #1e88e5;
+}
+
+/* 5コース：黄 */
+.c5 .expectation-fill {
+  background: #fdd835;
+}
+
+/* 6コース：緑 */
+.c6 .expectation-fill {
+  background: #43a047;
+}
