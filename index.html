@@ -21,10 +21,12 @@
 <!-- ② レース番号 -->
 <!-- ===================== -->
 <div id="raceScreen" class="hidden">
+
   <div class="race-header">
     <button id="backBtn" class="back-btn">戻る</button>
-    <h2 id="raceTitle" class="race-title"></h2>
+    <h2 id="raceTitle"></h2>
   </div>
+
   <div class="race-grid"></div>
 </div>
 
@@ -32,6 +34,7 @@
 <!-- ③ 選手番号入力 -->
 <!-- ===================== -->
 <div id="playerScreen" class="hidden">
+
   <h2>選手番号入力</h2>
 
   <div class="player-grid">
@@ -42,44 +45,29 @@
     <div class="course-box c5"><span>5</span><input type="number"></div>
     <div class="course-box c6"><span>6</span><input type="number"></div>
   </div>
-</div>
 
-<!-- ===================== -->
-<!-- ④ 展開予想 -->
-<!-- ===================== -->
-<div id="predictionScreen" class="hidden">
+  <!-- ===================== -->
+  <!-- ④ 展開予想 -->
+  <!-- ===================== -->
   <h2>展開予想</h2>
-  <div class="content-box">
-    （ここに展開予想テキストが入る）
-  </div>
-</div>
-
-<!-- ===================== -->
-<!-- ⑤ 買い目 -->
-<!-- ===================== -->
-<div id="betScreen" class="hidden">
-  <h2>買い目</h2>
-  <div class="content-box">
-    （ここに買い目が入る）
-  </div>
-</div>
-
-<!-- ===================== -->
-<!-- ⑥ 決まり手 -->
-<!-- ===================== -->
-<div id="kimariteScreen" class="hidden">
-  <h2>決まり手</h2>
-
-  <div class="kimarite-row">
-    <div class="label">逃げ</div>
-    <div class="bar"><div style="width:60%"></div></div>
-    <div class="value">60%</div>
+  <div class="box-area">
+    <div class="placeholder">（ここに展開予想を表示）</div>
   </div>
 
-  <div class="kimarite-row">
-    <div class="label">差し</div>
-    <div class="bar"><div style="width:25%"></div></div>
-    <div class="value">25%</div>
+  <!-- ===================== -->
+  <!-- ⑤ 決まり手割合 -->
+  <!-- ===================== -->
+  <h2>決まり手割合</h2>
+  <div class="box-area">
+    <div class="placeholder">（ここに決まり手データを表示）</div>
+  </div>
+
+  <!-- ===================== -->
+  <!-- ⑥ 最終評価 -->
+  <!-- ===================== -->
+  <h2>最終評価</h2>
+  <div class="box-area">
+    <div class="placeholder">（ここに最終評価を表示）</div>
   </div>
 
 </div>

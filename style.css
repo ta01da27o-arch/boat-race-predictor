@@ -1,9 +1,10 @@
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
   font-family: -apple-system, BlinkMacSystemFont,
                "Hiragino Kaku Gothic ProN",
                "Noto Sans JP", sans-serif;
@@ -16,7 +17,6 @@ h1, h2 {
   padding: 14px 0;
   text-align: center;
   font-size: 1.3rem;
-  font-weight: bold;
   background: #e6f5c9;
 }
 
@@ -40,10 +40,10 @@ h1, h2 {
 .race-header {
   margin: 10px;
   padding: 10px;
-  border-radius: 12px;
   display: flex;
   align-items: center;
   background: #e6f5c9;
+  border-radius: 12px;
 }
 
 #raceTitle {
@@ -60,8 +60,7 @@ h1, h2 {
   align-items: center;
   justify-content: center;
   background: linear-gradient(#eaf6ff, #b8dcff);
-  box-shadow: 0 4px 6px rgba(0,0,0,.3);
-  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
 .back-btn {
@@ -69,52 +68,60 @@ h1, h2 {
   padding: 0 18px;
 }
 
-/* 選手入力 */
+/* 候補 */
+.candidate {
+  background: linear-gradient(#ffd6e7, #ff9fc5) !important;
+}
+
+/* 選手番号 */
 .player-grid {
   padding: 10px;
   display: grid;
   gap: 8px;
 }
 
-.player-grid input {
-  height: 52px;
+.course-box {
+  padding: 8px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.course-box span {
+  font-weight: bold;
+}
+
+.course-box input {
+  width: 60%;
+  height: 48px;
   font-size: 1.1rem;
   text-align: center;
 }
 
 /* コース色 */
-.c1{background:#fff;}
-.c2{background:#eee;}
-.c3{background:#ffe5e5;}
-.c4{background:#e5f0ff;}
-.c5{background:#fff7cc;}
-.c6{background:#e5ffe5;}
+.c1 { background: #fff; }
+.c2 { background: #eee; }
+.c3 { background: #ffe5e5; }
+.c4 { background: #e5f0ff; }
+.c5 { background: #fff7cc; }
+.c6 { background: #e5ffe5; }
 
-/* 追加枠 */
-.content-box {
+/* ④⑤⑥ 枠 */
+.box-area {
   margin: 10px;
   padding: 16px;
-  background: #fff;
+  background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
-/* 決まり手 */
-.kimarite-row {
-  display: flex;
-  align-items: center;
-  margin: 8px 10px;
+.placeholder {
+  text-align: center;
+  color: #666;
 }
 
-.label { width: 60px; }
-.bar {
-  flex: 1;
-  height: 14px;
-  background: #ddd;
-  border-radius: 7px;
-  overflow: hidden;
+/* 非表示 */
+.hidden {
+  display: none;
 }
-.bar div { height: 100%; background: #4caf50; }
-.value { width: 50px; text-align: right; }
-
-.hidden { display: none; }
