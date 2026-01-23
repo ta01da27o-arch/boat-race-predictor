@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>競艇 展開解析UI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- =========================
+  ① 場選択画面
+========================= -->
+<section id="stadiumScreen">
+  <h1>場選択</h1>
+  <div class="stadium-grid"></div>
+</section>
+
+<!-- =========================
+  ② レース番号選択画面
+========================= -->
+<section id="raceScreen" class="hidden">
+  <div class="race-header">
+    <button id="backBtn" class="back-btn">戻る</button>
+    <div id="raceTitle"></div>
+  </div>
+
+  <div class="race-grid"></div>
+</section>
+
+<!-- =========================
+  ③ 選手番号入力
+========================= -->
+<section id="playerScreen" class="hidden">
+  <h2>選手番号入力</h2>
+
+  <div class="player-grid">
+    <div class="course-box c1"><span>1</span><input type="number"></div>
+    <div class="course-box c2"><span>2</span><input type="number"></div>
+    <div class="course-box c3"><span>3</span><input type="number"></div>
+    <div class="course-box c4"><span>4</span><input type="number"></div>
+    <div class="course-box c5"><span>5</span><input type="number"></div>
+    <div class="course-box c6"><span>6</span><input type="number"></div>
+  </div>
+</section>
+
+<!-- =========================
+  ④ 決まり手（箱構造確定）
+========================= -->
+<section id="kimariteScreen" class="hidden">
+  <h2>決まり手</h2>
+
+  <!-- 1コース -->
+  <div class="kimarite-course c1">
+    <div class="course-label">1コース</div>
+    <div class="kimarite-item">逃げ率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">差され率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">捲られ率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">捲り差され率<div class="bar"></div><span>%</span></div>
+  </div>
+
+  <!-- 2コース -->
+  <div class="kimarite-course c2">
+    <div class="course-label">2コース</div>
+    <div class="kimarite-item">逃がし率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">差し率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">捲り率<div class="bar"></div><span>%</span></div>
+  </div>
+
+  <!-- 3〜6コース -->
+  <div class="kimarite-course c3">
+    <div class="course-label">3コース</div>
+    <div class="kimarite-item">差し率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">捲り率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">捲り差し率<div class="bar"></div><span>%</span></div>
+  </div>
+
+  <div class="kimarite-course c4">
+    <div class="course-label">4コース</div>
+    <div class="kimarite-item">差し率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">捲り率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">捲り差し率<div class="bar"></div><span>%</span></div>
+  </div>
+
+  <div class="kimarite-course c5">
+    <div class="course-label">5コース</div>
+    <div class="kimarite-item">差し率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">捲り率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">捲り差し率<div class="bar"></div><span>%</span></div>
+  </div>
+
+  <div class="kimarite-course c6">
+    <div class="course-label">6コース</div>
+    <div class="kimarite-item">差し率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">捲り率<div class="bar"></div><span>%</span></div>
+    <div class="kimarite-item">捲り差し率<div class="bar"></div><span>%</span></div>
+  </div>
+</section>
+
+<!-- =========================
+  ⑤ 展開解析コメント
+========================= -->
+<section id="commentScreen" class="hidden">
+  <h2>展開解析</h2>
+  <div class="comment-box">解析コメント表示エリア</div>
+</section>
+
+<!-- =========================
+  ⑥ 買い目
+========================= -->
+<section id="betScreen" class="hidden">
+  <h2>買い目</h2>
+
+  <div class="bet-block">
+    <h3>本線</h3>
+    <ul>
+      <li>---</li><li>---</li><li>---</li><li>---</li>
+    </ul>
+  </div>
+
+  <div class="bet-block">
+    <h3>対抗</h3>
+    <ul>
+      <li>---</li><li>---</li><li>---</li><li>---</li>
+    </ul>
+  </div>
+</section>
+
+<!-- JS -->
+<script src="script.js"></script>
+</body>
+                                                           </html>
