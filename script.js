@@ -17,33 +17,36 @@ const stadiums = [
   '芦屋','福岡','唐津','大村'
 ];
 
-stadiums.forEach(name => {
-  const div = document.createElement('div');
-  div.className = 'stadium';
-  div.textContent = name;
-  div.onclick = () => {
-    document.querySelectorAll('.stadium').forEach(b => b.classList.remove('candidate'));
-    div.classList.add('candidate');
-    raceTitle.textContent = name;
-    stadiumScreen.classList.add('hidden');
-    raceScreen.classList.remove('hidden');
-    createRace();
-  };
-  stadiumGrid.appendChild(div);
-});
+createStadiumButtons();
 
-function createRace() {
+function createStadiumButtons() {
+  stadiumGrid.innerHTML = '';
+  stadiums.forEach(name => {
+    const div = document.createElement('div');
+    div.className = 'stadium';
+    div.textContent = name;
+    div.onclick = () => selectStadium(name);
+    stadiumGrid.appendChild(div);
+  });
+}
+
+function selectStadium(name) {
+  raceTitle.textContent = name;
+  stadiumScreen.classList.add('hidden');
+  raceScreen.classList.remove('hidden');
+  createRaceButtons();
+}
+
+function createRaceButtons() {
   raceGrid.innerHTML = '';
   for (let i = 1; i <= 12; i++) {
-    const r = document.createElement('div');
-    r.className = 'race';
-    r.textContent = i + 'R';
-    r.onclick = () => {
-      document.querySelectorAll('.race').forEach(b => b.classList.remove('candidate'));
-      r.classList.add('candidate');
+    const div = document.createElement('div');
+    div.className = 'race';
+    div.textContent = i + 'R';
+    div.onclick = () => {
       playerScreen.classList.remove('hidden');
     };
-    raceGrid.appendChild(r);
+    raceGrid.appendChild(div);
   }
 }
 

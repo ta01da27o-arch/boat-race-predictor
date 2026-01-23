@@ -5,30 +5,25 @@
 html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
   font-family: -apple-system, BlinkMacSystemFont,
                "Hiragino Kaku Gothic ProN",
                "Noto Sans JP", sans-serif;
   background: #f5f7f8;
 }
 
-/* 見出し共通 */
+/* 見出し */
 h1, h2 {
   margin: 0;
   padding: 14px 0;
   text-align: center;
   font-size: 1.3rem;
+  font-weight: bold;
   background: #e6f5c9;
 }
 
-/* 24場 */
-.stadium-grid {
-  padding: 10px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
-/* レース */
+/* グリッド */
+.stadium-grid,
 .race-grid {
   padding: 10px;
   display: grid;
@@ -36,7 +31,7 @@ h1, h2 {
   gap: 10px;
 }
 
-/* ヘッダー */
+/* レースヘッダー */
 .race-header {
   margin: 10px;
   padding: 10px;
@@ -52,7 +47,9 @@ h1, h2 {
 }
 
 /* ボタン */
-.stadium, .race, .back-btn {
+.stadium,
+.race,
+.back-btn {
   height: 90px;
   border-radius: 14px;
   font-weight: bold;
@@ -61,42 +58,60 @@ h1, h2 {
   justify-content: center;
   background: linear-gradient(#eaf6ff, #b8dcff);
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
 }
 
 .back-btn {
-  height: 64px;
+  height: 60px;
   padding: 0 18px;
 }
 
-/* 候補 */
-.candidate {
-  background: linear-gradient(#ffd6e7, #ff9fc5) !important;
-}
-
-/* 選手番号 */
+/* 選手入力UI */
 .player-grid {
   padding: 10px;
   display: grid;
   gap: 8px;
 }
 
-.course-box {
+.player-row {
+  display: grid;
+  grid-template-columns: 40px 90px 1fr 50px;
+  align-items: center;
+  gap: 8px;
   padding: 8px;
   border-radius: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
-.course-box span {
+.course {
   font-weight: bold;
+  text-align: center;
 }
 
-.course-box input {
-  width: 60%;
-  height: 48px;
-  font-size: 1.1rem;
+.player-row input {
+  height: 44px;
   text-align: center;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+}
+
+/* グラフ枠（中身なし） */
+.graph {
+  height: 14px;
+  background: #ddd;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.graph-bar {
+  width: 0%;
+  height: 100%;
+}
+
+/* % */
+.percent {
+  text-align: right;
+  font-weight: bold;
 }
 
 /* コース色 */
@@ -106,20 +121,6 @@ h1, h2 {
 .c4 { background: #e5f0ff; }
 .c5 { background: #fff7cc; }
 .c6 { background: #e5ffe5; }
-
-/* ④⑤⑥ 枠 */
-.box-area {
-  margin: 10px;
-  padding: 16px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-}
-
-.placeholder {
-  text-align: center;
-  color: #666;
-}
 
 /* 非表示 */
 .hidden {

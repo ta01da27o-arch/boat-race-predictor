@@ -24,52 +24,82 @@
 
   <div class="race-header">
     <button id="backBtn" class="back-btn">戻る</button>
-    <h2 id="raceTitle"></h2>
+    <h2 id="raceTitle" class="race-title"></h2>
   </div>
 
   <div class="race-grid"></div>
 </div>
 
 <!-- ===================== -->
-<!-- ③ 選手番号入力 -->
+<!-- ③ 選手番号入力＋グラフ前提UI -->
 <!-- ===================== -->
 <div id="playerScreen" class="hidden">
 
   <h2>選手番号入力</h2>
 
   <div class="player-grid">
-    <div class="course-box c1"><span>1</span><input type="number"></div>
-    <div class="course-box c2"><span>2</span><input type="number"></div>
-    <div class="course-box c3"><span>3</span><input type="number"></div>
-    <div class="course-box c4"><span>4</span><input type="number"></div>
-    <div class="course-box c5"><span>5</span><input type="number"></div>
-    <div class="course-box c6"><span>6</span><input type="number"></div>
-  </div>
 
-  <!-- ===================== -->
-  <!-- ④ 展開予想 -->
-  <!-- ===================== -->
-  <h2>展開予想</h2>
-  <div class="box-area">
-    <div class="placeholder">（ここに展開予想を表示）</div>
-  </div>
+    <!-- 1コース -->
+    <div class="player-row c1">
+      <div class="course">1</div>
+      <input type="number" placeholder="選手番号">
+      <div class="graph">
+        <div class="graph-bar"></div>
+      </div>
+      <div class="percent">--%</div>
+    </div>
 
-  <!-- ===================== -->
-  <!-- ⑤ 決まり手割合 -->
-  <!-- ===================== -->
-  <h2>決まり手割合</h2>
-  <div class="box-area">
-    <div class="placeholder">（ここに決まり手データを表示）</div>
-  </div>
+    <!-- 2コース -->
+    <div class="player-row c2">
+      <div class="course">2</div>
+      <input type="number" placeholder="選手番号">
+      <div class="graph">
+        <div class="graph-bar"></div>
+      </div>
+      <div class="percent">--%</div>
+    </div>
 
-  <!-- ===================== -->
-  <!-- ⑥ 最終評価 -->
-  <!-- ===================== -->
-  <h2>最終評価</h2>
-  <div class="box-area">
-    <div class="placeholder">（ここに最終評価を表示）</div>
-  </div>
+    <!-- 3コース -->
+    <div class="player-row c3">
+      <div class="course">3</div>
+      <input type="number" placeholder="選手番号">
+      <div class="graph">
+        <div class="graph-bar"></div>
+      </div>
+      <div class="percent">--%</div>
+    </div>
 
+    <!-- 4コース -->
+    <div class="player-row c4">
+      <div class="course">4</div>
+      <input type="number" placeholder="選手番号">
+      <div class="graph">
+        <div class="graph-bar"></div>
+      </div>
+      <div class="percent">--%</div>
+    </div>
+
+    <!-- 5コース -->
+    <div class="player-row c5">
+      <div class="course">5</div>
+      <input type="number" placeholder="選手番号">
+      <div class="graph">
+        <div class="graph-bar"></div>
+      </div>
+      <div class="percent">--%</div>
+    </div>
+
+    <!-- 6コース -->
+    <div class="player-row c6">
+      <div class="course">6</div>
+      <input type="number" placeholder="選手番号">
+      <div class="graph">
+        <div class="graph-bar"></div>
+      </div>
+      <div class="percent">--%</div>
+    </div>
+
+  </div>
 </div>
 
 <script src="script.js"></script>
