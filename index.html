@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>競艇展開予想</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<!-- ===================== -->
+<!-- ① 24場グリッド -->
+<!-- ===================== -->
+<div id="stadiumScreen">
+  <h1>場選択</h1>
+  <div class="stadium-grid"></div>
+</div>
+
+<!-- ===================== -->
+<!-- ② レース番号 -->
+<!-- ===================== -->
+<div id="raceScreen" class="hidden">
+
+  <div class="race-header">
+    <button id="backBtn" class="back-btn">戻る</button>
+    <h2 id="raceTitle"></h2>
+  </div>
+
+  <div class="race-grid"></div>
+</div>
+
+<!-- ===================== -->
+<!-- ③ 選手番号入力 -->
+<!-- ===================== -->
+<div id="playerScreen" class="hidden">
+
+  <h2>選手番号入力</h2>
+
+  <div class="player-grid">
+
+    <div class="course-box c1">
+      <span>1</span>
+      <input type="number" />
+    </div>
+
+    <div class="course-box c2">
+      <span>2</span>
+      <input type="number" />
+    </div>
+
+    <div class="course-box c3">
+      <span>3</span>
+      <input type="number" />
+    </div>
+
+    <div class="course-box c4">
+      <span>4</span>
+      <input type="number" />
+    </div>
+
+    <div class="course-box c5">
+      <span>5</span>
+      <input type="number" />
+    </div>
+
+    <div class="course-box c6">
+      <span>6</span>
+      <input type="number" />
+    </div>
+
+  </div>
+
+  <!-- ===================== -->
+  <!-- ④ 決まり手（UI箱構造確定・中身なし） -->
+  <!-- ===================== -->
+  <section class="kimarite-section">
+
+    <h2>決まり手</h2>
+
+    <!-- 1コース -->
+    <div class="kimarite-course c1">
+      <div class="course-title">1コース</div>
+
+      <div class="kimarite-row">
+        <span class="label">逃げ</span>
+        <div class="bar"><div style="width:0%"></div></div>
+        <span class="value">0%</span>
+      </div>
+
+      <div class="kimarite-row">
+        <span class="label">差され</span>
+        <div class="bar"><div style="width:0%"></div></div>
+        <span class="value">0%</span>
+      </div>
+
+      <div class="kimarite-row">
+        <span class="label">捲られ</span>
+        <div class="bar"><div style="width:0%"></div></div>
+        <span class="value">0%</span>
+      </div>
+
+      <div class="kimarite-row">
+        <span class="label">捲差</span>
+        <div class="bar"><div style="width:0%"></div></div>
+        <span class="value">0%</span>
+      </div>
+    </div>
+
+    <!-- 2コース -->
+    <div class="kimarite-course c2">
+      <div class="course-title">2コース</div>
+
+      <div class="kimarite-row">
+        <span class="label">逃がし</span>
+        <div class="bar"><div style="width:0%"></div></div>
+        <span class="value">0%</span>
+      </div>
+
+      <div class="kimarite-row">
+        <span class="label">差し</span>
+        <div class="bar"><div style="width:0%"></div></div>
+        <span class="value">0%</span>
+      </div>
+
+      <div class="kimarite-row">
+        <span class="label">捲り</span>
+        <div class="bar"><div style="width:0%"></div></div>
+        <span class="value">0%</span>
+      </div>
+    </div>
+
+    <!-- 3〜6コース（共通構造） -->
+    <div class="kimarite-course c3">
+      <div class="course-title">3コース</div>
+      <div class="kimarite-row"><span class="label">差し</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+      <div class="kimarite-row"><span class="label">捲り</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+      <div class="kimarite-row"><span class="label">捲差</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+    </div>
+
+    <div class="kimarite-course c4">
+      <div class="course-title">4コース</div>
+      <div class="kimarite-row"><span class="label">差し</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+      <div class="kimarite-row"><span class="label">捲り</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+      <div class="kimarite-row"><span class="label">捲差</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+    </div>
+
+    <div class="kimarite-course c5">
+      <div class="course-title">5コース</div>
+      <div class="kimarite-row"><span class="label">差し</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+      <div class="kimarite-row"><span class="label">捲り</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+      <div class="kimarite-row"><span class="label">捲差</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+    </div>
+
+    <div class="kimarite-course c6">
+      <div class="course-title">6コース</div>
+      <div class="kimarite-row"><span class="label">差し</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+      <div class="kimarite-row"><span class="label">捲り</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+      <div class="kimarite-row"><span class="label">捲差</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+    </div>
+
+  </section>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+          </html>
