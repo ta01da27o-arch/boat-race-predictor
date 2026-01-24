@@ -1,0 +1,213 @@
+/* =========================
+   全体
+========================= */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Hiragino Kaku Gothic ProN",
+               "Noto Sans JP", sans-serif;
+  background: #f5f7f8;
+  color: #000;
+  overflow-y: auto;
+}
+
+/* =========================
+   見出し共通
+========================= */
+h1, h2 {
+  width: 100%;
+  margin: 0;
+  padding: 14px 0;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  background: #e6f5c9;
+}
+
+/* =========================
+   24場グリッド
+========================= */
+.stadium-grid {
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+/* =========================
+   レース番号
+========================= */
+.race-header {
+  margin: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  background: #e6f5c9;
+  border-radius: 12px;
+}
+
+.race-grid {
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+/* =========================
+   ボタン
+========================= */
+.stadium, .race, .back-btn {
+  height: 90px;
+  border-radius: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #eaf6ff, #b8dcff);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.back-btn {
+  height: 64px;
+}
+
+/* =========================
+   選手番号入力
+========================= */
+.player-grid {
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.course-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.course-no {
+  width: 32px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.player-input {
+  width: 33%;
+  height: 48px;
+  font-size: 1.1rem;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #aaa;
+}
+
+.player-name {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+/* =========================
+   コース色
+========================= */
+.c1 { background: #ffffff; }
+.c2 { background: #eeeeee; }
+.c3 { background: #ffe5e5; }
+.c4 { background: #e5f0ff; }
+.c5 { background: #fff7cc; }
+.c6 { background: #e5ffe5; }
+
+/* =========================
+   決まり手
+========================= */
+.kimarite-course {
+  margin: 8px 10px;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.kimarite-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.label {
+  width: 60px;
+}
+
+.bar {
+  flex: 1;
+  height: 12px;
+  background: #ddd;
+  border-radius: 6px;
+}
+
+.bar div {
+  height: 100%;
+  background: #4caf50;
+}
+
+.value {
+  width: 40px;
+  text-align: right;
+}
+
+/* =========================
+   総合期待度
+========================= */
+.expectation-list {
+  padding: 10px;
+}
+
+.expectation-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.expectation-bar {
+  flex: 1;
+  height: 12px;
+  background: #ddd;
+  border-radius: 6px;
+}
+
+.expectation-bar div {
+  height: 100%;
+  background: #333;
+}
+
+.expectation-value {
+  width: 40px;
+  text-align: right;
+}
+
+/* =========================
+   非表示
+========================= */
+.hidden {
+  display: none;
+  }
+/* =========================
+   決まり手欄：各コース枠に細い縁取り
+========================= */
+.kimarite-course {
+  border: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+/* =========================
+   総合期待度欄：各コース枠に細い縁取り
+========================= */
+.expectation-row {
+  border: 1px solid rgba(0, 0, 0, 0.18);
+    }
