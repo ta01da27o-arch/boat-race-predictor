@@ -349,3 +349,14 @@ h1, h2 {
   z-index: 2;
   pointer-events: none;
 }
+/* ============================= */
+/* 二重グラフ色 強制指定 */
+/* ============================= */
+
+.expectation-bar > div:first-child {
+  background: #f1c40f !important;   /* 実績：黄色 */
+}
+
+.expectation-bar .prediction-bar {
+  background: rgba(231, 76, 60, 0.85) !important; /* 予測：赤 */
+}
