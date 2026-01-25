@@ -437,3 +437,67 @@ setTimeout(() => {
   calculateTotalExpectation();
 
 }, 300);
+// =====================================
+// 二重グラフ：予測バーAI連動（シンプル型）
+// =====================================
+
+function calculatePrediction(course) {
+
+  const row = document.querySelector(`.expectation-row.c${course}`);
+  if (!row) return 0;
+
+  const baseText = row.querySelector(".expectation-value").textContent;
+  const base = parseInt(baseText.replace("%", "")) || 0;
+
+  let modifier = 1;
+
+  // 展開補正（簡易AI）
+  if (course === 1) modifier += 0.15;      // イン補正
+  if (course === 2 || course === 3) modifier += 0.05;
+  if (course === 5 || course === 6) modifier -= 0.1;
+
+  let predicted = Math.round(base * modifier);
+
+  if (predicted > 100) predicted = 100;
+  if (predicted < 0) predicted = 0;
+
+  return predicted;
+}
+
+
+function updatePredictionBars() {
+
+  for (let i = 1; i <= 6; i++) {
+
+    const row = document.querySelector(`.expectation-row.c${i}`);
+    if (!row) continue;
+
+    // 予測バー（赤）
+    let predictBar = row.querySelector(".prediction-bar");
+
+    if (!predictBar) {
+      predictBar = document.createElement("div");
+      predictBar.className = "prediction-bar";
+      row.querySelector(".expectation-bar").appendChild(predictBar);
+    }
+
+    const predictedValue = calculatePrediction(i);
+
+    predictBar.style.width = predictedValue + "%";
+  }
+}
+
+
+// 総合期待度が変わったら自動更新
+const predictionObserver = new MutationObserver(updatePredictionBars);
+
+document.querySelectorAll(".expectation-value").forEach(el => {
+  predictionObserver.observe(el, {
+    childList: true,
+    characterData: true,
+    subtree: true
+  });
+});
+
+// 初期表示
+updatePredictionBars();
