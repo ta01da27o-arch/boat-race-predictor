@@ -143,3 +143,72 @@ document.addEventListener("DOMContentLoaded", () => {
   updateExpectations();
 
 });
+// ================================
+// 展開コメント自動生成（シンプル型）
+// ================================
+
+function generateRaceComment() {
+
+  const scores = [];
+
+  for (let i = 1; i <= 6; i++) {
+    const row = document.querySelector(`.expectation-row.c${i}`);
+    if (!row) continue;
+
+    const valueText = row.querySelector(".expectation-value").textContent;
+    const value = parseInt(valueText.replace("%", "")) || 0;
+
+    scores.push({ course: i, value });
+  }
+
+  scores.sort((a, b) => b.value - a.value);
+
+  const top = scores[0];
+  const second = scores[1];
+
+  let comment = "";
+
+  // 強弱判定
+  if (top.value >= 80 && top.value - second.value >= 20) {
+
+    if (top.course === 1) {
+      comment = "イン優勢の堅い展開。逃げ中心。";
+    } else {
+      comment = `${top.course}コース主導の攻め展開。波乱含み。`;
+    }
+
+  } else if (top.value >= 60) {
+
+    if (top.course === 1) {
+      comment = "イン有利だが差し・まくり警戒。";
+    } else {
+      comment = "攻め手有利の展開。まくり中心。";
+    }
+
+  } else {
+
+    comment = "各艇拮抗。混戦模様で高配当注意。";
+
+  }
+
+  const commentBox = document.querySelector("#race-comment");
+
+  if (commentBox) {
+    commentBox.textContent = comment;
+  }
+}
+
+
+// 総合期待度更新後に連動させる
+const commentObserver = new MutationObserver(generateRaceComment);
+
+document.querySelectorAll(".expectation-value").forEach(el => {
+  commentObserver.observe(el, {
+    childList: true,
+    characterData: true,
+    subtree: true
+  });
+});
+
+// 初回生成
+generateRaceComment();
