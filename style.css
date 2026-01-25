@@ -279,3 +279,38 @@ h1, h2 {
   flex: 1;
   letter-spacing: 0.5px;
 }
+/* =========================
+   二重グラフ（HTML変更なし安全版）
+========================= */
+
+.bar {
+  position: relative;
+  height: 14px;
+  background: #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 実績バー（既存の中のdivを実績として使用） */
+.bar div {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: #ffd54f;   /* 実績＝黄色 */
+  border-radius: 8px;
+  z-index: 1;
+}
+
+/* 予測バー（CSSだけで追加表示） */
+.bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 42%;             /* ←予測ダミー値（後でJSで変更可） */
+  background: rgba(255,60,60,0.75);
+  border-radius: 8px;
+  z-index: 2;
+}
