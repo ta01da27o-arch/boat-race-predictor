@@ -262,3 +262,178 @@ function generateBetsAllPatterns() {
     betBox.appendChild(div);
   });
 }
+// ========================================
+// ダミーデータ自動生成（後で実データ差替可）
+// ========================================
+
+function randomPercent(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function injectDummyKimarite() {
+
+  // 1コース（特殊）
+  setKimarite(1, ["逃げ","差され","捲られ","捲差"]);
+
+  // 2コース（特殊）
+  setKimarite(2, ["逃がし","差し","捲り"]);
+
+  // 3〜6コース
+  for (let i = 3; i <= 6; i++) {
+    setKimarite(i, ["差し","捲り","捲差"]);
+  }
+}
+
+function setKimarite(course, labels) {
+
+  const rows = document.querySelectorAll(
+    `.kimarite-course.c${course} .kimarite-row`
+  );
+
+  rows.forEach(row => {
+
+    const label = row.querySelector(".label").textContent.trim();
+
+    if (!labels.includes(label)) return;
+
+    const value = randomPercent(5, 80);
+
+    const bar = row.querySelector(".bar div");
+    const text = row.querySelector(".value");
+
+    if (bar) bar.style.width = value + "%";
+    if (text) text.textContent = value + "%";
+  });
+}
+
+
+// ========================================
+// 総合期待度 自動計算
+// ========================================
+
+function calculateTotalExpectation() {
+
+  const scores = [];
+
+  for (let i = 1; i <= 6; i++) {
+
+    const rows = document.querySelectorAll(
+      `.kimarite-course.c${i} .kimarite-row`
+    );
+
+    let total = 0;
+
+    rows.forEach(row => {
+      const val = parseInt(
+        row.querySelector(".value").textContent.replace("%","")
+      ) || 0;
+
+      total += val;
+    });
+
+    scores.push(total);
+  }
+
+  const max = Math.max(...scores, 1);
+
+  scores.forEach((score, index) => {
+
+    const percent = Math.round(score / max * 100);
+
+    const row = document.querySelector(`.expectation-row.c${index+1}`);
+
+    if (!row) return;
+
+    row.querySelector(".expectation-bar div").style.width = percent + "%";
+    row.querySelector(".expectation-value").textContent = percent + "%";
+  });
+
+  generateFullRaceComment(scores);
+  generateBets(scores);
+}
+
+
+// ========================================
+// 展開解析（全展開型）
+// ========================================
+
+function generateFullRaceComment(scores) {
+
+  const ranked = scores
+    .map((v,i)=>({course:i+1, value:v}))
+    .sort((a,b)=>b.value-a.value);
+
+  const top = ranked[0];
+  const second = ranked[1];
+
+  let comment = "";
+
+  if (top.value - second.value >= 30) {
+
+    if (top.course === 1) {
+      comment = "イン圧倒的優勢。逃げ濃厚の一本調子。";
+    } else {
+      comment = `${top.course}コース中心の主導権。攻め展開濃厚。`;
+    }
+
+  } 
+  else if (top.value >= 60) {
+
+    if (top.course === 1) {
+      comment = "イン有利だが差し・まくり逆転余地あり。";
+    } else {
+      comment = "攻めとインの力拮抗。展開次第。";
+    }
+
+  } 
+  else {
+
+    comment = "全艇拮抗の混戦。高配当狙いの展開。";
+  }
+
+  const box = document.querySelector(".analysis-text");
+
+  if (box) box.textContent = comment;
+}
+
+
+// ========================================
+// 買い目自動算出（シンプル高速型）
+// ========================================
+
+function generateBets(scores) {
+
+  const ranked = scores
+    .map((v,i)=>({course:i+1, value:v}))
+    .sort((a,b)=>b.value-a.value);
+
+  const first = ranked[0].course;
+  const second = ranked[1].course;
+  const third = ranked[2].course;
+
+  const betRows = document.querySelectorAll(".bet-row");
+
+  if (betRows[0])
+    betRows[0].querySelector(".bet-content").textContent =
+      `${first}-${second}-${third}`;
+
+  if (betRows[1])
+    betRows[1].querySelector(".bet-content").textContent =
+      `${first}-${third}-${second}`;
+
+  if (betRows[2])
+    betRows[2].querySelector(".bet-content").textContent =
+      `${second}-${first}-${third}`;
+}
+
+
+// ========================================
+// 初期自動実行
+// ========================================
+
+setTimeout(() => {
+
+  injectDummyKimarite();
+  calculateTotalExpectation();
+
+}, 300);
