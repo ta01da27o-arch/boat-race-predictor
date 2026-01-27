@@ -80,66 +80,59 @@ function calcAll(){
 }
 
 // ===============================
-// ✅ 総合期待度（3本グラフ強化版）
+// 総合期待度（完成仕様）
 // ===============================
 function updateExpectationBars(base,predict,ai){
 
+  const colors = [
+    "#ffffff", // 1コース 白
+    "#000000", // 2 黒
+    "#e53935", // 3 赤
+    "#1e88e5", // 4 青
+    "#fdd835", // 5 黄
+    "#43a047"  // 6 緑
+  ];
+
   document.querySelectorAll(".expectation-row").forEach((row,i)=>{
 
-    const box = row.querySelector(".expectation-bar");
+    const barBox = row.querySelector(".expectation-bar");
+    barBox.innerHTML="";
 
-    // 初期化
-    box.innerHTML = "";
+    const makeLine=(val)=>{
 
-    const data = [
-      {label:"実績", value: base[i]},
-      {label:"予測", value: predict[i]},
-      {label:"AI", value: ai[i]}
-    ];
+      const line=document.createElement("div");
+      line.style.display="flex";
+      line.style.alignItems="center";
+      line.style.margin="4px 0";
 
-    data.forEach(d=>{
+      const barOuter=document.createElement("div");
+      barOuter.style.flex="1";
+      barOuter.style.height="14px";
+      barOuter.style.border = i===0 ? "3px solid #000" : "1px solid #333";
+      barOuter.style.background="#eee";
+      barOuter.style.position="relative";
 
-      const wrap = document.createElement("div");
-      wrap.style.display = "flex";
-      wrap.style.alignItems = "center";
-      wrap.style.marginBottom = "4px";
+      const bar=document.createElement("div");
+      bar.style.height="100%";
+      bar.style.width=val+"%";
+      bar.style.background=colors[i];
 
-      const lab = document.createElement("span");
-      lab.textContent = d.label;
-      lab.style.width = "40px";
-      lab.style.fontSize = "12px";
+      barOuter.appendChild(bar);
+      line.appendChild(barOuter);
 
-      const barBox = document.createElement("div");
-      barBox.style.flex = "1";
-      barBox.style.height = "10px";
-      barBox.style.border = "1px solid #aaa";
-      barBox.style.marginRight = "6px";
+      return line;
+    };
 
-      const bar = document.createElement("div");
-      bar.style.height = "100%";
-      bar.style.width = d.value + "%";
-      bar.style.background = "#4caf50";
-
-      barBox.appendChild(bar);
-
-      const val = document.createElement("span");
-      val.textContent = d.value + "%";
-      val.style.fontSize = "12px";
-      val.style.width = "35px";
-
-      wrap.appendChild(lab);
-      wrap.appendChild(barBox);
-      wrap.appendChild(val);
-
-      box.appendChild(wrap);
-    });
+    barBox.appendChild(makeLine(base[i]));
+    barBox.appendChild(makeLine(predict[i]));
+    barBox.appendChild(makeLine(ai[i]));
 
     row.querySelector(".expectation-value").textContent = ai[i] + "%";
   });
 }
 
 // ===============================
-// 決まり手グラフ（安全方式）
+// 決まり手（安全）
 // ===============================
 function updateKimarite(){
 
@@ -156,7 +149,7 @@ function updateKimarite(){
 }
 
 // ===============================
-// 展開タイプAI（実戦寄り）
+// 展開タイプAI
 // ===============================
 function updateRaceTypeByAI(ai){
 
@@ -185,11 +178,12 @@ function updateRaceTypeByAI(ai){
     type="バランス型";
   }
 
-  document.getElementById("race-type").textContent = "展開タイプ : " + type;
+  document.getElementById("race-type").textContent =
+    "展開タイプ : " + type;
 }
 
 // ===============================
-// 展開解析コメント
+// 展開解析
 // ===============================
 function updateAnalysis(ai){
 
@@ -203,22 +197,22 @@ function updateAnalysis(ai){
   let text="";
 
   if(main===1){
-    text="1コースがスタート優勢。イン主導で展開は安定傾向。中枠は差し狙い。";
+    text="1コースがスタート優勢。イン主導で展開は安定傾向。";
   }
   else if(main<=3){
-    text="中枠勢が主導権争い。1コースは守勢で展開が動きやすい。";
+    text="中枠勢が主導権争い。展開が動きやすいレース。";
   }
   else{
-    text="外枠の伸びが優勢。スタート次第で高配当も十分狙える。";
+    text="外枠の伸びが優勢。波乱展開も十分。";
   }
 
   text += `\n軸候補は ${main}コース。対抗は ${sub}コース。`;
 
-  document.querySelector(".analysis-text").textContent = text;
+  document.querySelector(".analysis-text").textContent=text;
 }
 
 // ===============================
-// 買い目生成（3枠）
+// 買い目生成
 // ===============================
 function updateBets(ai){
 
