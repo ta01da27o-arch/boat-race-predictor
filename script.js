@@ -1,15 +1,15 @@
-// =================================
-// 画面切替＆24場グリッド
-// =================================
+// ================================
+// 画面切替
+// ================================
 
-const stadiumScreen=document.getElementById("stadiumScreen");
-const raceScreen=document.getElementById("raceScreen");
-const playerScreen=document.getElementById("playerScreen");
+const stadiumScreen = document.getElementById("stadiumScreen");
+const raceScreen = document.getElementById("raceScreen");
+const playerScreen = document.getElementById("playerScreen");
 
-const stadiumGrid=document.querySelector(".stadium-grid");
-const raceGrid=document.querySelector(".race-grid");
-const raceTitle=document.getElementById("raceTitle");
-const backBtn=document.getElementById("backBtn");
+const stadiumGrid = document.querySelector(".stadium-grid");
+const raceGrid = document.querySelector(".race-grid");
+const raceTitle = document.getElementById("raceTitle");
+const backBtn = document.getElementById("backBtn");
 
 const stadiums=[
 "桐生","戸田","江戸川","平和島","多摩川","浜名湖","蒲郡","常滑",
@@ -19,11 +19,11 @@ const stadiums=[
 
 function createStadiumButtons(){
  stadiumGrid.innerHTML="";
- stadiums.forEach(n=>{
+ stadiums.forEach(name=>{
   const d=document.createElement("div");
   d.className="stadium";
-  d.textContent=n;
-  d.onclick=()=>selectStadium(n);
+  d.textContent=name;
+  d.onclick=()=>selectStadium(name);
   stadiumGrid.appendChild(d);
  });
 }
@@ -42,92 +42,50 @@ function createRaceButtons(){
   const d=document.createElement("div");
   d.className="race";
   d.textContent=i+"R";
-  d.onclick=()=>playerScreen.classList.remove("hidden");
+  d.onclick=()=>{
+    raceScreen.classList.add("hidden");
+    playerScreen.classList.remove("hidden");
+    injectDummy();
+    calcExpectation();
+  };
   raceGrid.appendChild(d);
  }
 }
 
 backBtn.onclick=()=>{
+ playerScreen.classList.add("hidden");
  raceScreen.classList.add("hidden");
  stadiumScreen.classList.remove("hidden");
- playerScreen.classList.add("hidden");
 };
 
-// =================================
-// ダミー決まり手注入
-// =================================
+// ================================
+// ダミー決まり手
+// ================================
 
 function rand(min,max){
  return Math.floor(Math.random()*(max-min+1))+min;
 }
 
 function injectDummy(){
-
  setCourse(1,["逃げ","差され","捲られ","捲差"]);
  setCourse(2,["逃がし","差し","捲り"]);
-
- for(let i=3;i<=6;i++){
-  setCourse(i,["差し","捲り","捲差"]);
- }
+ for(let i=3;i<=6;i++) setCourse(i,["差し","捲り","捲差"]);
 }
 
 function setCourse(c,labels){
-
- document.querySelectorAll(
-  `.kimarite-course.c${c} .kimarite-row`
- ).forEach(r=>{
-
+ document.querySelectorAll(`.kimarite-course.c${c} .kimarite-row`)
+ .forEach(r=>{
   const lab=r.querySelector(".label").textContent.trim();
   if(!labels.includes(lab)) return;
-
   const v=rand(10,80);
   r.querySelector(".value").textContent=v+"%";
   r.querySelector(".bar div").style.width=v+"%";
  });
 }
 
-// =================================
-// 総合期待度算出
-// =================================
-
-function calcExpectation(){
-
- const totals=[];
-
- for(let i=1;i<=6;i++){
-
-  let t=0;
-
-  document.querySelectorAll(
-   `.kimarite-course.c${i} .kimarite-row`
-  ).forEach(r=>{
-   t+=parseInt(r.querySelector(".value").textContent)||0;
-  });
-
-  totals.push(t);
- }
-
- const max=Math.max(...totals,1);
-
- totals.forEach((v,i)=>{
-
-  const p=Math.round(v/max*100);
-
-  const row=document.querySelector(`.expectation-row.c${i+1}`);
-
-  const base=row.querySelector(".expectation-bar > div");
-
-  base.style.width=p+"%";
-  row.querySelector(".expectation-value").textContent=p+"%";
- });
-
- detectRaceType();
- updatePrediction();
- buildAttackBars();
- updateAttackGraphs();
- generateComment();
- generateBets(totals);
-}
+// ================================
+// 共通取得
+// ================================
 
 function getVal(c){
  return parseInt(
@@ -135,143 +93,39 @@ function getVal(c){
  )||0;
 }
 
-// =================================
-// 展開タイプAI
-// =================================
-
-let currentRaceType="混戦型";
-
-function detectRaceType(){
-
- const arr=[];
- for(let i=1;i<=6;i++){
-  arr.push({c:i,v:getVal(i)});
- }
-
- arr.sort((a,b)=>b.v-a.v);
-
- const top=arr[0];
- const second=arr[1];
- const one=arr.find(x=>x.c===1).v;
-
- if(top.c===1 && top.v>=70 && top.v-second.v>=15)
-  currentRaceType="イン逃げ型";
-
- else if(top.c===2 && top.v>=60)
-  currentRaceType="差し主導型";
-
- else if(top.c>=3 && top.v>=65)
-  currentRaceType="まくり一撃型";
-
- else if(one<=30 && top.c!==1)
-  currentRaceType="波乱型";
-
- else if(top.v-second.v<=10)
-  currentRaceType="混戦型";
-
- else
-  currentRaceType="外攻め主導型";
-
- document.getElementById("race-type").textContent=
-  "展開タイプ："+currentRaceType;
-}
-
-// =================================
-// 予測バーAI
-// =================================
-
-function updatePrediction(){
-
- for(let i=1;i<=6;i++){
-
-  const base=getVal(i);
-  let mod=1;
-
-  switch(currentRaceType){
-
-   case "イン逃げ型":
-    if(i===1) mod=1.25;
-    else if(i===2) mod=1.05;
-    else mod=0.8;
-    break;
-
-   case "差し主導型":
-    if(i===2) mod=1.3;
-    else if(i===1) mod=0.85;
-    else mod=1.05;
-    break;
-
-   case "まくり一撃型":
-    if(i>=3 && i<=5) mod=1.35;
-    else if(i===1) mod=0.75;
-    break;
-
-   case "外攻め主導型":
-    if(i>=3) mod=1.2;
-    else mod=0.9;
-    break;
-
-   case "波乱型":
-    mod=rand(80,120)/100;
-    break;
-
-   case "混戦型":
-    mod=0.9+Math.random()*0.2;
-    break;
-  }
-
-  let pred=Math.round(base*mod);
-  pred=Math.max(Math.min(pred,100),0);
-
-  const row=document.querySelector(`.expectation-row.c${i}`);
-
-  let pbar=row.querySelector(".prediction-bar");
-
-  if(!pbar){
-   pbar=document.createElement("div");
-   pbar.className="prediction-bar";
-   row.querySelector(".expectation-bar").appendChild(pbar);
-  }
-
-  pbar.style.width=pred+"%";
- }
-}
-
-// =================================
+// ================================
 // 攻め指数AI
-// =================================
+// ================================
 
 function getAttackPower(course){
+ const rows=document.querySelectorAll(`.kimarite-course.c${course} .kimarite-row`);
+ let v=0;
 
- let attack=0;
+ rows.forEach(r=>{
+  const l=r.querySelector(".label").textContent.trim();
+  const p=parseInt(r.querySelector(".value").textContent)||0;
 
- document.querySelectorAll(
-  `.kimarite-course.c${course} .kimarite-row`
- ).forEach(row=>{
-
-  const label=row.querySelector(".label").textContent.trim();
-  const v=parseInt(row.querySelector(".value").textContent)||0;
-
-  if(label==="捲り") attack+=v*1.2;
-  if(label==="捲差") attack+=v*1.0;
-  if(label==="差し") attack+=v*0.8;
-  if(label==="逃げ") attack+=v*0.6;
+  if(l==="捲り") v+=p*1.2;
+  if(l==="捲差") v+=p*1.0;
+  if(l==="差し") v+=p*0.8;
+  if(l==="逃げ") v+=p*0.6;
  });
 
- return attack;
+ return v;
 }
 
+// ================================
+// 攻め指数バー生成
+// ================================
+
 function buildAttackBars(){
-
  for(let i=1;i<=6;i++){
-
   const row=document.querySelector(`.expectation-row.c${i}`);
   if(!row) continue;
 
   const box=row.querySelector(".expectation-bar");
 
   if(!box.querySelector(".attack-base")){
-
    box.innerHTML=`
     <div class="attack-base"></div>
     <div class="attack-predict"></div>
@@ -281,82 +135,122 @@ function buildAttackBars(){
  }
 }
 
+// ================================
+// 攻め指数更新
+// ================================
+
 function updateAttackGraphs(){
 
- const raw=[];
-
- for(let i=1;i<=6;i++){
-  raw.push(getAttackPower(i));
- }
+ let raw=[];
+ for(let i=1;i<=6;i++) raw.push(getAttackPower(i));
 
  const max=Math.max(...raw,1);
 
  for(let i=1;i<=6;i++){
 
   const row=document.querySelector(`.expectation-row.c${i}`);
-
   const base=row.querySelector(".attack-base");
   const pred=row.querySelector(".attack-predict");
   const ai=row.querySelector(".attack-ai");
 
-  let baseP=Math.round(raw[i-1]/max*100);
+  const baseP=Math.round(raw[i-1]/max*100);
 
-  let predP=Math.round(baseP*(i===1?1.15:i===2?1.05:i===5?0.9:i===6?0.85:1));
+  let p=baseP*(i===1?1.1:i===2?1.05:i>=5?0.9:1);
+  if(p>100) p=100;
 
-  let aiP=Math.round(baseP*(currentRaceType==="イン逃げ型"&&i>=3?0.7:1));
-
-  baseP=Math.min(baseP,100);
-  predP=Math.min(predP,100);
-  aiP=Math.min(aiP,100);
+  let aiVal=Math.round(baseP*(0.9+Math.random()*0.3));
+  if(aiVal>100) aiVal=100;
 
   base.style.width=baseP+"%";
-  pred.style.width=predP+"%";
-  ai.style.width=aiP+"%";
-
-  // 枠線強調（1コースのみ中バー太線）
-  if(i===1){
-   base.classList.add("bold-frame");
-   pred.classList.add("bold-frame");
-   ai.classList.add("bold-frame");
-  }
+  pred.style.width=p+"%";
+  ai.style.width=aiVal+"%";
  }
 }
 
-// =================================
-// 展開コメントAI
-// =================================
+// ================================
+// 展開タイプAI
+// ================================
+
+let currentRaceType="混戦型";
+
+function detectRaceType(){
+
+ const arr=[];
+ for(let i=1;i<=6;i++) arr.push({c:i,v:getVal(i)});
+ arr.sort((a,b)=>b.v-a.v);
+
+ const top=arr[0], second=arr[1];
+ const one=arr.find(x=>x.c===1).v;
+
+ if(top.c===1 && top.v>=70 && top.v-second.v>=15)
+  currentRaceType="イン逃げ型";
+ else if(top.c===2 && top.v>=60)
+  currentRaceType="差し主導型";
+ else if(top.c>=3 && top.v>=65)
+  currentRaceType="まくり一撃型";
+ else if(one<=30 && top.c!==1)
+  currentRaceType="波乱型";
+ else if(top.v-second.v<=10)
+  currentRaceType="混戦型";
+ else
+  currentRaceType="外攻め主導型";
+
+ document.getElementById("race-type").textContent="展開タイプ："+currentRaceType;
+}
+
+// ================================
+// 総合期待度算出
+// ================================
+
+function calcExpectation(){
+
+ const totals=[];
+
+ for(let i=1;i<=6;i++){
+  let t=0;
+  document.querySelectorAll(`.kimarite-course.c${i} .kimarite-row`)
+  .forEach(r=>{
+   t+=parseInt(r.querySelector(".value").textContent)||0;
+  });
+  totals.push(t);
+ }
+
+ const max=Math.max(...totals,1);
+
+ totals.forEach((v,i)=>{
+  const p=Math.round(v/max*100);
+  const row=document.querySelector(`.expectation-row.c${i+1}`);
+  row.querySelector(".expectation-value").textContent=p+"%";
+ });
+
+ buildAttackBars();
+ updateAttackGraphs();
+ detectRaceType();
+ generateComment();
+ generateBets(totals);
+}
+
+// ================================
+// 展開コメント
+// ================================
 
 function generateComment(){
 
- let txt="";
+ const map={
+  "イン逃げ型":"イン主導の堅い展開。",
+  "差し主導型":"差し中心の攻防。",
+  "まくり一撃型":"外から一気の攻め。",
+  "外攻め主導型":"スピード勝負。",
+  "波乱型":"高配当注意。",
+  "混戦型":"拮抗した展開。"
+ };
 
- switch(currentRaceType){
-
-  case "イン逃げ型":
-   txt="イン主導で堅い展開。1コース中心。"; break;
-
-  case "差し主導型":
-   txt="2コース差し有力。イン残り注意。"; break;
-
-  case "まくり一撃型":
-   txt="外から強襲まくり展開。"; break;
-
-  case "外攻め主導型":
-   txt="攻め艇優勢で展開速い。"; break;
-
-  case "波乱型":
-   txt="波乱含み。高配当注意。"; break;
-
-  case "混戦型":
-   txt="拮抗戦。展開次第。"; break;
- }
-
- document.querySelector(".analysis-text").textContent=txt;
+ document.querySelector(".analysis-text").textContent=map[currentRaceType];
 }
 
-// =================================
-// 買い目算出
-// =================================
+// ================================
+// 🧠 買い目AI（A案）
+// ================================
 
 function generateBets(tot){
 
@@ -366,19 +260,25 @@ function generateBets(tot){
  const a=arr[0].c;
  const b=arr[1].c;
  const c=arr[2].c;
+ const d=arr[3].c;
 
  const rows=document.querySelectorAll(".bet-row");
 
- if(rows[0]) rows[0].querySelector(".bet-content").textContent=`${a}-${b}-${c}`;
- if(rows[1]) rows[1].querySelector(".bet-content").textContent=`${a}-${c}-${b}`;
- if(rows[2]) rows[2].querySelector(".bet-content").textContent=`${b}-${a}-${c}`;
+ const bets=[
+  `${a}-${b}-${c}`,
+  `${a}-${c}-${b}`,
+  `${b}-${a}-${c}`,
+
+  `${b}-${c}-${d}`,
+  `${b}-${d}-${c}`,
+  `${c}-${b}-${d}`,
+
+  `1-${a}-${b}`,
+  `1-${b}-${a}`,
+  `1-${a}-${c}`
+ ];
+
+ rows.forEach((r,i)=>{
+  if(bets[i]) r.querySelector(".bet-content").textContent=bets[i];
+ });
 }
-
-// =================================
-// 初期実行
-// =================================
-
-setTimeout(()=>{
- injectDummy();
- calcExpectation();
-},300);
