@@ -50,7 +50,7 @@ function selectRace(r){
   document.getElementById("raceScreen").classList.add("hidden");
   document.getElementById("playerScreen").classList.remove("hidden");
 
-  // ★ここが重要（あなたが言っていた1行）
+  // 自動計算
   calcAll();
 }
 
@@ -59,63 +59,61 @@ function selectRace(r){
 // ===============================
 function calcAll(){
 
-  // ---- 実績・予測・AI値（リアル寄りダミー） ----
-  let base = [];
-  let predict = [];
-  let ai = [];
+  let base=[];
+  let predict=[];
+  let ai=[];
 
   for(let i=0;i<6;i++){
     const b = Math.floor(40+Math.random()*40);
     const p = Math.floor(35+Math.random()*45);
-    const a = Math.round((b*0.4 + p*0.6));
+    const a = Math.round(b*0.4 + p*0.6);
 
     base.push(b);
     predict.push(p);
     ai.push(a);
   }
 
-  updateExpectationBars(base,predict,ai);
+  updateExpectationBars(ai);
+  updateKimarite();
   updateRaceTypeByAI(ai);
   updateAnalysis(ai);
   updateBets(ai);
 }
 
 // ===============================
-// 総合期待度 3本グラフ更新
+// 総合期待度（安全方式）
 // ===============================
-function updateExpectationBars(base,predict,ai){
+function updateExpectationBars(ai){
 
   document.querySelectorAll(".expectation-row").forEach((row,i)=>{
 
-    const barBox = row.querySelector(".expectation-bar");
-    barBox.innerHTML="";
+    const bar = row.querySelector(".expectation-bar div");
 
-    const makeLine=(label,val)=>{
-      const line=document.createElement("div");
-      line.className="bar-line";
+    bar.style.width = ai[i] + "%";
 
-      const lab=document.createElement("span");
-      lab.className="bar-label";
-      lab.textContent=label;
-
-      const bar=document.createElement("div");
-      bar.style.width=val+"%";
-
-      line.appendChild(lab);
-      line.appendChild(bar);
-      barBox.appendChild(line);
-    };
-
-    makeLine("実績",base[i]);
-    makeLine("予測",predict[i]);
-    makeLine("AI",ai[i]);
-
-    row.querySelector(".expectation-value").textContent=ai[i]+"%";
+    row.querySelector(".expectation-value").textContent = ai[i] + "%";
   });
 }
 
 // ===============================
-// 展開タイプAI（本物寄り）
+// 決まり手グラフ（安全方式）
+// ===============================
+function updateKimarite(){
+
+  document.querySelectorAll(".kimarite-row").forEach(row=>{
+
+    const v = Math.floor(10 + Math.random()*75);
+
+    const bar = row.querySelector(".bar div");
+    const val = row.querySelector(".value");
+
+    bar.style.width = v + "%";
+    val.textContent = v + "%";
+  });
+}
+
+// ===============================
+// 展開タイプAI（実戦寄り）
 // ===============================
 function updateRaceTypeByAI(ai){
 
@@ -128,27 +126,27 @@ function updateRaceTypeByAI(ai){
 
   let type="";
 
-  if(inner>middle+10 && inner>outer+15){
+  if(inner > middle+10 && inner > outer+15){
     type="イン逃げ主導型";
   }
-  else if(middle>inner && middle>outer){
+  else if(middle > inner && middle > outer){
     type="中枠攻め合い型";
   }
-  else if(outer>inner && outer>middle){
+  else if(outer > inner && outer > middle){
     type="外伸び波乱型";
   }
-  else if(max-min<8){
+  else if(max-min < 8){
     type="超混戦型";
   }
   else{
     type="バランス型";
   }
 
-  document.getElementById("race-type").textContent="展開タイプ : "+type;
+  document.getElementById("race-type").textContent = "展開タイプ : " + type;
 }
 
 // ===============================
-// 展開解析コメント生成
+// 展開解析コメント
 // ===============================
 function updateAnalysis(ai){
 
@@ -159,25 +157,25 @@ function updateAnalysis(ai){
   const main = order[0].i;
   const sub = order[1].i;
 
-  let text = "";
+  let text="";
 
   if(main===1){
-    text="1コースがスタート優勢。イン主導で隊形は比較的安定。中枠は差し狙い。";
+    text="1コースがスタート優勢。イン主導で展開は安定傾向。中枠は差し狙い。";
   }
   else if(main<=3){
-    text="中枠勢の仕掛けが鍵。1コースは守勢になりやすく展開は動く。";
+    text="中枠勢が主導権争い。1コースは守勢で展開が動きやすい。";
   }
   else{
-    text="外枠の伸びが目立つ。スタート次第で一気の波乱展開も十分。";
+    text="外枠の伸びが優勢。スタート次第で高配当も十分狙える。";
   }
 
-  text+=`\n軸候補は ${main}コース。対抗は ${sub}コース。`;
+  text += `\n軸候補は ${main}コース。対抗は ${sub}コース。`;
 
-  document.querySelector(".analysis-text").textContent=text;
+  document.querySelector(".analysis-text").textContent = text;
 }
 
 // ===============================
-// 買い目3枠自動生成
+// 買い目生成（3枠）
 // ===============================
 function updateBets(ai){
 
@@ -191,21 +189,18 @@ function updateBets(ai){
 
   const cols = document.querySelectorAll(".bet-col");
 
-  // 本命
   setCol(cols[0],[
     `${main}-${sub}-${third}`,
     `${main}-${third}-${sub}`,
     `${sub}-${main}-${third}`
   ]);
 
-  // 対抗（本命が飛んだ想定）
   setCol(cols[1],[
     `${sub}-${third}-${main}`,
     `${sub}-${main}-${third}`,
     `${third}-${sub}-${main}`
   ]);
 
-  // 逃げ（1コース主導）
   setCol(cols[2],[
     `1-${sub}-${third}`,
     `1-${third}-${sub}`,
@@ -214,8 +209,8 @@ function updateBets(ai){
 }
 
 function setCol(col,arr){
-  const items=col.querySelectorAll(".bet-item");
+  const items = col.querySelectorAll(".bet-item");
   items.forEach((el,i)=>{
-    el.textContent=arr[i]||"";
+    el.textContent = arr[i] || "";
   });
 }
