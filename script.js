@@ -1,30 +1,20 @@
-/* ============================
-   競艇展開予想 完全統合版
-============================ */
-
+// ===============================
+// 24場名（正式）
+// ===============================
 const stadiums = [
-"桐生","戸田","江戸川","平和島","多摩川","浜名湖",
-"蒲郡","常滑","津","三国","びわこ","住之江",
-"尼崎","鳴門","丸亀","児島","宮島","徳山",
-"下関","若松","芦屋","福岡","唐津","大村"
+  "桐生","戸田","江戸川","平和島",
+  "多摩川","浜名湖","蒲郡","常滑",
+  "津","三国","びわこ","住之江",
+  "尼崎","鳴門","丸亀","児島",
+  "宮島","徳山","下関","若松",
+  "芦屋","福岡","唐津","大村"
 ];
 
-const stadiumGrid=document.querySelector(".stadium-grid");
-const raceGrid=document.querySelector(".race-grid");
-
-const stadiumScreen=document.getElementById("stadiumScreen");
-const raceScreen=document.getElementById("raceScreen");
-const playerScreen=document.getElementById("playerScreen");
-
-const backBtn=document.getElementById("backBtn");
-const raceTitle=document.getElementById("raceTitle");
-
-const raceTypeBox=document.getElementById("race-type");
-const analysisText=document.querySelector(".analysis-text");
-
-/* ============================
-   初期表示
-============================ */
+// ===============================
+// 初期表示
+// ===============================
+const stadiumGrid = document.querySelector(".stadium-grid");
+const raceGrid = document.querySelector(".race-grid");
 
 stadiums.forEach((name,i)=>{
   const div=document.createElement("div");
@@ -34,208 +24,198 @@ stadiums.forEach((name,i)=>{
   stadiumGrid.appendChild(div);
 });
 
-function selectStadium(idx){
-  stadiumScreen.classList.add("hidden");
-  raceScreen.classList.remove("hidden");
-  raceGrid.innerHTML="";
-  for(let i=1;i<=12;i++){
-    const d=document.createElement("div");
-    d.className="race";
-    d.textContent=`${i}R`;
-    d.onclick=()=>selectRace(idx,i);
-    raceGrid.appendChild(d);
-  }
+for(let i=1;i<=12;i++){
+  const div=document.createElement("div");
+  div.className="race";
+  div.textContent=i+"R";
+  div.onclick=()=>selectRace(i);
+  raceGrid.appendChild(div);
 }
 
-function selectRace(idx,race){
-  raceScreen.classList.add("hidden");
-  playerScreen.classList.remove("hidden");
-  raceTitle.textContent=`${stadiums[idx]} ${race}R`;
-  initExpectationBars();
-}
-
-backBtn.onclick=()=>{
-  playerScreen.classList.add("hidden");
-  raceScreen.classList.remove("hidden");
+document.getElementById("backBtn").onclick=()=>{
+  document.getElementById("raceScreen").classList.add("hidden");
+  document.getElementById("stadiumScreen").classList.remove("hidden");
 };
 
-/* ============================
-   総合期待度 3本生成
-============================ */
-
-function initExpectationBars(){
-  document.querySelectorAll(".expectation-row").forEach(row=>{
-    const box=row.querySelector(".expectation-bar");
-    box.innerHTML="";
-
-    const labels=["実績","予測","AI"];
-
-    labels.forEach(l=>{
-      const wrap=document.createElement("div");
-      wrap.className="bar-line";
-
-      const label=document.createElement("div");
-      label.className="bar-label";
-      label.textContent=l;
-
-      const bar=document.createElement("div");
-      bar.classList.add(
-        l==="実績"?"attack-base":
-        l==="予測"?"attack-predict":"attack-ai"
-      );
-
-      const percent=document.createElement("span");
-      percent.className="expectation-value";
-      percent.textContent="0%";
-
-      wrap.appendChild(label);
-      wrap.appendChild(bar);
-      box.appendChild(wrap);
-    });
-  });
+// ===============================
+// 画面遷移
+// ===============================
+function selectStadium(i){
+  document.getElementById("stadiumScreen").classList.add("hidden");
+  document.getElementById("raceScreen").classList.remove("hidden");
+  document.getElementById("raceTitle").textContent=stadiums[i];
 }
 
-/* ============================
-   数値取得補助
-============================ */
+function selectRace(r){
+  document.getElementById("raceScreen").classList.add("hidden");
+  document.getElementById("playerScreen").classList.remove("hidden");
 
-function rand(min,max){
-  return Math.floor(Math.random()*(max-min+1))+min;
+  // ★ここが重要（あなたが言っていた1行）
+  calcAll();
 }
 
-/* ============================
-   展開タイプ判定
-============================ */
-
-function judgeRaceType(values){
-  if(values[0]>65) return "イン逃げ主導型";
-  if(values[2]>60) return "まくり一撃型";
-  if(values[1]>55) return "差し展開型";
-  return "混戦型";
-}
-
-/* ============================
-   AI算出
-============================ */
-
+// ===============================
+// メイン計算
+// ===============================
 function calcAll(){
 
-  const base=[],predict=[],ai=[];
+  // ---- 実績・予測・AI値（リアル寄りダミー） ----
+  let base = [];
+  let predict = [];
+  let ai = [];
 
   for(let i=0;i<6;i++){
-    base[i]=rand(30,80);
-    predict[i]=rand(20,75);
-    ai[i]=Math.round(base[i]*0.4+predict[i]*0.6+rand(-5,5));
+    const b = Math.floor(40+Math.random()*40);
+    const p = Math.floor(35+Math.random()*45);
+    const a = Math.round((b*0.4 + p*0.6));
+
+    base.push(b);
+    predict.push(p);
+    ai.push(a);
   }
 
-  updateBars(base,predict,ai);
-
-  const raceType=judgeRaceType(ai);
-  raceTypeBox.textContent=raceType;
-
-  makeAnalysis(raceType,ai);
-  makeBets(ai);
+  updateExpectationBars(base,predict,ai);
+  updateRaceTypeByAI(ai);
+  updateAnalysis(ai);
+  updateBets(ai);
 }
 
-/* ============================
-   バー反映
-============================ */
-
-function updateBars(base,predict,ai){
+// ===============================
+// 総合期待度 3本グラフ更新
+// ===============================
+function updateExpectationBars(base,predict,ai){
 
   document.querySelectorAll(".expectation-row").forEach((row,i)=>{
 
-    const lines=row.querySelectorAll(".bar-line");
+    const barBox = row.querySelector(".expectation-bar");
+    barBox.innerHTML="";
 
-    const sets=[base[i],predict[i],ai[i]];
+    const makeLine=(label,val)=>{
+      const line=document.createElement("div");
+      line.className="bar-line";
 
-    lines.forEach((line,idx)=>{
-      const bar=line.querySelector("div");
-      const val=line.querySelector("span");
+      const lab=document.createElement("span");
+      lab.className="bar-label";
+      lab.textContent=label;
 
-      bar.style.width=sets[idx]+"%";
-      val.textContent=sets[idx]+"%";
-    });
+      const bar=document.createElement("div");
+      bar.style.width=val+"%";
+
+      line.appendChild(lab);
+      line.appendChild(bar);
+      barBox.appendChild(line);
+    };
+
+    makeLine("実績",base[i]);
+    makeLine("予測",predict[i]);
+    makeLine("AI",ai[i]);
+
+    row.querySelector(".expectation-value").textContent=ai[i]+"%";
   });
 }
 
-/* ============================
-   展開解析
-============================ */
+// ===============================
+// 展開タイプAI（本物寄り）
+// ===============================
+function updateRaceTypeByAI(ai){
 
-function makeAnalysis(type,ai){
+  const inner = ai[0];
+  const middle = (ai[1]+ai[2]+ai[3])/3;
+  const outer = (ai[4]+ai[5])/2;
 
-  const top=[...ai].map((v,i)=>({v,i}))
-                 .sort((a,b)=>b.v-a.v);
+  const max=Math.max(...ai);
+  const min=Math.min(...ai);
 
-  const lead=top[0].i+1;
-  const second=top[1].i+1;
+  let type="";
 
-  let text="";
-
-  if(type==="イン逃げ主導型"){
-    text=`スタートから1コースが主導権を握る展開。${lead}コース中心で隊形が固まり、${second}コースが追走する流れ。`;
+  if(inner>middle+10 && inner>outer+15){
+    type="イン逃げ主導型";
   }
-  else if(type==="まくり一撃型"){
-    text=`3〜4コース勢が一気に攻勢。${lead}コースのまくりが決まり、内側は対応に追われる展開。`;
+  else if(middle>inner && middle>outer){
+    type="中枠攻め合い型";
   }
-  else if(type==="差し展開型"){
-    text=`内外の攻防から差し場が生まれ、${lead}コースが冷静に抜け出す展開。`;
+  else if(outer>inner && outer>middle){
+    type="外伸び波乱型";
+  }
+  else if(max-min<8){
+    type="超混戦型";
   }
   else{
-    text=`スタートから混戦模様。各艇が攻め合い、展開次第で着順が大きく変わるレース。`;
+    type="バランス型";
   }
 
-  analysisText.textContent=text;
+  document.getElementById("race-type").textContent="展開タイプ : "+type;
 }
 
-/* ============================
-   買い目生成（3枠）
-============================ */
+// ===============================
+// 展開解析コメント生成
+// ===============================
+function updateAnalysis(ai){
 
-function makeBets(ai){
+  const order = ai
+    .map((v,i)=>({v,i:i+1}))
+    .sort((a,b)=>b.v-a.v);
 
-  const order=[...ai].map((v,i)=>({v,i}))
-                     .sort((a,b)=>b.v-a.v)
-                     .map(o=>o.i+1);
+  const main = order[0].i;
+  const sub = order[1].i;
 
-  const main=[
-    `${order[0]}-${order[1]}-${order[2]}`,
-    `${order[0]}-${order[2]}-${order[1]}`,
-    `${order[1]}-${order[0]}-${order[2]}`
-  ];
+  let text = "";
 
-  const sub=[
-    `${order[1]}-${order[2]}-${order[0]}`,
-    `${order[1]}-${order[0]}-${order[2]}`,
-    `${order[2]}-${order[1]}-${order[0]}`
-  ];
+  if(main===1){
+    text="1コースがスタート優勢。イン主導で隊形は比較的安定。中枠は差し狙い。";
+  }
+  else if(main<=3){
+    text="中枠勢の仕掛けが鍵。1コースは守勢になりやすく展開は動く。";
+  }
+  else{
+    text="外枠の伸びが目立つ。スタート次第で一気の波乱展開も十分。";
+  }
 
-  const escape=[
-    `1-${order[1]}-${order[2]}`,
-    `1-${order[2]}-${order[1]}`,
-    `1-${order[0]}-${order[1]}`
-  ];
+  text+=`\n軸候補は ${main}コース。対抗は ${sub}コース。`;
 
-  const cols=document.querySelectorAll(".bet-col");
+  document.querySelector(".analysis-text").textContent=text;
+}
 
-  [main,sub,escape].forEach((arr,idx)=>{
-    const items=cols[idx].querySelectorAll(".bet-item");
-    items.forEach((el,i)=>{
-      el.textContent=arr[i]||"";
-    });
+// ===============================
+// 買い目3枠自動生成
+// ===============================
+function updateBets(ai){
+
+  const order = ai
+    .map((v,i)=>({v,i:i+1}))
+    .sort((a,b)=>b.v-a.v);
+
+  const main = order[0].i;
+  const sub = order[1].i;
+  const third = order[2].i;
+
+  const cols = document.querySelectorAll(".bet-col");
+
+  // 本命
+  setCol(cols[0],[
+    `${main}-${sub}-${third}`,
+    `${main}-${third}-${sub}`,
+    `${sub}-${main}-${third}`
+  ]);
+
+  // 対抗（本命が飛んだ想定）
+  setCol(cols[1],[
+    `${sub}-${third}-${main}`,
+    `${sub}-${main}-${third}`,
+    `${third}-${sub}-${main}`
+  ]);
+
+  // 逃げ（1コース主導）
+  setCol(cols[2],[
+    `1-${sub}-${third}`,
+    `1-${third}-${sub}`,
+    `1-${sub}-${main}`
+  ]);
+}
+
+function setCol(col,arr){
+  const items=col.querySelectorAll(".bet-item");
+  items.forEach((el,i)=>{
+    el.textContent=arr[i]||"";
   });
 }
-
-/* ============================
-   入力監視 → 再計算
-============================ */
-
-document.querySelectorAll(".player-input").forEach(inp=>{
-  inp.addEventListener("input",calcAll);
-});
-
-/* 初期化 */
-
-initExpectationBars();
-calcAll();
