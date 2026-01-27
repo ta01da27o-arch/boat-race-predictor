@@ -49,7 +49,6 @@ function selectStadium(i){
 function selectRace(r){
   document.getElementById("raceScreen").classList.add("hidden");
   document.getElementById("playerScreen").classList.remove("hidden");
-
   calcAll();
 }
 
@@ -84,22 +83,22 @@ function calcAll(){
 // ===============================
 function updateExpectationBars(base,predict,ai){
 
-  const bgColors = [
-    "#ffffff",   // 1 白
-    "#e0e0e0",   // 2 グレー
-    "#ffebee",   // 3 薄赤
-    "#e3f2fd",   // 4 薄青
-    "#fffde7",   // 5 薄黄
-    "#e8f5e9"    // 6 薄緑
+  const barColors = [
+    "#ffffff", // 1 白
+    "#000000", // 2 黒
+    "#e53935", // 3 赤
+    "#1e88e5", // 4 青
+    "#fdd835", // 5 黄
+    "#43a047"  // 6 緑
   ];
 
-  const barColors = [
-    "#ffffff",   // 1 白
-    "#000000",   // 2 黒
-    "#e53935",   // 3 赤
-    "#1e88e5",   // 4 青
-    "#fdd835",   // 5 黄
-    "#43a047"    // 6 緑
+  const bgColors = [
+    "#ffffff",
+    "#e0e0e0",
+    "#ffcdd2",
+    "#bbdefb",
+    "#fff9c4",
+    "#c8e6c9"
   ];
 
   const labels = ["実績","予測","AI"];
@@ -109,53 +108,54 @@ function updateExpectationBars(base,predict,ai){
     const box = row.querySelector(".expectation-bar");
     box.innerHTML = "";
 
-    const values = [base[i],predict[i],ai[i]];
+    const values = [base[i], predict[i], ai[i]];
 
     values.forEach((val,idx)=>{
 
       const line = document.createElement("div");
       line.style.display="flex";
       line.style.alignItems="center";
-      line.style.margin="6px 0";
+      line.style.margin="4px 0";
 
-      // 左ラベル
+      // ラベル
       const label = document.createElement("div");
       label.textContent = labels[idx];
-      label.style.width="40px";
+      label.style.width="45px";
       label.style.fontSize="12px";
 
-      // 背景枠
-      const outer = document.createElement("div");
-      outer.style.flex="1";
-      outer.style.height="16px";
-      outer.style.background = bgColors[i];
-      outer.style.border = i===0 ? "3px solid #000" : "1px solid #000";
-      outer.style.position="relative";
-      outer.style.margin="0 6px";
+      // 背景バー（100%）
+      const bg = document.createElement("div");
+      bg.style.flex="1";
+      bg.style.height="16px";
+      bg.style.background = bgColors[i];
+      bg.style.position="relative";
 
-      // バー
+      // 実バー（伸縮）
       const bar = document.createElement("div");
       bar.style.height="100%";
       bar.style.width = val + "%";
       bar.style.background = barColors[i];
 
-      outer.appendChild(bar);
+      const thick = i===0 ? "3px" : "1px";
+      bar.style.border = `solid black ${thick}`;
+      bar.style.boxSizing="border-box";
 
-      // 右％
+      bg.appendChild(bar);
+
+      // %表示
       const percent = document.createElement("div");
       percent.textContent = val + "%";
-      percent.style.width="40px";
+      percent.style.width="45px";
       percent.style.textAlign="right";
       percent.style.fontSize="12px";
+      percent.style.marginLeft="6px";
 
       line.appendChild(label);
-      line.appendChild(outer);
+      line.appendChild(bg);
       line.appendChild(percent);
 
       box.appendChild(line);
     });
-
-    row.querySelector(".expectation-value").textContent = ai[i] + "%";
   });
 }
 
@@ -225,13 +225,13 @@ function updateAnalysis(ai){
   let text="";
 
   if(main===1){
-    text="1コースがスタート優勢。イン主導で展開は安定傾向。";
+    text="1コースがスタート優勢。イン主導で安定展開。";
   }
   else if(main<=3){
-    text="中枠勢が主導権争い。展開が動きやすいレース。";
+    text="中枠勢が主導権争い。動きやすい展開。";
   }
   else{
-    text="外枠の伸びが優勢。波乱展開も十分。";
+    text="外枠伸び優勢。波乱含み。";
   }
 
   text += `\n軸候補は ${main}コース。対抗は ${sub}コース。`;
