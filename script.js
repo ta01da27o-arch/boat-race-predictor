@@ -67,7 +67,6 @@ function calcAll(){
    const p = Math.floor(35 + Math.random()*45);
 
    let a = Math.round(b*0.4 + p*0.6);
-
    if(a>95) a=95;
    if(a<5) a=5;
 
@@ -84,7 +83,7 @@ function calcAll(){
 }
 
 // ===============================
-// 総合期待度（CSS完全対応版）
+// 総合期待度（並び変更対応）
 // ===============================
 function updateExpectationBars(base,predict,ai){
 
@@ -98,21 +97,26 @@ function updateExpectationBars(base,predict,ai){
      const line = document.createElement("div");
      line.className="bar-line";
 
+     // ラベル
      const lab = document.createElement("span");
      lab.className="bar-label";
      lab.textContent = label;
 
+     // 数値
+     const num = document.createElement("span");
+     num.style.width="32px";
+     num.style.textAlign="right";
+     num.style.fontSize="12px";
+     num.style.fontWeight="bold";
+     num.textContent = val;
+
+     // バー
      const bar = document.createElement("div");
      bar.className = cls;
      bar.style.width = val + "%";
 
-     const txt = document.createElement("span");
-     txt.className="bar-text";
-     txt.textContent = val;
-
-     bar.appendChild(txt);
-
      line.appendChild(lab);
+     line.appendChild(num);
      line.appendChild(bar);
 
      return line;
@@ -223,21 +227,18 @@ function updateBets(ai){
 
  const cols = document.querySelectorAll(".bet-col");
 
- // 本命
  setCol(cols[0],[
    `${main}-${sub}-${third}`,
    `${main}-${third}-${sub}`,
    `${sub}-${main}-${third}`
  ]);
 
- // 対抗（本命飛び）
  setCol(cols[1],[
    `${sub}-${third}-${main}`,
    `${third}-${sub}-${main}`,
    `${sub}-${main}-${third}`
  ]);
 
- // 逃げ（1コース主導）
  setCol(cols[2],[
    `1-${sub}-${third}`,
    `1-${third}-${sub}`,
