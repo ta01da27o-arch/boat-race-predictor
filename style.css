@@ -225,3 +225,60 @@ h1,h2{
 
 .bet-mark{width:24px;font-weight:bold;}
 .bet-content{flex:1;}
+/* =========================
+   AI視認性3本グラフ縦構造
+========================= */
+
+.expectation-bar{
+ display:flex;
+ flex-direction:column;
+ gap:3px;
+ height:auto;
+ background:#eee;
+ padding:3px;
+}
+
+/* 共通バー */
+
+.attack-base,
+.attack-predict,
+.attack-ai{
+ height:12px;
+ border:1px solid rgba(0,0,0,0.4);
+ border-radius:4px;
+ box-sizing:border-box;
+}
+
+/* 1コースだけ中バー太枠 */
+
+.expectation-row.c1 .attack-base,
+.expectation-row.c1 .attack-predict,
+.expectation-row.c1 .attack-ai{
+ border:2px solid #000;
+}
+
+/* ===== コース別濃色 ===== */
+
+.expectation-row.c1 .attack-base,
+.expectation-row.c1 .attack-predict,
+.expectation-row.c1 .attack-ai{ background:#ffffff; }
+
+.expectation-row.c2 .attack-base,
+.expectation-row.c2 .attack-predict,
+.expectation-row.c2 .attack-ai{ background:#000000; }
+
+.expectation-row.c3 .attack-base,
+.expectation-row.c3 .attack-predict,
+.expectation-row.c3 .attack-ai{ background:#ff3333; }
+
+.expectation-row.c4 .attack-base,
+.expectation-row.c4 .attack-predict,
+.expectation-row.c4 .attack-ai{ background:#3366ff; }
+
+.expectation-row.c5 .attack-base,
+.expectation-row.c5 .attack-predict,
+.expectation-row.c5 .attack-ai{ background:#ffcc00; }
+
+.expectation-row.c6 .attack-base,
+.expectation-row.c6 .attack-predict,
+.expectation-row.c6 .attack-ai{ background:#33cc66; }
