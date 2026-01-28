@@ -84,50 +84,47 @@ function calcAll(){
 // ===============================
 function updateExpectationBars(base,predict,ai){
 
-  const colors = ["#ffffff","#000000","#ff3333","#3366ff","#ffcc00","#33cc66"];
-  const japaneseLabels = ["実績","予測","AI"];
+  const colors=["#ffffff","#000000","#ff3333","#3366ff","#ffcc00","#33cc66"];
+  const labels=["実績","予測","AI"];
 
   document.querySelectorAll(".expectation-row").forEach((row,i)=>{
+    const box=row.querySelector(".expectation-bar");
+    box.innerHTML="";
 
-    const barBox = row.querySelector(".expectation-bar");
-    barBox.innerHTML="";
-
-    const values = [base[i], predict[i], ai[i]];
-
-    values.forEach((val,j)=>{
+    [base[i],predict[i],ai[i]].forEach((val,j)=>{
 
       const line=document.createElement("div");
       line.className="bar-line";
 
       const label=document.createElement("span");
       label.className="bar-label";
-      label.textContent=japaneseLabels[j];
+      label.textContent=labels[j];
 
-      const barOuter=document.createElement("div");
-      barOuter.style.flex="1";
-      barOuter.style.height="14px";
-      barOuter.style.border="1px solid #333";
-      barOuter.style.background=getLightColor(i);
-      barOuter.style.position="relative";
-      barOuter.style.borderRadius="4px";
+      const outer=document.createElement("div");
+      outer.style.flex="1";
+      outer.style.height="14px";
+      outer.style.border="1px solid #333";
+      outer.style.background=getLightColor(i);
+      outer.style.position="relative";
+      outer.style.borderRadius="4px";
 
       const bar=document.createElement("div");
       bar.style.height="100%";
       bar.style.width=val+"%";
       bar.style.background=colors[i];
-      bar.style.border=(i===0)?"2px solid #000":"1px solid #000";
+      bar.style.border="1px solid #000";
       bar.style.boxSizing="border-box";
 
-      const barText=document.createElement("span");
-      barText.className="bar-text";
-      barText.textContent=val+"%";
+      const text=document.createElement("span");
+      text.className="bar-text";
+      text.textContent=val+"%";
 
-      barOuter.appendChild(bar);
-      barOuter.appendChild(barText);
+      outer.appendChild(bar);
+      outer.appendChild(text);
 
       line.appendChild(label);
-      line.appendChild(barOuter);
-      barBox.appendChild(line);
+      line.appendChild(outer);
+      box.appendChild(line);
     });
 
     row.querySelector(".expectation-value").textContent=ai[i]+"%";
@@ -158,14 +155,10 @@ function updateRaceTypeByAI(ai){
   const middle=(ai[1]+ai[2]+ai[3])/3;
   const outer=(ai[4]+ai[5])/2;
 
-  const max=Math.max(...ai);
-  const min=Math.min(...ai);
-
   let type="";
   if(inner>middle+10 && inner>outer+15) type="イン逃げ主導型";
   else if(middle>inner && middle>outer) type="中枠攻め合い型";
   else if(outer>inner && outer>middle) type="外伸び波乱型";
-  else if(max-min<8) type="超混戦型";
   else type="バランス型";
 
   document.getElementById("race-type").textContent="展開タイプ : "+type;
@@ -176,67 +169,70 @@ function updateRaceTypeByAI(ai){
 // ===============================
 function updateAnalysis(ai){
 
-  const order=ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
+  const sorted=ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
 
-  const main=order[0].i;
-  const sub=order[1].i;
+  const main=sorted[0].i;
+  const sub=sorted[1].i;
 
   let text="";
-  if(main===1) text="1コースがスタート優勢。イン主導で展開は安定傾向。";
-  else if(main<=3) text="中枠勢が主導権争い。展開が動きやすいレース。";
-  else text="外枠の伸びが優勢。波乱展開も十分。";
+  if(main===1) text="1コースが主導権。イン優勢展開。";
+  else if(main<=3) text="中枠主導で混戦傾向。";
+  else text="外枠優勢で波乱含み。";
 
-  text+=`\n軸候補は ${main}コース。対抗は ${sub}コース。`;
+  text+=`\n軸候補 ${main} 対抗 ${sub}`;
 
   document.querySelector(".analysis-text").textContent=text;
 }
 
 // ===============================
-// 買い目生成（逃げ＝1頭固定 修正版）
+// 買い目（完全分離ロジック）
 // ===============================
 function updateBets(ai){
 
-  const sorted=[0,1,2,3,4,5]
-    .map(i=>({v:ai[i],i:i+1}))
-    .sort((a,b)=>b.v-a.v);
+  const order=ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
 
-  // ===== 逃げ（必ず1頭固定） =====
-  const secondCandidates = sorted
-    .filter(o=>o.i!==1)
-    .slice(0,2)
-    .map(o=>o.i);
+  const a1=order[0].i;
+  const a2=order[1].i;
+  const a3=order[2].i;
+  const a4=order[3].i;
 
-  const n2=secondCandidates[0];
-  const n3=secondCandidates[1];
-
-  const escapeBets=[
-    `1-${n2}-${n3}`,
-    `1-${n3}-${n2}`
+  // --- 本命 ---
+  const mainBets=[
+    `${a1}-${a2}-${a3}`,
+    `${a1}-${a3}-${a2}`,
+    `${a2}-${a1}-${a3}`
   ];
 
-  // ===== 差し・まくり =====
-  const main=sorted[0].i;
-  const sub=sorted[1].i;
-  const third=sorted[2].i;
+  // --- 対抗 ---
+  const subBets=[
+    `${a2}-${a1}-${a4}`,
+    `${a2}-${a4}-${a1}`,
+    `${a3}-${a2}-${a1}`
+  ];
 
-  const otherBets=[
-    `${main}-${sub}-${third}`,
-    `${main}-${third}-${sub}`,
-    `${sub}-${main}-${third}`
+  // --- 逃げ（1固定） ---
+  let escapeTargets=[a1,a2,a3,a4,a5=order[4].i,a6=order[5].i]
+    .filter(n=>n!==1);
+
+  const e1=escapeTargets[0];
+  const e2=escapeTargets[1];
+
+  const escapeBets=[
+    `1-${e1}-${e2}`,
+    `1-${e2}-${e1}`,
+    `1-${escapeTargets[2]}-${e1}`
   ];
 
   const cols=document.querySelectorAll(".bet-col");
 
-  setCol(cols[0],escapeBets);
-  setCol(cols[1],otherBets);
-  setCol(cols[2],otherBets);
+  setCol(cols[0],mainBets);
+  setCol(cols[1],subBets);
+  setCol(cols[2],escapeBets);
 }
 
 function setCol(col,arr){
   const items=col.querySelectorAll(".bet-item");
-  items.forEach((el,i)=>{
-    el.textContent=arr[i]||"";
-  });
+  items.forEach((el,i)=>el.textContent=arr[i]||"");
 }
 
 // ===============================
@@ -250,7 +246,7 @@ function updateHitRateSimulation(base,predict,ai){
   container.innerHTML="";
 
   const colors=["#ffffff","#000000","#ff3333","#3366ff","#ffcc00","#33cc66"];
-  const lightColors=["#fff","#eee","#ffe5e5","#e5f0ff","#fff7cc","#e5ffe5"];
+  const light=["#fff","#eee","#ffe5e5","#e5f0ff","#fff7cc","#e5ffe5"];
 
   for(let i=0;i<6;i++){
 
@@ -261,37 +257,37 @@ function updateHitRateSimulation(base,predict,ai){
     row.style.marginBottom="6px";
 
     const label=document.createElement("span");
-    label.style.width="28px";
+    label.style.width="26px";
     label.style.textAlign="right";
-    label.style.marginRight="8px";
+    label.style.marginRight="10px";
     label.textContent=(i+1);
 
-    const barOuter=document.createElement("div");
-    barOuter.style.flex="1";
-    barOuter.style.height="14px";
-    barOuter.style.background=lightColors[i];
-    barOuter.style.border="1px solid #333";
-    barOuter.style.position="relative";
-    barOuter.style.borderRadius="4px";
+    const outer=document.createElement("div");
+    outer.style.flex="1";
+    outer.style.height="14px";
+    outer.style.border="1px solid #333";
+    outer.style.background=light[i];
+    outer.style.position="relative";
+    outer.style.borderRadius="4px";
 
-    const hitRate=Math.round((ai[i]+predict[i]+base[i])/3);
+    const rate=Math.round((base[i]+predict[i]+ai[i])/3);
 
     const bar=document.createElement("div");
     bar.style.height="100%";
-    bar.style.width=hitRate+"%";
+    bar.style.width=rate+"%";
     bar.style.background=colors[i];
     bar.style.border="1px solid #000";
     bar.style.boxSizing="border-box";
 
-    const barText=document.createElement("span");
-    barText.className="bar-text";
-    barText.textContent=hitRate+"%";
+    const text=document.createElement("span");
+    text.className="bar-text";
+    text.textContent=rate+"%";
 
-    barOuter.appendChild(bar);
-    barOuter.appendChild(barText);
+    outer.appendChild(bar);
+    outer.appendChild(text);
 
     row.appendChild(label);
-    row.appendChild(barOuter);
+    row.appendChild(outer);
 
     container.appendChild(row);
   }
