@@ -316,3 +316,87 @@ function updateTrustMeter(ai){
     <p><strong>総合信頼度：${trust}%</strong></p>
   `;
 }
+// ===============================
+// C② 信頼度メーター強化ロジック（追加統合）
+// ===============================
+
+// 信頼度計算メイン
+function updateConfidenceMeter(base, predict, ai){
+
+  const hardness = calcHardness(ai);
+  const volatility = calcVolatility(ai);
+  const reliability = calcReliability(hardness, volatility);
+
+  renderConfidence(hardness, volatility, reliability);
+}
+
+// -------------------------------
+// 堅さスコア（上位集中度）
+// -------------------------------
+function calcHardness(ai){
+
+  const sorted = [...ai].sort((a,b)=>b-a);
+
+  const top3 = sorted[0] + sorted[1] + sorted[2];
+  const total = ai.reduce((a,b)=>a+b,0);
+
+  return Math.round((top3 / total) * 100);
+}
+
+// -------------------------------
+// 荒れ指数（ばらつき）
+// -------------------------------
+function calcVolatility(ai){
+
+  const avg = ai.reduce((a,b)=>a+b,0) / ai.length;
+
+  const variance = ai.reduce((sum,v)=>{
+    return sum + Math.pow(v - avg,2);
+  },0) / ai.length;
+
+  return Math.round(Math.sqrt(variance));
+}
+
+// -------------------------------
+// 総合信頼度
+// -------------------------------
+function calcReliability(hardness, volatility){
+
+  let score = hardness - volatility;
+
+  if(score < 0) score = 0;
+  if(score > 100) score = 100;
+
+  return score;
+}
+
+// -------------------------------
+// 表示反映
+// -------------------------------
+function renderConfidence(hardness, volatility, reliability){
+
+  const box = document.getElementById("confidenceSection");
+  if(!box) return;
+
+  box.innerHTML = `
+    <h2>信頼度メーター</h2>
+
+    <div class="confidence-row">
+      <span>堅さスコア</span>
+      <div class="conf-bar"><div style="width:${hardness}%"></div></div>
+      <span>${hardness}%</span>
+    </div>
+
+    <div class="confidence-row">
+      <span>荒れ指数</span>
+      <div class="conf-bar"><div style="width:${Math.min(volatility,100)}%"></div></div>
+      <span>${volatility}</span>
+    </div>
+
+    <div class="confidence-row">
+      <span>総合信頼度</span>
+      <div class="conf-bar"><div style="width:${reliability}%"></div></div>
+      <span>${reliability}%</span>
+    </div>
+  `;
+}
