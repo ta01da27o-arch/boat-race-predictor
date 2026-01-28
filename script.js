@@ -49,7 +49,6 @@ function selectStadium(i){
 function selectRace(r){
   document.getElementById("raceScreen").classList.add("hidden");
   document.getElementById("playerScreen").classList.remove("hidden");
-
   calcAll();
 }
 
@@ -213,7 +212,7 @@ function updateBets(ai){
   const sub  = sorted[1].i;
   const third= sorted[2].i;
 
-  const others = [1,2,3,4,5,6].filter(n=>n!==1);
+  const others = [2,3,4,5,6];
 
   const cols = document.querySelectorAll(".bet-col");
 
@@ -231,7 +230,7 @@ function updateBets(ai){
     `${sub}-${third}-${main}`
   ]);
 
-  // 逃げ（1頭固定）
+  // 逃げ（1固定）
   setCol(cols[2],[
     `1-${others[0]}-${others[1]}`,
     `1-${others[1]}-${others[0]}`,
@@ -246,7 +245,7 @@ function setCol(col,arr){
 }
 
 // ===============================
-// 的中率シミュレーション（完全修正版）
+// 的中率シミュレーション（横並び完全修正版）
 // ===============================
 function updateHitRateSimulation(base,predict,ai){
 
@@ -257,6 +256,11 @@ function updateHitRateSimulation(base,predict,ai){
 
   rows.forEach((row,i)=>{
 
+    // 横並びレイアウト
+    row.style.display = "flex";
+    row.style.alignItems = "center";
+    row.style.marginBottom = "6px";
+
     const hitRate = Math.round((base[i] + predict[i] + ai[i]) / 3);
 
     const value = row.querySelector(".hitrate-value");
@@ -264,14 +268,15 @@ function updateHitRateSimulation(base,predict,ai){
     const bar = row.querySelector(".hitrate-bar div");
 
     value.textContent = hitRate + "%";
+    value.style.width = "50px";
+    value.style.textAlign = "right";
+    value.style.marginRight = "8px";
 
     barOuter.style.flex = "1";
     barOuter.style.height = "14px";
     barOuter.style.border = "1px solid #333";
     barOuter.style.background = lightColors[i];
-    barOuter.style.position = "relative";
     barOuter.style.borderRadius = "4px";
-    barOuter.style.marginLeft = "8px";
 
     bar.style.height = "100%";
     bar.style.width = hitRate + "%";
