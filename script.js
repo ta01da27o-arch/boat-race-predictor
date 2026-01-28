@@ -81,7 +81,7 @@ function calcAll(){
 }
 
 // ===============================
-// 総合期待度（完成仕様）
+// 総合期待度（1コースバーのみ太線）
 // ===============================
 function updateExpectationBars(base,predict,ai){
 
@@ -111,7 +111,7 @@ function updateExpectationBars(base,predict,ai){
       barOuter.style.flex="1";
       barOuter.style.height="12px";
       barOuter.style.backgroundColor=colors[i]+"33"; // 薄色背景
-      barOuter.style.border = i===0 ? "2px solid #000" : "1px solid #333";
+      barOuter.style.border = "1px solid #333"; // 全コース細線
       barOuter.style.position="relative";
       barOuter.style.borderRadius="6px";
 
@@ -119,6 +119,17 @@ function updateExpectationBars(base,predict,ai){
       bar.style.width=val+"%";
       bar.style.height="100%";
       bar.style.backgroundColor=colors[i];
+
+      // 1コースのみバー枠太線
+      if(i===0){
+        bar.style.border="2px solid #000";
+        bar.style.borderRadius="4px";
+        bar.style.boxSizing="border-box";
+      } else {
+        bar.style.border="1px solid #333";
+        bar.style.borderRadius="4px";
+        bar.style.boxSizing="border-box";
+      }
 
       // %テキスト右端表示
       const txt=document.createElement("span");
@@ -269,6 +280,9 @@ function updateSimulation(ai, base){
     bar.style.width=val+"%";
     bar.style.height="100%";
     bar.style.backgroundColor=colors[i];
+    bar.style.border = i===0 ? "2px solid #000" : "1px solid #333";
+    bar.style.borderRadius="4px";
+    bar.style.boxSizing="border-box";
 
     const barTxt = document.createElement("span");
     barTxt.className="bar-text";
