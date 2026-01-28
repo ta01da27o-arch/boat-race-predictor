@@ -74,7 +74,7 @@ function calcAll(){
  updateKimarite();
  updateRaceTypeByAI(ai);
  updateAnalysis(ai);
- updateBets(ai);
+ updateBets(ai); // ← 触っていません
  updateHitRateSimulation(base,predict,ai);
 }
 
@@ -146,8 +146,6 @@ function updateKimarite(){
 }
 
 // ===============================
-// 展開タイプ
-// ===============================
 function updateRaceTypeByAI(ai){
 
  const inner=ai[0];
@@ -164,8 +162,6 @@ function updateRaceTypeByAI(ai){
  document.getElementById("race-type").textContent="展開タイプ : "+type;
 }
 
-// ===============================
-// 展開解析
 // ===============================
 function updateAnalysis(ai){
 
@@ -186,7 +182,7 @@ function updateAnalysis(ai){
 }
 
 // ===============================
-// 買い目（逃げ修正版）
+// 買い目（完成版そのまま）
 // ===============================
 function updateBets(ai){
 
@@ -198,21 +194,18 @@ function updateBets(ai){
 
  const cols=document.querySelectorAll(".bet-col");
 
- // 本命
  setCol(cols[0],[
   `${main}-${sub}-${third}`,
   `${main}-${third}-${sub}`,
   `${sub}-${main}-${third}`
  ]);
 
- // 対抗
  setCol(cols[1],[
   `${sub}-${third}-${main}`,
   `${sub}-${main}-${third}`,
   `${third}-${sub}-${main}`
  ]);
 
- // 逃げ（必ず1頭）
  const others=sorted.map(x=>x.i).filter(n=>n!==1);
 
  setCol(cols[2],[
@@ -229,7 +222,7 @@ function setCol(col,arr){
 }
 
 // ===============================
-// 的中率シュミレーション
+// 的中率シュミレーション（見出し＆バランス修正）
 // ===============================
 function updateHitRateSimulation(base,predict,ai){
 
@@ -237,6 +230,11 @@ function updateHitRateSimulation(base,predict,ai){
  if(!box) return;
 
  box.innerHTML="";
+
+ // 見出し追加
+ const title=document.createElement("h2");
+ title.textContent="的中率シュミレーション";
+ box.appendChild(title);
 
  const colors=["#fff","#000","#ff3333","#3366ff","#ffcc00","#33cc66"];
  const light=["#fff","#eee","#ffe5e5","#e5f0ff","#fff7cc","#e5ffe5"];
@@ -246,12 +244,21 @@ function updateHitRateSimulation(base,predict,ai){
   const row=document.createElement("div");
   row.style.display="flex";
   row.style.alignItems="center";
-  row.style.marginBottom="4px";
+  row.style.gap="8px";
+  row.style.marginBottom="6px";
 
   const lab=document.createElement("span");
   lab.style.width="36px";
   lab.style.textAlign="right";
+  lab.style.fontWeight="bold";
   lab.textContent=i+1;
+
+  const val=document.createElement("span");
+  val.style.width="40px";
+  val.style.textAlign="right";
+
+  const rate=Math.round((base[i]+predict[i]+ai[i])/3);
+  val.textContent=rate+"%";
 
   const outer=document.createElement("div");
   outer.style.flex="1";
@@ -259,23 +266,19 @@ function updateHitRateSimulation(base,predict,ai){
   outer.style.background=light[i];
   outer.style.border="1px solid #333";
   outer.style.position="relative";
-
-  const rate=Math.round((base[i]+predict[i]+ai[i])/3);
+  outer.style.borderRadius="4px";
 
   const bar=document.createElement("div");
   bar.style.height="100%";
   bar.style.width=rate+"%";
   bar.style.background=colors[i];
   bar.style.border="1px solid #000";
-
-  const txt=document.createElement("span");
-  txt.className="bar-text";
-  txt.textContent=rate+"%";
+  bar.style.boxSizing="border-box";
 
   outer.appendChild(bar);
-  outer.appendChild(txt);
 
   row.appendChild(lab);
+  row.appendChild(val);
   row.appendChild(outer);
 
   box.appendChild(row);
