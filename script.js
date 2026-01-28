@@ -77,11 +77,11 @@ function calcAll(){
   updateRaceTypeByAI(ai);
   updateAnalysis(ai);
   updateBets(ai);
-  updateSimulation(ai, base); // 的中率シミュレーション
+  updateHitRateSimulation(base, predict, ai); // 新規追加
 }
 
 // ===============================
-// 総合期待度（1コースバーのみ太線）
+// 総合期待度（完成仕様）
 // ===============================
 function updateExpectationBars(base,predict,ai){
 
@@ -99,66 +99,64 @@ function updateExpectationBars(base,predict,ai){
     const barBox = row.querySelector(".expectation-bar");
     barBox.innerHTML="";
 
-    const makeLine=(val,label)=>{
-      const line=document.createElement("div");
-      line.className="bar-line";
+    const makeLine=(val)=>{
 
-      const barLabel=document.createElement("span");
-      barLabel.className="bar-label";
-      barLabel.textContent=label;
+      const line=document.createElement("div");
+      line.style.display="flex";
+      line.style.alignItems="center";
+      line.style.margin="4px 0";
 
       const barOuter=document.createElement("div");
       barOuter.style.flex="1";
-      barOuter.style.height="12px";
-      barOuter.style.backgroundColor=colors[i]+"33"; // 薄色背景
-      barOuter.style.border = "1px solid #333"; // 全コース細線
+      barOuter.style.height="14px";
+      barOuter.style.border = "1px solid #333"; // 100%枠は細線統一
+      barOuter.style.background=getCourseBackground(i);
       barOuter.style.position="relative";
-      barOuter.style.borderRadius="6px";
 
       const bar=document.createElement("div");
-      bar.style.width=val+"%";
       bar.style.height="100%";
-      bar.style.backgroundColor=colors[i];
+      bar.style.width=val+"%";
+      bar.style.background=colors[i];
+      bar.style.border = (i===0) ? "2px solid #000" : "1px solid #000"; // バー枠のみ
+      bar.style.boxSizing="border-box";
 
-      // 1コースのみバー枠太線
-      if(i===0){
-        bar.style.border="2px solid #000";
-        bar.style.borderRadius="4px";
-        bar.style.boxSizing="border-box";
-      } else {
-        bar.style.border="1px solid #333";
-        bar.style.borderRadius="4px";
-        bar.style.boxSizing="border-box";
-      }
-
-      // %テキスト右端表示
-      const txt=document.createElement("span");
+      // バー内右端 % 表示
+      const txt = document.createElement("span");
       txt.className="bar-text";
       txt.textContent=val+"%";
+      bar.appendChild(txt);
 
       barOuter.appendChild(bar);
-      barOuter.appendChild(txt);
-      line.appendChild(barLabel);
       line.appendChild(barOuter);
+
       return line;
     };
 
-    barBox.appendChild(makeLine(base[i],"実績"));
-    barBox.appendChild(makeLine(predict[i],"予測"));
-    barBox.appendChild(makeLine(ai[i],"AI"));
+    barBox.appendChild(makeLine(base[i]));
+    barBox.appendChild(makeLine(predict[i]));
+    barBox.appendChild(makeLine(ai[i]));
 
-    row.querySelector(".expectation-value").textContent = ai[i]+"%";
+    row.querySelector(".expectation-value").textContent = ai[i] + "%";
   });
+}
+
+function getCourseBackground(i){
+  const backgrounds=["#fff","#eee","#ffe5e5","#e5f0ff","#fff7cc","#e5ffe5"];
+  return backgrounds[i];
 }
 
 // ===============================
 // 決まり手（安全）
 // ===============================
 function updateKimarite(){
+
   document.querySelectorAll(".kimarite-row").forEach(row=>{
+
     const v = Math.floor(10 + Math.random()*75);
+
     const bar = row.querySelector(".bar div");
     const val = row.querySelector(".value");
+
     bar.style.width = v + "%";
     val.textContent = v + "%";
   });
@@ -168,6 +166,7 @@ function updateKimarite(){
 // 展開タイプAI
 // ===============================
 function updateRaceTypeByAI(ai){
+
   const inner = ai[0];
   const middle = (ai[1]+ai[2]+ai[3])/3;
   const outer = (ai[4]+ai[5])/2;
@@ -176,62 +175,94 @@ function updateRaceTypeByAI(ai){
   const min=Math.min(...ai);
 
   let type="";
+
   if(inner > middle+10 && inner > outer+15){
     type="イン逃げ主導型";
-  } else if(middle > inner && middle > outer){
+  }
+  else if(middle > inner && middle > outer){
     type="中枠攻め合い型";
-  } else if(outer > inner && outer > middle){
+  }
+  else if(outer > inner && outer > middle){
     type="外伸び波乱型";
-  } else if(max-min < 8){
+  }
+  else if(max-min < 8){
     type="超混戦型";
-  } else{
+  }
+  else{
     type="バランス型";
   }
 
-  document.getElementById("race-type").textContent = "展開タイプ : " + type;
+  document.getElementById("race-type").textContent =
+    "展開タイプ : " + type;
 }
 
 // ===============================
 // 展開解析
 // ===============================
 function updateAnalysis(ai){
-  const order = ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
+
+  const order = ai
+    .map((v,i)=>({v,i:i+1}))
+    .sort((a,b)=>b.v-a.v);
+
   const main = order[0].i;
   const sub = order[1].i;
 
   let text="";
+
   if(main===1){
     text="1コースがスタート優勢。イン主導で展開は安定傾向。";
-  } else if(main<=3){
+  }
+  else if(main<=3){
     text="中枠勢が主導権争い。展開が動きやすいレース。";
-  } else{
+  }
+  else{
     text="外枠の伸びが優勢。波乱展開も十分。";
   }
+
   text += `\n軸候補は ${main}コース。対抗は ${sub}コース。`;
+
   document.querySelector(".analysis-text").textContent=text;
 }
 
 // ===============================
-// 買い目生成（重複排除版）
+// 買い目生成（重複防止版）
 // ===============================
 function updateBets(ai){
-  const order = ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
+
+  const order = ai
+    .map((v,i)=>({v,i:i+1}))
+    .sort((a,b)=>b.v-a.v);
+
   const main = order[0].i;
   const sub = order[1].i;
   const third = order[2].i;
+
+  const allNumbers=[1,2,3,4,5,6];
+
+  // 逃げ列重複回避
+  const escapeNums = allNumbers.filter(n=>n!==main && n!==sub);
+  const escapeThird = escapeNums[Math.floor(Math.random()*escapeNums.length)];
+
   const cols = document.querySelectorAll(".bet-col");
 
-  const makeComb=(a,b,c)=>{
-    const arr=[];
-    if(new Set([a,b,c]).size===3) arr.push(`${a}-${b}-${c}`);
-    if(new Set([a,c,b]).size===3) arr.push(`${a}-${c}-${b}`);
-    if(new Set([b,a,c]).size===3) arr.push(`${b}-${a}-${c}`);
-    return arr;
-  };
+  setCol(cols[0],[
+    `${main}-${sub}-${third}`,
+    `${main}-${third}-${sub}`,
+    `${sub}-${main}-${third}`
+  ]);
 
-  setCol(cols[0], makeComb(main,sub,third));
-  setCol(cols[1], makeComb(sub,third,main));
-  setCol(cols[2], makeComb(1,sub,third)); // 1コース逃げ想定
+  setCol(cols[1],[
+    `${sub}-${third}-${main}`,
+    `${sub}-${main}-${third}`,
+    `${third}-${sub}-${main}`
+  ]);
+
+  setCol(cols[2],[
+    `${main}-${sub}-${escapeThird}`,
+    `${main}-${escapeThird}-${sub}`,
+    `${sub}-${main}-${escapeThird}`
+  ]);
 }
 
 function setCol(col,arr){
@@ -244,57 +275,39 @@ function setCol(col,arr){
 // ===============================
 // 的中率シミュレーション
 // ===============================
-function updateSimulation(ai, base){
-  const simSection = document.getElementById("simulationSection");
-  if(!simSection) return;
-
-  simSection.innerHTML=""; // 初期化
+function updateHitRateSimulation(base,predict,ai){
 
   const colors = ["#ffffff","#000000","#e53935","#1e88e5","#fdd835","#43a047"];
-  for(let i=0;i<6;i++){
-    const row = document.createElement("div");
-    row.style.display="flex";
-    row.style.alignItems="center";
-    row.style.margin="4px 0";
 
-    const label = document.createElement("span");
-    label.style.width="40px";
-    label.textContent = `${i+1}コース`;
+  document.querySelectorAll(".hitrate-row").forEach((row,i)=>{
 
-    const val = Math.floor((ai[i]+base[i])/2); // 簡易シミュレーション
-    const valText = document.createElement("span");
-    valText.textContent = val+"%";
-    valText.style.width="40px";
-    valText.style.textAlign="right";
-    valText.style.marginRight="4px";
+    // 基本ヒット率 = AI値ベース + 決まり手 + 買い目補正
+    let hit = ai[i];
 
-    const barOuter = document.createElement("div");
-    barOuter.style.flex="1";
-    barOuter.style.height="12px";
-    barOuter.style.backgroundColor=colors[i]+"33";
-    barOuter.style.border = "1px solid #333";
-    barOuter.style.borderRadius="6px";
-    barOuter.style.position="relative";
+    // 決まり手補正
+    const kimariteRows = document.querySelectorAll(".kimarite-course.c"+(i+1)+" .kimarite-row");
+    kimariteRows.forEach(r=>{
+      const val=parseInt(r.querySelector(".value").textContent) || 0;
+      hit += Math.round(val*0.1); // 10%加算補正
+    });
 
-    const bar = document.createElement("div");
-    bar.style.width=val+"%";
-    bar.style.height="100%";
-    bar.style.backgroundColor=colors[i];
-    bar.style.border = i===0 ? "2px solid #000" : "1px solid #333";
-    bar.style.borderRadius="4px";
-    bar.style.boxSizing="border-box";
+    // 買い目補正
+    const betCols=document.querySelectorAll(".bet-col");
+    betCols.forEach(col=>{
+      const items=col.querySelectorAll(".bet-item");
+      items.forEach(item=>{
+        if(item.textContent.includes((i+1)+"-") || item.textContent.includes("-"+(i+1)+"-") || item.textContent.endsWith("-"+(i+1))){
+          hit +=5;
+        }
+      });
+    });
 
-    const barTxt = document.createElement("span");
-    barTxt.className="bar-text";
-    barTxt.textContent=val+"%";
+    if(hit>100) hit=100;
 
-    barOuter.appendChild(bar);
-    barOuter.appendChild(barTxt);
+    const bar = row.querySelector(".hitrate-bar div");
+    bar.style.width = hit+"%";
+    bar.style.background = colors[i];
 
-    row.appendChild(label);
-    row.appendChild(valText);
-    row.appendChild(barOuter);
-
-    simSection.appendChild(row);
-  }
+    row.querySelector(".hitrate-value").textContent = hit+"%";
+  });
 }
