@@ -1,5 +1,5 @@
 // ===============================
-// 24場名
+// 24場名（正式）
 // ===============================
 const stadiums = [
   "桐生","戸田","江戸川","平和島",
@@ -41,14 +41,15 @@ document.getElementById("backBtn").onclick=()=>{
 // 画面遷移
 // ===============================
 function selectStadium(i){
-  stadiumScreen.classList.add("hidden");
-  raceScreen.classList.remove("hidden");
-  raceTitle.textContent=stadiums[i];
+  document.getElementById("stadiumScreen").classList.add("hidden");
+  document.getElementById("raceScreen").classList.remove("hidden");
+  document.getElementById("raceTitle").textContent=stadiums[i];
 }
 
-function selectRace(){
-  raceScreen.classList.add("hidden");
-  playerScreen.classList.remove("hidden");
+function selectRace(r){
+  document.getElementById("raceScreen").classList.add("hidden");
+  document.getElementById("playerScreen").classList.remove("hidden");
+
   calcAll();
 }
 
@@ -57,12 +58,14 @@ function selectRace(){
 // ===============================
 function calcAll(){
 
-  let base=[],predict=[],ai=[];
+  let base=[];
+  let predict=[];
+  let ai=[];
 
   for(let i=0;i<6;i++){
-    const b=Math.floor(40+Math.random()*40);
-    const p=Math.floor(35+Math.random()*45);
-    const a=Math.round(b*0.4+p*0.6);
+    const b = Math.floor(40+Math.random()*40);
+    const p = Math.floor(35+Math.random()*45);
+    const a = Math.round(b*0.4 + p*0.6);
 
     base.push(b);
     predict.push(p);
@@ -82,64 +85,75 @@ function calcAll(){
 // ===============================
 function updateExpectationBars(base,predict,ai){
 
-  const colors=["#fff","#000","#f33","#36f","#fc0","#3c6"];
-  const labels=["実績","予測","AI"];
+  const colors = [
+    "#ffffff",
+    "#000000",
+    "#ff3333",
+    "#3366ff",
+    "#ffcc00",
+    "#33cc66"
+  ];
+
+  const japaneseLabels = ["実績","予測","AI"];
 
   document.querySelectorAll(".expectation-row").forEach((row,i)=>{
+    const barBox = row.querySelector(".expectation-bar");
+    barBox.innerHTML="";
 
-    const box=row.querySelector(".expectation-bar");
-    box.innerHTML="";
+    const values = [base[i], predict[i], ai[i]];
 
-    [base[i],predict[i],ai[i]].forEach((v,j)=>{
-
+    values.forEach((val,j)=>{
       const line=document.createElement("div");
-      line.style.display="flex";
-      line.style.alignItems="center";
-      line.style.marginBottom="3px";
+      line.className="bar-line";
 
-      const lab=document.createElement("span");
-      lab.textContent=labels[j];
-      lab.style.width="40px";
+      const label = document.createElement("span");
+      label.className="bar-label";
+      label.textContent = japaneseLabels[j];
 
-      const out=document.createElement("div");
-      out.style.flex="1";
-      out.style.height="14px";
-      out.style.border="1px solid #333";
-      out.style.background=["#fff","#eee","#ffe5e5","#e5f0ff","#fff7cc","#e5ffe5"][i];
-      out.style.position="relative";
+      const barOuter=document.createElement("div");
+      barOuter.style.flex="1";
+      barOuter.style.height="14px";
+      barOuter.style.border = "1px solid #333";
+      barOuter.style.background = getLightColor(i);
+      barOuter.style.position="relative";
+      barOuter.style.borderRadius="4px";
 
       const bar=document.createElement("div");
       bar.style.height="100%";
-      bar.style.width=v+"%";
+      bar.style.width=val+"%";
       bar.style.background=colors[i];
-      bar.style.border="1px solid #000";
+      bar.style.border = (i===0)? "2px solid #000" : "1px solid #000";
+      bar.style.boxSizing="border-box";
 
-      const txt=document.createElement("span");
-      txt.textContent=v+"%";
-      txt.style.position="absolute";
-      txt.style.right="4px";
-      txt.style.fontSize="11px";
+      const barText = document.createElement("span");
+      barText.className="bar-text";
+      barText.textContent = val + "%";
 
-      out.appendChild(bar);
-      out.appendChild(txt);
+      barOuter.appendChild(bar);
+      barOuter.appendChild(barText);
 
-      line.appendChild(lab);
-      line.appendChild(out);
-      box.appendChild(line);
+      line.appendChild(label);
+      line.appendChild(barOuter);
+
+      barBox.appendChild(line);
     });
 
-    row.querySelector(".expectation-value").textContent=ai[i]+"%";
+    row.querySelector(".expectation-value").textContent = ai[i] + "%";
   });
+}
+
+function getLightColor(i){
+  return ["#fff","#eee","#ffe5e5","#e5f0ff","#fff7cc","#e5ffe5"][i];
 }
 
 // ===============================
 // 決まり手
 // ===============================
 function updateKimarite(){
-  document.querySelectorAll(".kimarite-row").forEach(r=>{
-    const v=Math.floor(10+Math.random()*75);
-    r.querySelector(".bar div").style.width=v+"%";
-    r.querySelector(".value").textContent=v+"%";
+  document.querySelectorAll(".kimarite-row").forEach(row=>{
+    const v = Math.floor(10 + Math.random()*75);
+    row.querySelector(".bar div").style.width = v + "%";
+    row.querySelector(".value").textContent = v + "%";
   });
 }
 
@@ -147,66 +161,77 @@ function updateKimarite(){
 // 展開タイプ
 // ===============================
 function updateRaceTypeByAI(ai){
+  const inner = ai[0];
+  const middle = (ai[1]+ai[2]+ai[3])/3;
+  const outer = (ai[4]+ai[5])/2;
 
-  const inner=ai[0];
-  const middle=(ai[1]+ai[2]+ai[3])/3;
-  const outer=(ai[4]+ai[5])/2;
+  const max=Math.max(...ai);
+  const min=Math.min(...ai);
 
-  let type="バランス型";
+  let type="";
+  if(inner > middle+10 && inner > outer+15) type="イン逃げ主導型";
+  else if(middle > inner && middle > outer) type="中枠攻め合い型";
+  else if(outer > inner && outer > middle) type="外伸び波乱型";
+  else if(max-min < 8) type="超混戦型";
+  else type="バランス型";
 
-  if(inner>middle+10&&inner>outer+15) type="イン逃げ主導型";
-  else if(middle>inner&&middle>outer) type="中枠攻め合い型";
-  else if(outer>inner&&outer>middle) type="外伸び波乱型";
-
-  raceType.textContent="展開タイプ : "+type;
+  document.getElementById("race-type").textContent =
+    "展開タイプ : " + type;
 }
 
 // ===============================
 // 展開解析
 // ===============================
 function updateAnalysis(ai){
+  const order = ai
+    .map((v,i)=>({v,i:i+1}))
+    .sort((a,b)=>b.v-a.v);
 
-  const order=ai.map((v,i)=>({v,i:i+1}))
-                .sort((a,b)=>b.v-a.v);
+  const main = order[0].i;
+  const sub = order[1].i;
 
-  let txt="";
-  if(order[0].i===1) txt="イン有利な展開。";
-  else if(order[0].i<=3) txt="中枠主導。";
-  else txt="外枠波乱傾向。";
+  let text="";
+  if(main===1) text="1コースがスタート優勢。イン主導で展開は安定傾向。";
+  else if(main<=3) text="中枠勢が主導権争い。展開が動きやすいレース。";
+  else text="外枠の伸びが優勢。波乱展開も十分。";
 
-  txt+=`\n軸:${order[0].i} 対抗:${order[1].i}`;
+  text += `\n軸候補は ${main}コース。対抗は ${sub}コース。`;
 
-  document.querySelector(".analysis-text").textContent=txt;
+  document.querySelector(".analysis-text").textContent=text;
 }
 
 // ===============================
-// 買い目（完成済そのまま）
+// 買い目（完成版そのまま）
 // ===============================
 function updateBets(ai){
 
-  const sorted=ai.map((v,i)=>({v,i:i+1}))
-                 .sort((a,b)=>b.v-a.v);
+  const sorted = ai
+    .map((v,i)=>({v,i:i+1}))
+    .sort((a,b)=>b.v-a.v);
 
-  const main=sorted[0].i;
-  const sub=sorted[1].i;
-  const third=sorted[2].i;
+  const main = sorted[0].i;
+  const sub  = sorted[1].i;
+  const third= sorted[2].i;
 
-  const others=[1,2,3,4,5,6].filter(n=>n!==1);
+  const others = [1,2,3,4,5,6].filter(n=>n!==1);
 
-  const cols=document.querySelectorAll(".bet-col");
+  const cols = document.querySelectorAll(".bet-col");
 
+  // 本命
   setCol(cols[0],[
     `${main}-${sub}-${third}`,
     `${main}-${third}-${sub}`,
     `${sub}-${main}-${third}`
   ]);
 
+  // 対抗
   setCol(cols[1],[
     `${sub}-${main}-${third}`,
     `${third}-${main}-${sub}`,
     `${sub}-${third}-${main}`
   ]);
 
+  // 逃げ（1頭固定）
   setCol(cols[2],[
     `1-${others[0]}-${others[1]}`,
     `1-${others[1]}-${others[0]}`,
@@ -215,39 +240,30 @@ function updateBets(ai){
 }
 
 function setCol(col,arr){
-  col.querySelectorAll(".bet-item").forEach((e,i)=>{
-    e.textContent=arr[i]||"";
+  col.querySelectorAll(".bet-item").forEach((el,i)=>{
+    el.textContent = arr[i] || "";
   });
 }
 
 // ===============================
-// 的中率シミュレーション（完全復活版）
+// 的中率シミュレーション（見出し保持版）
 // ===============================
 function updateHitRateSimulation(base,predict,ai){
 
-  const rows=document.querySelectorAll("#hitRateSection .hitrate-row");
+  // ★ sectionではなく listのみ取得（重要）
+  const rows = document.querySelectorAll("#hitRateSection .hitrate-row");
 
-  const colors=["#fff","#000","#f33","#36f","#fc0","#3c6"];
+  const colors = ["#ffffff","#000000","#ff3333","#3366ff","#ffcc00","#33cc66"];
 
   rows.forEach((row,i)=>{
 
-    const rate=Math.round((base[i]+predict[i]+ai[i])/3);
+    const hitRate = Math.round((base[i]+predict[i]+ai[i])/3);
 
-    const value=row.querySelector(".hitrate-value");
-    const barWrap=row.querySelector(".hitrate-bar");
-    const bar=row.querySelector(".hitrate-bar div");
+    const value = row.querySelector(".hitrate-value");
+    const bar = row.querySelector(".hitrate-bar div");
 
-    // 見えるよう強制設定
-    barWrap.style.flex="1";
-    barWrap.style.height="14px";
-    barWrap.style.border="1px solid #333";
-    barWrap.style.position="relative";
-    barWrap.style.background=["#fff","#eee","#ffe5e5","#e5f0ff","#fff7cc","#e5ffe5"][i];
-
-    bar.style.height="100%";
-    bar.style.width=rate+"%";
-    bar.style.background=colors[i];
-
-    value.textContent=rate+"%";
+    value.textContent = hitRate + "%";
+    bar.style.width = hitRate + "%";
+    bar.style.background = colors[i];
   });
 }
