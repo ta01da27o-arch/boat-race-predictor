@@ -77,86 +77,86 @@ function calcAll(){
   updateRaceTypeByAI(ai);
   updateAnalysis(ai);
   updateBets(ai);
-  updateHitRateSimulation(base, predict, ai); // 新規追加
+  updateHitRateSimulation(base,predict,ai);
 }
 
 // ===============================
-// 総合期待度（完成仕様）
+// 総合期待度（ラベル表示修正版）
 // ===============================
 function updateExpectationBars(base,predict,ai){
 
   const colors = [
     "#ffffff", // 1コース 白
     "#000000", // 2 黒
-    "#e53935", // 3 赤
-    "#1e88e5", // 4 青
-    "#fdd835", // 5 黄
-    "#43a047"  // 6 緑
+    "#ff3333", // 3 赤
+    "#3366ff", // 4 青
+    "#ffcc00", // 5 黄
+    "#33cc66"  // 6 緑
   ];
 
   document.querySelectorAll(".expectation-row").forEach((row,i)=>{
-
     const barBox = row.querySelector(".expectation-bar");
     barBox.innerHTML="";
 
-    const makeLine=(val)=>{
+    const labels = ["Base","Predict","AI"];
+    const values = [base[i], predict[i], ai[i]];
 
+    values.forEach((val,j)=>{
       const line=document.createElement("div");
-      line.style.display="flex";
-      line.style.alignItems="center";
-      line.style.margin="4px 0";
+      line.className="bar-line";
+
+      const label = document.createElement("span");
+      label.className="bar-label";
+      label.textContent = labels[j];
 
       const barOuter=document.createElement("div");
       barOuter.style.flex="1";
       barOuter.style.height="14px";
-      barOuter.style.border = "1px solid #333"; // 100%枠は細線統一
-      barOuter.style.background=getCourseBackground(i);
+      barOuter.style.border = "1px solid #333";  // すべて細線
+      barOuter.style.background = getLightColor(i); // 各コース薄色背景
       barOuter.style.position="relative";
+      barOuter.style.borderRadius="4px";
 
       const bar=document.createElement("div");
       bar.style.height="100%";
       bar.style.width=val+"%";
       bar.style.background=colors[i];
-      bar.style.border = (i===0) ? "2px solid #000" : "1px solid #000"; // バー枠のみ
+      bar.style.border = (i===0)? "2px solid #000" : "1px solid #000"; // バー枠のみ線
       bar.style.boxSizing="border-box";
+      bar.className= j===0 ? "attack-base" : j===1 ? "attack-predict" : "attack-ai";
 
-      // バー内右端 % 表示
-      const txt = document.createElement("span");
-      txt.className="bar-text";
-      txt.textContent=val+"%";
-      bar.appendChild(txt);
+      const barText = document.createElement("span");
+      barText.className="bar-text";
+      barText.textContent = val + "%";
 
       barOuter.appendChild(bar);
+      barOuter.appendChild(barText);
+
+      line.appendChild(label);
       line.appendChild(barOuter);
 
-      return line;
-    };
-
-    barBox.appendChild(makeLine(base[i]));
-    barBox.appendChild(makeLine(predict[i]));
-    barBox.appendChild(makeLine(ai[i]));
+      barBox.appendChild(line);
+    });
 
     row.querySelector(".expectation-value").textContent = ai[i] + "%";
   });
 }
 
-function getCourseBackground(i){
-  const backgrounds=["#fff","#eee","#ffe5e5","#e5f0ff","#fff7cc","#e5ffe5"];
-  return backgrounds[i];
+// 薄色背景（バー外）
+function getLightColor(i){
+  const lightColors = ["#fff","#eee","#ffe5e5","#e5f0ff","#fff7cc","#e5ffe5"];
+  return lightColors[i];
 }
 
 // ===============================
-// 決まり手（安全）
+// 決まり手（安全方式）
 // ===============================
 function updateKimarite(){
 
   document.querySelectorAll(".kimarite-row").forEach(row=>{
-
     const v = Math.floor(10 + Math.random()*75);
-
     const bar = row.querySelector(".bar div");
     const val = row.querySelector(".value");
-
     bar.style.width = v + "%";
     val.textContent = v + "%";
   });
@@ -226,43 +226,28 @@ function updateAnalysis(ai){
 }
 
 // ===============================
-// 買い目生成（重複防止版）
+// 買い目生成（重複なし修正版）
 // ===============================
 function updateBets(ai){
 
-  const order = ai
-    .map((v,i)=>({v,i:i+1}))
+  const indices = [0,1,2,3,4,5];
+
+  const sorted = indices
+    .map(i=>({v:ai[i],i:i+1}))
     .sort((a,b)=>b.v-a.v);
 
-  const main = order[0].i;
-  const sub = order[1].i;
-  const third = order[2].i;
+  const main = sorted[0].i;
+  const sub = sorted[1].i;
+  let third = sorted[2].i;
 
-  const allNumbers=[1,2,3,4,5,6];
-
-  // 逃げ列重複回避
-  const escapeNums = allNumbers.filter(n=>n!==main && n!==sub);
-  const escapeThird = escapeNums[Math.floor(Math.random()*escapeNums.length)];
+  // 重複回避
+  if(third === main) third = sorted.find(x=>x.i!==main && x.i!==sub).i;
 
   const cols = document.querySelectorAll(".bet-col");
 
-  setCol(cols[0],[
-    `${main}-${sub}-${third}`,
-    `${main}-${third}-${sub}`,
-    `${sub}-${main}-${third}`
-  ]);
-
-  setCol(cols[1],[
-    `${sub}-${third}-${main}`,
-    `${sub}-${main}-${third}`,
-    `${third}-${sub}-${main}`
-  ]);
-
-  setCol(cols[2],[
-    `${main}-${sub}-${escapeThird}`,
-    `${main}-${escapeThird}-${sub}`,
-    `${sub}-${main}-${escapeThird}`
-  ]);
+  setCol(cols[0],[`${main}-${sub}-${third}`,`${main}-${third}-${sub}`,`${sub}-${main}-${third}`]);
+  setCol(cols[1],[`${sub}-${third}-${main}`,`${sub}-${main}-${third}`,`${third}-${sub}-${main}`]);
+  setCol(cols[2],[`${main}-${sub}-${third}`,`${main}-${third}-${sub}`,`${sub}-${main}-${third}`]);
 }
 
 function setCol(col,arr){
@@ -273,41 +258,59 @@ function setCol(col,arr){
 }
 
 // ===============================
-// 的中率シミュレーション
+// 的中率シュミレーション（総合期待度・決まり手・買い目連動）
 // ===============================
 function updateHitRateSimulation(base,predict,ai){
 
-  const colors = ["#ffffff","#000000","#e53935","#1e88e5","#fdd835","#43a047"];
+  const container = document.getElementById("hitRateSection");
+  if(!container) return;
 
-  document.querySelectorAll(".hitrate-row").forEach((row,i)=>{
+  container.innerHTML="";
 
-    // 基本ヒット率 = AI値ベース + 決まり手 + 買い目補正
-    let hit = ai[i];
+  const colors = ["#ffffff","#000000","#ff3333","#3366ff","#ffcc00","#33cc66"];
+  const lightColors = ["#fff","#eee","#ffe5e5","#e5f0ff","#fff7cc","#e5ffe5"];
 
-    // 決まり手補正
-    const kimariteRows = document.querySelectorAll(".kimarite-course.c"+(i+1)+" .kimarite-row");
-    kimariteRows.forEach(r=>{
-      const val=parseInt(r.querySelector(".value").textContent) || 0;
-      hit += Math.round(val*0.1); // 10%加算補正
-    });
+  for(let i=0;i<6;i++){
+    const row = document.createElement("div");
+    row.className="hitrate-row";
+    row.style.display="flex";
+    row.style.alignItems="center";
+    row.style.marginBottom="4px";
+    row.style.position="relative";
 
-    // 買い目補正
-    const betCols=document.querySelectorAll(".bet-col");
-    betCols.forEach(col=>{
-      const items=col.querySelectorAll(".bet-item");
-      items.forEach(item=>{
-        if(item.textContent.includes((i+1)+"-") || item.textContent.includes("-"+(i+1)+"-") || item.textContent.endsWith("-"+(i+1))){
-          hit +=5;
-        }
-      });
-    });
+    const label = document.createElement("span");
+    label.className="hitrate-label";
+    label.style.width="36px";
+    label.style.textAlign="right";
+    label.style.marginRight="6px";
+    label.textContent=(i+1)+"";
 
-    if(hit>100) hit=100;
+    const barOuter = document.createElement("div");
+    barOuter.style.flex="1";
+    barOuter.style.height="14px";
+    barOuter.style.background=lightColors[i];
+    barOuter.style.border="1px solid #333";
+    barOuter.style.position="relative";
+    barOuter.style.borderRadius="4px";
 
-    const bar = row.querySelector(".hitrate-bar div");
-    bar.style.width = hit+"%";
+    const hitRate = Math.round((ai[i]+predict[i]+base[i])/3); // シンプル平均
+    const bar = document.createElement("div");
+    bar.style.height="100%";
+    bar.style.width = hitRate + "%";
     bar.style.background = colors[i];
+    bar.style.border = "1px solid #000";
+    bar.style.boxSizing="border-box";
 
-    row.querySelector(".hitrate-value").textContent = hit+"%";
-  });
+    const barText = document.createElement("span");
+    barText.className="bar-text";
+    barText.textContent = hitRate + "%";
+
+    barOuter.appendChild(bar);
+    barOuter.appendChild(barText);
+
+    row.appendChild(label);
+    row.appendChild(barOuter);
+
+    container.appendChild(row);
+  }
 }
