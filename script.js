@@ -597,3 +597,61 @@ function updateTotalBets(base, predict, ai, confidence) {
 
 // ④ 汎用setCol関数を既存コードから流用
 // function setCol(col, arr) {...} は既存のまま使用可能
+// ===============================
+// 穴買い目（低スコアコース）表示
+// calcAll() 内で自動更新
+// ===============================
+function updateHoleBets(ai){
+  const cols = document.querySelectorAll(".bet-col");
+  if(cols.length < 4) return; // 穴欄が存在するか確認
+
+  // スコア降順でソート
+  const sorted = ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
+
+  // 上位3つは本命・対抗・逃げで使用済みなので穴候補は下位
+  const holeCandidates = sorted.slice(3).map(x=>x.i); 
+
+  // 候補が少ない場合は穴候補を補完
+  const others = [1,2,3,4,5,6].filter(n=>!holeCandidates.includes(n));
+
+  const hole1 = holeCandidates[0] || others[0];
+  const hole2 = holeCandidates[1] || others[1];
+  const hole3 = holeCandidates[2] || others[2];
+
+  // 穴欄に買い目セット
+  const holeCol = cols[3]; 
+  holeCol.querySelectorAll(".bet-item").forEach((el,i)=>{
+    if(i===0) el.textContent = `${hole1}-${hole2}-${hole3}`;
+    else if(i===1) el.textContent = `${hole1}-${hole3}-${hole2}`;
+    else if(i===2) el.textContent = `${hole2}-${hole1}-${hole3}`;
+  });
+}
+
+// ===============================
+// calcAll() 内で呼び出し例
+// ===============================
+function calcAll(){
+  let base=[];
+  let predict=[];
+  let ai=[];
+
+  for(let i=0;i<6;i++){
+    const b = Math.floor(40+Math.random()*40);
+    const p = Math.floor(35+Math.random()*45);
+    const a = Math.round(b*0.4 + p*0.6);
+
+    base.push(b);
+    predict.push(p);
+    ai.push(a);
+  }
+
+  updateExpectationBars(base,predict,ai);
+  updateKimarite();
+  updateRaceTypeByAI(ai);
+  updateAnalysis(ai);
+  updateBets(ai);
+  updateHitRateSimulation(base,predict,ai);
+
+  // ←ここで穴買い目を自動更新
+  updateHoleBets(ai);
+}
