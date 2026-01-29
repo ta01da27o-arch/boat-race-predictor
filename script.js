@@ -721,3 +721,61 @@ function updateHoleBets(ai){
     `${others[2]}-${others[0]}-${others[1]}`
   ]);
 }
+// ===============================
+// calcAll() 末尾追加：統合更新（信頼度＋穴買い目）
+// ===============================
+function updateAllDisplays(ai, base, predict) {
+  // 本命・対抗・逃げ買い目更新
+  updateBets(ai);
+
+  // 穴買い目更新
+  updateHoleBets(ai);
+
+  // 総合期待度バー更新
+  updateExpectationBars(base, predict, ai);
+
+  // 的中率バー更新
+  updateHitRateSimulation(base, predict, ai);
+
+  // 信頼度メーター更新
+  updateTrustMeter(ai);
+}
+
+// ===============================
+// 穴買い目（末尾追加用）
+// ===============================
+function updateHoleBets(ai){
+  const sorted = ai
+    .map((v,i)=>({v,i:i+1}))
+    .sort((a,b)=>b.v-a.v);
+
+  const main = sorted[0].i;
+  const sub  = sorted[1].i;
+  const third= sorted[2].i;
+
+  const others = [1,2,3,4,5,6].filter(n => ![main,sub,third].includes(n));
+
+  const col = document.querySelectorAll(".bet-col")[3]; // 穴列
+  const bets = [
+    `${others[0]}-${others[1]}-${others[2]}`,
+    `${others[0]}-${others[2]}-${others[1]}`,
+    `${others[1]}-${others[0]}-${others[2]}`
+  ];
+
+  setCol(col, bets);
+}
+
+// ===============================
+// 信頼度メーター更新（末尾追加用）
+// ===============================
+function updateTrustMeter(ai){
+  const meter = document.querySelector(".trust-meter-bar div");
+  const scoreText = document.querySelector(".trust-score");
+
+  // 簡易スコア例: 平均AI値で総合信頼度を算出
+  const avg = Math.round(ai.reduce((a,b)=>a+b,0)/ai.length);
+  const volatility = Math.max(...ai)-Math.min(...ai); // 荒れ指数
+
+  meter.style.width = avg + "%";            // 総合信頼度バー
+  scoreText.textContent = `総合信頼度: ${avg}%  荒れ指数: ${volatility}`;
+}
