@@ -508,3 +508,92 @@ function renderConfidenceFinal(hardness, volatility, reliability){
 // 使用例: stadiumIndex を選択場に置き換える
 // const stadiumIndex = 0; // 選択場インデックス
 // updateConfidenceMeterFinal(base,predict,ai,stadiumIndex);
+// ===============================
+// E：総合買い目AI化（穴買い目追加）
+// ===============================
+
+// ① 買い目欄HTML自動生成（末尾追加用）
+(function createHoleBetSection() {
+  const betSection = document.getElementById("betSection");
+  if (!betSection) return;
+
+  // 穴買い目欄
+  const holeCol = document.createElement("div");
+  holeCol.className = "bet-col";
+
+  const title = document.createElement("div");
+  title.className = "bet-title";
+  title.textContent = "穴";
+  holeCol.appendChild(title);
+
+  for (let i = 0; i < 3; i++) {
+    const item = document.createElement("div");
+    item.className = "bet-item";
+    holeCol.appendChild(item);
+  }
+
+  betSection.querySelector(".bet-box").appendChild(holeCol);
+
+  // スタイル調整：4分割表示
+  const cols = betSection.querySelectorAll(".bet-col");
+  cols.forEach(col => col.style.flex = "1");
+  betSection.querySelector(".bet-box").style.display = "flex";
+  betSection.querySelector(".bet-box").style.gap = "8px";
+})();
+
+// ② 総合買い目AI化関数（本命・対抗・逃げ + 穴）
+function updateTotalBets(base, predict, ai, confidence) {
+  const sorted = ai
+    .map((v,i)=>({v,i:i+1}))
+    .sort((a,b)=>b.v-a.v);
+
+  const main = sorted[0].i;      // 本命
+  const sub  = sorted[1].i;      // 対抗
+  const third= sorted[2].i;      // 3着候補
+
+  const others = [1,2,3,4,5,6].filter(n=>n!==main && n!==sub);
+
+  const cols = document.querySelectorAll(".bet-col");
+
+  if (cols.length < 4) return;
+
+  // 本命
+  setCol(cols[0], [
+    `${main}-${sub}-${third}`,
+    `${main}-${third}-${sub}`,
+    `${sub}-${main}-${third}`
+  ]);
+
+  // 対抗
+  setCol(cols[1], [
+    `${sub}-${main}-${third}`,
+    `${third}-${main}-${sub}`,
+    `${sub}-${third}-${main}`
+  ]);
+
+  // 逃げ（1固定）
+  setCol(cols[2], [
+    `1-${others[0]}-${others[1]}`,
+    `1-${others[1]}-${others[0]}`,
+    `1-${others[2]}-${others[3]}`
+  ]);
+
+  // 穴（総合スコア低め + confidence低めコースをピック）
+  const holeCandidates = sorted.slice(3).map(x => x.i);
+  const hole1 = holeCandidates[0] || others[0];
+  const hole2 = holeCandidates[1] || others[1];
+  const hole3 = holeCandidates[2] || others[2];
+
+  setCol(cols[3], [
+    `${hole1}-${hole2}-${hole3}`,
+    `${hole1}-${hole3}-${hole2}`,
+    `${hole2}-${hole1}-${hole3}`
+  ]);
+}
+
+// ③ 既存calcAll()内での呼び出し例
+// calcAll()の末尾に追加するイメージ
+// updateTotalBets(base, predict, ai, confidenceScore);
+
+// ④ 汎用setCol関数を既存コードから流用
+// function setCol(col, arr) {...} は既存のまま使用可能
