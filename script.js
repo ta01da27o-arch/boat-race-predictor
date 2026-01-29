@@ -655,3 +655,69 @@ function calcAll(){
   // ←ここで穴買い目を自動更新
   updateHoleBets(ai);
 }
+// ===============================
+// 過去傾向データ（ダミー、0～100）
+// ===============================
+const pastTrend = [
+  [60,50,45,40,35,30],[55,50,50,45,40,35],[50,45,50,40,35,30],[60,55,50,45,40,35],
+  [55,50,45,40,35,30],[50,45,40,35,30,25],[60,55,50,45,40,35],[55,50,45,40,35,30],
+  [50,45,40,35,30,25],[60,55,50,45,40,35],[55,50,45,40,35,30],[50,45,40,35,30,25],
+  [60,55,50,45,40,35],[55,50,45,40,35,30],[50,45,40,35,30,25],[60,55,50,45,40,35],
+  [55,50,45,40,35,30],[50,45,40,35,30,25],[60,55,50,45,40,35],[55,50,45,40,35,30],
+  [50,45,40,35,30,25],[60,55,50,45,40,35],[55,50,45,40,35,30],[50,45,40,35,30,25]
+];
+
+// ===============================
+// 過去傾向反映版メイン計算
+// ===============================
+function calcAllWithTrend(stadiumIndex){
+
+  let base=[];
+  let predict=[];
+  let ai=[];
+  let trend = pastTrend[stadiumIndex]; // 選択された場の過去傾向
+
+  for(let i=0;i<6;i++){
+    const b = Math.floor(40+Math.random()*40);
+    const p = Math.floor(35+Math.random()*45);
+    const t = trend[i]; // 過去傾向
+    const a = Math.round(b*0.3 + p*0.5 + t*0.2); // 補正AIスコア
+
+    base.push(b);
+    predict.push(p);
+    ai.push(a);
+  }
+
+  // 既存関数連動
+  updateExpectationBars(base,predict,ai);
+  updateKimarite();
+  updateRaceTypeByAI(ai);
+  updateAnalysis(ai);
+  updateBets(ai);
+  updateHoleBets(ai);          // 穴買い目
+  updateHitRateSimulation(base,predict,ai);
+  updateTrustMeter(ai);         // 信頼度メーター
+}
+
+// ===============================
+// 穴買い目（末尾追加用）
+// ===============================
+function updateHoleBets(ai){
+  const sorted = ai
+    .map((v,i)=>({v,i:i+1}))
+    .sort((a,b)=>b.v-a.v);
+
+  const main = sorted[0].i;
+  const sub  = sorted[1].i;
+  const third= sorted[2].i;
+
+  const others = [1,2,3,4,5,6].filter(n=>![main,sub,third].includes(n));
+
+  const col = document.querySelector("#betSection .bet-col.hole"); // 穴用列
+
+  setCol(col, [
+    `${others[0]}-${others[1]}-${others[2]}`,
+    `${others[1]}-${others[0]}-${others[2]}`,
+    `${others[2]}-${others[0]}-${others[1]}`
+  ]);
+}
