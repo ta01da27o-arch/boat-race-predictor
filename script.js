@@ -247,60 +247,97 @@ ${sub}コースが続き高配当も視野。
   document.querySelector(".analysis-text").textContent = text;
 }
 // ===============================
-// 買い目（逃げ重複完全排除＋9点ユニーク）
-function updateBets(ai){
+// コース固定カラー（絶対変更禁止）
+const courseColors = [
+  "#ffffff", // 1コース 白
+  "#000000", // 2コース 黒
+  "#ff0000", // 3コース 赤
+  "#0000ff", // 4コース 青
+  "#ffff00", // 5コース 黄
+  "#00aa00"  // 6コース 緑
+];
 
-  const sorted = ai
+// ===============================
+// 買い目生成（重複完全排除）
+
+function generateBets(expect){
+
+  const sorted = expect
     .map((v,i)=>({v,i:i+1}))
     .sort((a,b)=>b.v-a.v);
 
-  const main   = sorted[0].i;
-  const sub    = sorted[1].i;
-  const third  = sorted[2].i;
+  const main1 = sorted[0].i;
+  const main2 = sorted[1].i;
+  const main3 = sorted[2].i;
 
-  const all = [1,2,3,4,5,6];
+  const bets = new Set();
 
-  const rest = all.filter(n=>![main,sub,third].includes(n));
+  // 本命
+  bets.add(`${main1}-${main2}-${main3}`);
 
-  let bets = [];
+  // 対抗
+  bets.add(`${main2}-${main3}-${main1}`);
+  bets.add(`${main1}-${main3}-${main2}`);
 
-  // 本命系
-  bets.push(`${main}-${sub}-${third}`);
-  bets.push(`${main}-${third}-${sub}`);
-  bets.push(`${sub}-${main}-${third}`);
+  // 逃げ（1着固定・重複排除）
+  if(main1 === 1){
 
-  // 対抗系
-  bets.push(`${sub}-${third}-${main}`);
-  bets.push(`${third}-${main}-${sub}`);
-  bets.push(`${third}-${sub}-${main}`);
+    for(let i=2;i<=6;i++){
+      for(let j=2;j<=6;j++){
 
-  // 逃げ固定（1着=1のみ、重複禁止）
-  all.forEach(a=>{
-    all.forEach(b=>{
-      if(a!==1 && b!==1 && a!==b){
-        bets.push(`1-${a}-${b}`);
+        if(i !== j){
+          bets.add(`1-${i}-${j}`);
+        }
+
+        if(bets.size >= 9) break;
       }
-    });
-  });
+      if(bets.size >= 9) break;
+    }
+  }
 
-  // 完全ユニーク化 → 上位9点だけ使用
-  bets = [...new Set(bets)].slice(0,9);
+  // 足りなければ期待度順で補完
+  for(let a of sorted){
+    for(let b of sorted){
+      for(let c of sorted){
 
-  const cols = document.querySelectorAll(".bet-col");
+        if(a.i !== b.i && b.i !== c.i && a.i !== c.i){
 
-  cols.forEach((col,j)=>{
+          bets.add(`${a.i}-${b.i}-${c.i}`);
 
-    const items = col.querySelectorAll(".bet-item");
+          if(bets.size >= 9) break;
+        }
+      }
+      if(bets.size >= 9) break;
+    }
+    if(bets.size >= 9) break;
+  }
 
-    items.forEach((el,i)=>{
-      el.textContent = bets[j*3+i] || "";
-    });
+  return Array.from(bets).slice(0,9);
+}
 
+// ===============================
+// 買い目表示
+
+function updateBets(expect){
+
+  const betBox = document.getElementById("betList");
+  if(!betBox) return;
+
+  const bets = generateBets(expect);
+
+  betBox.innerHTML = "";
+
+  bets.forEach(bet=>{
+    const div = document.createElement("div");
+    div.className = "bet-item";
+    div.textContent = bet;
+    betBox.appendChild(div);
   });
 }
 
 // ===============================
-// 的中率シュミレーション（%バグ修正版＋各コースバー生成）
+// 的中率シュミレーション（修正版）
+
 function updateHitRateSimulation(base,predict,ai){
 
   const rows = document.querySelectorAll(".hitrate-row");
@@ -308,72 +345,74 @@ function updateHitRateSimulation(base,predict,ai){
   rows.forEach((row,i)=>{
 
     let rate = Math.round((base[i] + predict[i] + ai[i]) / 3);
-
-    rate = Math.max(1,Math.min(100,rate));
+    rate = Math.max(1, Math.min(100, rate));
 
     const valueBox = row.querySelector(".hitrate-value");
     const barWrap  = row.querySelector(".hitrate-bar");
-    const barInner = row.querySelector(".hitrate-bar div");
 
+    // バー生成
+    let barInner = barWrap.querySelector("div");
+    if(!barInner){
+      barInner = document.createElement("div");
+      barWrap.appendChild(barInner);
+    }
+
+    // %表示（間隔調整）
     if(valueBox){
       valueBox.textContent = rate + "%";
+      valueBox.style.marginLeft = "12px";
     }
 
-    if(barInner){
+    // バー枠
+    barWrap.style.border = "1px solid #333";
+    barWrap.style.height = "14px";
+    barWrap.style.borderRadius = "4px";
+    barWrap.style.background = "#ddd";
+    barWrap.style.marginLeft = "12px";
 
-      barInner.style.width = rate + "%";
-      barInner.style.background = courseColors[i];
-
-      barWrap.style.border = "1px solid #333";
-      barWrap.style.height = "14px";
-      barWrap.style.borderRadius = "4px";
-      barWrap.style.background = "#ddd";
-    }
+    // バー本体
+    barInner.style.height = "100%";
+    barInner.style.width = rate + "%";
+    barInner.style.background = courseColors[i];
+    barInner.style.borderRadius = "4px";
 
   });
 }
 
 // ===============================
-// 信頼度メーター（完全維持）
-function updateTrustMeter(ai){
+// 信頼度メーター
 
-  const max = Math.max(...ai);
-  const min = Math.min(...ai);
+function updateTrustMeter(expect){
 
-  let solidity = Math.round((max - min) * 1.5);
+  const meter = document.getElementById("trustMeterBar");
+  const label = document.getElementById("trustMeterValue");
 
-  const avg = ai.reduce((a,b)=>a+b,0) / 6;
+  if(!meter || !label) return;
 
-  let variance = Math.round(
-    ai.reduce((s,v)=> s + Math.abs(v - avg), 0) / 6 * 1.8
-  );
+  const avg = expect.reduce((a,b)=>a+b,0) / expect.length;
+  const trust = Math.round(Math.min(100, Math.max(10, avg)));
 
-  solidity = Math.min(100,solidity);
-  variance = Math.min(100,variance);
+  meter.style.width = trust + "%";
 
-  let trust = Math.round(solidity - variance * 0.6);
-
-  trust = Math.max(0,Math.min(100,trust));
-
-  let box = document.getElementById("trustMeter");
-
-  if(!box){
-
-    box = document.createElement("div");
-
-    box.id = "trustMeter";
-    box.style.margin = "16px 10px";
-    box.style.padding = "12px";
-    box.style.border = "2px solid #333";
-    box.style.borderRadius = "8px";
-
-    document.getElementById("playerScreen").appendChild(box);
+  if(trust >= 75){
+    meter.style.background = "#00cc00";
+  }else if(trust >= 50){
+    meter.style.background = "#ffaa00";
+  }else{
+    meter.style.background = "#ff4444";
   }
 
-  box.innerHTML = `
-    <h2>信頼度メーター</h2>
-    <p>堅さスコア：${solidity}</p>
-    <p>荒れ指数：${variance}</p>
-    <p><strong>総合信頼度：${trust}%</strong></p>
-  `;
+  label.textContent = trust + "%";
+}
+
+// ===============================
+// part3統合更新
+
+function updatePart3(base,predict,ai){
+
+  const expect = base.map((v,i)=> Math.round((v + predict[i] + ai[i]) / 3));
+
+  updateBets(expect);
+  updateHitRateSimulation(base,predict,ai);
+  updateTrustMeter(expect);
 }
