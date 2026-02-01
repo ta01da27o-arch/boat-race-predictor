@@ -247,43 +247,61 @@ ${sub}コースが続き高配当も視野。
   document.querySelector(".analysis-text").textContent = text;
 }
 // ===============================
-// part3 安定修正版（24場対応）
+// 買い目（逃げ重複完全排除＋9点ユニーク）
+function updateBets(ai){
 
-function updatePart3(card, base, predict, ai){
+  const sorted = ai
+    .map((v,i)=>({v,i:i+1}))
+    .sort((a,b)=>b.v-a.v);
 
-  const expect = base.map((v,i)=> Math.round((v + predict[i] + ai[i]) / 3));
+  const main   = sorted[0].i;
+  const sub    = sorted[1].i;
+  const third  = sorted[2].i;
 
-  updateBets(card, expect);
-  updateHitRateSimulation(card, base, predict, ai);
-  updateTrustMeter(card, expect);
-}
+  const all = [1,2,3,4,5,6];
 
-// ===============================
+  let bets = [];
 
-function updateBets(card, expect){
+  // ===== 本命系 =====
+  bets.push(`${main}-${sub}-${third}`);
+  bets.push(`${main}-${third}-${sub}`);
+  bets.push(`${sub}-${main}-${third}`);
 
-  const betBox = card.querySelector(".betList");
-  if(!betBox) return;
+  // ===== 対抗系 =====
+  bets.push(`${sub}-${third}-${main}`);
+  bets.push(`${third}-${main}-${sub}`);
+  bets.push(`${third}-${sub}-${main}`);
 
-  const bets = generateBets(expect);
+  // ===== 逃げ固定（1着=1のみ・完全重複防止）=====
+  all.forEach(a=>{
+    all.forEach(b=>{
+      if(a !== 1 && b !== 1 && a !== b){
+        bets.push(`1-${a}-${b}`);
+      }
+    });
+  });
 
-  betBox.innerHTML = "";
+  // ===== 完全ユニーク化 → 上位9点 =====
+  bets = [...new Set(bets)].slice(0,9);
 
-  bets.forEach(bet=>{
-    const div = document.createElement("div");
-    div.className = "bet-item";
-    div.textContent = bet;
-    betBox.appendChild(div);
+  const cols = document.querySelectorAll(".bet-col");
+
+  cols.forEach((col,j)=>{
+
+    const items = col.querySelectorAll(".bet-item");
+
+    items.forEach((el,i)=>{
+      el.textContent = bets[j*3 + i] || "";
+    });
+
   });
 }
 
 // ===============================
+// 的中率シュミレーション（バー確実表示・間隔調整・％正常化）
+function updateHitRateSimulation(base,predict,ai){
 
-function updateHitRateSimulation(card, base,predict,ai){
-
-  const rows = card.querySelectorAll(".hitrate-row");
-
-  if(!rows.length) return;
+  const rows = document.querySelectorAll(".hitrate-row");
 
   rows.forEach((row,i)=>{
 
@@ -292,50 +310,72 @@ function updateHitRateSimulation(card, base,predict,ai){
 
     const valueBox = row.querySelector(".hitrate-value");
     const barWrap  = row.querySelector(".hitrate-bar");
+    const barInner = barWrap.querySelector("div");
 
-    let barInner = barWrap.querySelector("div");
-    if(!barInner){
-      barInner = document.createElement("div");
-      barWrap.appendChild(barInner);
-    }
-
+    // ===== %表示 =====
     if(valueBox){
       valueBox.textContent = rate + "%";
-      valueBox.style.marginLeft = "12px";
+      valueBox.style.marginLeft = "8px";
     }
 
+    // ===== バー外枠 =====
+    barWrap.style.flex = "1";
+    barWrap.style.marginLeft = "12px";
     barWrap.style.border = "1px solid #333";
     barWrap.style.height = "14px";
+    barWrap.style.borderRadius = "4px";
     barWrap.style.background = "#ddd";
-    barWrap.style.marginLeft = "12px";
+    barWrap.style.minWidth = "140px";   // ←確実に見える幅
 
-    barInner.style.width = rate + "%";
+    // ===== バー本体 =====
     barInner.style.height = "100%";
+    barInner.style.width = rate + "%";
     barInner.style.background = courseColors[i];
+    barInner.style.borderRadius = "4px";
   });
 }
 
 // ===============================
+// 信頼度メーター（完全維持）
+function updateTrustMeter(ai){
 
-function updateTrustMeter(card, expect){
+  const max = Math.max(...ai);
+  const min = Math.min(...ai);
 
-  const meter = card.querySelector(".trustMeterBar");
-  const label = card.querySelector(".trustMeterValue");
+  let solidity = Math.round((max - min) * 1.5);
 
-  if(!meter || !label) return;
+  const avg = ai.reduce((a,b)=>a+b,0) / 6;
 
-  const avg = expect.reduce((a,b)=>a+b,0) / expect.length;
-  const trust = Math.round(Math.min(100, Math.max(10, avg)));
+  let variance = Math.round(
+    ai.reduce((s,v)=> s + Math.abs(v - avg), 0) / 6 * 1.8
+  );
 
-  meter.style.width = trust + "%";
+  solidity = Math.min(100,solidity);
+  variance = Math.min(100,variance);
 
-  if(trust >= 75){
-    meter.style.background = "#00cc00";
-  }else if(trust >= 50){
-    meter.style.background = "#ffaa00";
-  }else{
-    meter.style.background = "#ff4444";
+  let trust = Math.round(solidity - variance * 0.6);
+
+  trust = Math.max(0, Math.min(100, trust));
+
+  let box = document.getElementById("trustMeter");
+
+  if(!box){
+
+    box = document.createElement("div");
+
+    box.id = "trustMeter";
+    box.style.margin = "16px 10px";
+    box.style.padding = "12px";
+    box.style.border = "2px solid #333";
+    box.style.borderRadius = "8px";
+
+    document.getElementById("playerScreen").appendChild(box);
   }
 
-  label.textContent = trust + "%";
+  box.innerHTML = `
+    <h2>信頼度メーター</h2>
+    <p>堅さスコア：${solidity}</p>
+    <p>荒れ指数：${variance}</p>
+    <p><strong>総合信頼度：${trust}%</strong></p>
+  `;
 }
