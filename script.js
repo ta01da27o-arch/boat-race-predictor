@@ -43,6 +43,22 @@ document.getElementById("backBtn").onclick = () => {
 };
 
 // ===============================
+// 本日の日付 自動表示（★追加のみ）
+// ===============================
+const todayBox = document.getElementById("todayDate");
+
+if(todayBox){
+
+  const now = new Date();
+
+  const y = now.getFullYear();
+  const m = String(now.getMonth()+1).padStart(2,"0");
+  const d = String(now.getDate()).padStart(2,"0");
+
+  todayBox.textContent = `${y}/${m}/${d}`;
+}
+
+// ===============================
 // 画面遷移
 // ===============================
 let currentStadiumIndex = 0;
@@ -73,7 +89,7 @@ const pastTrend = [
 ];
 
 // ===============================
-// メイン計算
+// メイン計算（既存完全維持）
 // ===============================
 function calcAllWithTrend(stadiumIndex){
 
