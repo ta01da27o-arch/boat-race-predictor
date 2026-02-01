@@ -247,80 +247,22 @@ ${sub}コースが続き高配当も視野。
   document.querySelector(".analysis-text").textContent = text;
 }
 // ===============================
-// コース固定カラー（絶対変更禁止）
-const courseColors = [
-  "#ffffff", // 1コース 白
-  "#000000", // 2コース 黒
-  "#ff0000", // 3コース 赤
-  "#0000ff", // 4コース 青
-  "#ffff00", // 5コース 黄
-  "#00aa00"  // 6コース 緑
-];
+// part3 安定修正版（24場対応）
 
-// ===============================
-// 買い目生成（重複完全排除）
+function updatePart3(card, base, predict, ai){
 
-function generateBets(expect){
+  const expect = base.map((v,i)=> Math.round((v + predict[i] + ai[i]) / 3));
 
-  const sorted = expect
-    .map((v,i)=>({v,i:i+1}))
-    .sort((a,b)=>b.v-a.v);
-
-  const main1 = sorted[0].i;
-  const main2 = sorted[1].i;
-  const main3 = sorted[2].i;
-
-  const bets = new Set();
-
-  // 本命
-  bets.add(`${main1}-${main2}-${main3}`);
-
-  // 対抗
-  bets.add(`${main2}-${main3}-${main1}`);
-  bets.add(`${main1}-${main3}-${main2}`);
-
-  // 逃げ（1着固定・重複排除）
-  if(main1 === 1){
-
-    for(let i=2;i<=6;i++){
-      for(let j=2;j<=6;j++){
-
-        if(i !== j){
-          bets.add(`1-${i}-${j}`);
-        }
-
-        if(bets.size >= 9) break;
-      }
-      if(bets.size >= 9) break;
-    }
-  }
-
-  // 足りなければ期待度順で補完
-  for(let a of sorted){
-    for(let b of sorted){
-      for(let c of sorted){
-
-        if(a.i !== b.i && b.i !== c.i && a.i !== c.i){
-
-          bets.add(`${a.i}-${b.i}-${c.i}`);
-
-          if(bets.size >= 9) break;
-        }
-      }
-      if(bets.size >= 9) break;
-    }
-    if(bets.size >= 9) break;
-  }
-
-  return Array.from(bets).slice(0,9);
+  updateBets(card, expect);
+  updateHitRateSimulation(card, base, predict, ai);
+  updateTrustMeter(card, expect);
 }
 
 // ===============================
-// 買い目表示
 
-function updateBets(expect){
+function updateBets(card, expect){
 
-  const betBox = document.getElementById("betList");
+  const betBox = card.querySelector(".betList");
   if(!betBox) return;
 
   const bets = generateBets(expect);
@@ -336,11 +278,12 @@ function updateBets(expect){
 }
 
 // ===============================
-// 的中率シュミレーション（修正版）
 
-function updateHitRateSimulation(base,predict,ai){
+function updateHitRateSimulation(card, base,predict,ai){
 
-  const rows = document.querySelectorAll(".hitrate-row");
+  const rows = card.querySelectorAll(".hitrate-row");
+
+  if(!rows.length) return;
 
   rows.forEach((row,i)=>{
 
@@ -350,42 +293,34 @@ function updateHitRateSimulation(base,predict,ai){
     const valueBox = row.querySelector(".hitrate-value");
     const barWrap  = row.querySelector(".hitrate-bar");
 
-    // バー生成
     let barInner = barWrap.querySelector("div");
     if(!barInner){
       barInner = document.createElement("div");
       barWrap.appendChild(barInner);
     }
 
-    // %表示（間隔調整）
     if(valueBox){
       valueBox.textContent = rate + "%";
       valueBox.style.marginLeft = "12px";
     }
 
-    // バー枠
     barWrap.style.border = "1px solid #333";
     barWrap.style.height = "14px";
-    barWrap.style.borderRadius = "4px";
     barWrap.style.background = "#ddd";
     barWrap.style.marginLeft = "12px";
 
-    // バー本体
-    barInner.style.height = "100%";
     barInner.style.width = rate + "%";
+    barInner.style.height = "100%";
     barInner.style.background = courseColors[i];
-    barInner.style.borderRadius = "4px";
-
   });
 }
 
 // ===============================
-// 信頼度メーター
 
-function updateTrustMeter(expect){
+function updateTrustMeter(card, expect){
 
-  const meter = document.getElementById("trustMeterBar");
-  const label = document.getElementById("trustMeterValue");
+  const meter = card.querySelector(".trustMeterBar");
+  const label = card.querySelector(".trustMeterValue");
 
   if(!meter || !label) return;
 
@@ -403,16 +338,4 @@ function updateTrustMeter(expect){
   }
 
   label.textContent = trust + "%";
-}
-
-// ===============================
-// part3統合更新
-
-function updatePart3(base,predict,ai){
-
-  const expect = base.map((v,i)=> Math.round((v + predict[i] + ai[i]) / 3));
-
-  updateBets(expect);
-  updateHitRateSimulation(base,predict,ai);
-  updateTrustMeter(expect);
 }
