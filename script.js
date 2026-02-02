@@ -1,13 +1,31 @@
 // ===============================
-// 24場名
+// 24場名 + JSONファイル紐付け
 // ===============================
 const stadiums = [
-  "桐生","戸田","江戸川","平和島",
-  "多摩川","浜名湖","蒲郡","常滑",
-  "津","三国","びわこ","住之江",
-  "尼崎","鳴門","丸亀","児島",
-  "宮島","徳山","下関","若松",
-  "芦屋","福岡","唐津","大村"
+  { name:"桐生", file:"kiryu.json" },
+  { name:"戸田", file:"toda.json" },
+  { name:"江戸川", file:"edogawa.json" },
+  { name:"平和島", file:"heiwajima.json" },
+  { name:"多摩川", file:"tamagawa.json" },
+  { name:"浜名湖", file:"hamanako.json" },
+  { name:"蒲郡", file:"gamagori.json" },
+  { name:"常滑", file:"tokoname.json" },
+  { name:"津", file:"tsu.json" },
+  { name:"三国", file:"mikuni.json" },
+  { name:"びわこ", file:"biwako.json" },
+  { name:"住之江", file:"suminoe.json" },
+  { name:"尼崎", file:"amagasaki.json" },
+  { name:"鳴門", file:"naruto.json" },
+  { name:"丸亀", file:"marugame.json" },
+  { name:"児島", file:"kojima.json" },
+  { name:"宮島", file:"miyajima.json" },
+  { name:"徳山", file:"tokuyama.json" },
+  { name:"下関", file:"shimonoseki.json" },
+  { name:"若松", file:"wakamatsu.json" },
+  { name:"芦屋", file:"ashiya.json" },
+  { name:"福岡", file:"fukuoka.json" },
+  { name:"唐津", file:"karatsu.json" },
+  { name:"大村", file:"omura.json" }
 ];
 
 // ===============================
@@ -21,10 +39,10 @@ const courseColors = ["#ffffff","#000000","#ff0000","#0000ff","#ffff00","#00ff00
 const stadiumGrid = document.querySelector(".stadium-grid");
 const raceGrid = document.querySelector(".race-grid");
 
-stadiums.forEach((name,i)=>{
+stadiums.forEach((stadium,i)=>{
   const div = document.createElement("div");
   div.className = "stadium";
-  div.textContent = name;
+  div.textContent = stadium.name;
   div.onclick = () => selectStadium(i);
   stadiumGrid.appendChild(div);
 });
@@ -43,22 +61,6 @@ document.getElementById("backBtn").onclick = () => {
 };
 
 // ===============================
-// 本日の日付 自動表示（★追加のみ）
-// ===============================
-const todayBox = document.getElementById("todayDate");
-
-if(todayBox){
-
-  const now = new Date();
-
-  const y = now.getFullYear();
-  const m = String(now.getMonth()+1).padStart(2,"0");
-  const d = String(now.getDate()).padStart(2,"0");
-
-  todayBox.textContent = `${y}/${m}/${d}`;
-}
-
-// ===============================
 // 画面遷移
 // ===============================
 let currentStadiumIndex = 0;
@@ -67,7 +69,7 @@ function selectStadium(i){
   currentStadiumIndex = i;
   document.getElementById("stadiumScreen").classList.add("hidden");
   document.getElementById("raceScreen").classList.remove("hidden");
-  document.getElementById("raceTitle").textContent = stadiums[i];
+  document.getElementById("raceTitle").textContent = stadiums[i].name;
 }
 
 function selectRace(){
@@ -75,7 +77,6 @@ function selectRace(){
   document.getElementById("playerScreen").classList.remove("hidden");
   calcAllWithTrend(currentStadiumIndex);
 }
-
 // ===============================
 // 過去傾向データ
 // ===============================
@@ -89,7 +90,7 @@ const pastTrend = [
 ];
 
 // ===============================
-// メイン計算（既存完全維持）
+// メイン計算
 // ===============================
 function calcAllWithTrend(stadiumIndex){
 
@@ -122,8 +123,10 @@ function calcAllWithTrend(stadiumIndex){
   updateHitRateSimulation(base,predict,ai);
   updateTrustMeter(ai);
 }
+
 // ===============================
-// 総合期待度バー（3本バー＋ラベル付き）
+// 総合期待度（3本バー＋ラベル付き）
+// ===============================
 function updateExpectationBars(base,predict,ai){
 
   const labels = ["実績","予測","AI"];
@@ -144,8 +147,7 @@ function updateExpectationBars(base,predict,ai){
       label.textContent = labels[j];
       label.style.width="40px";
       label.style.fontSize="12px";
-      label.style.marginRight="4px";
-      container.appendChild(label);
+      label.style.marginRight="6px";
 
       const outer = document.createElement("div");
       outer.style.flex="1";
@@ -153,7 +155,6 @@ function updateExpectationBars(base,predict,ai){
       outer.style.border="1px solid #333";
       outer.style.borderRadius="4px";
       outer.style.background="#ddd";
-      outer.style.position="relative";
 
       const bar = document.createElement("div");
       bar.style.height="100%";
@@ -161,7 +162,9 @@ function updateExpectationBars(base,predict,ai){
       bar.style.background = courseColors[i];
 
       outer.appendChild(bar);
+      container.appendChild(label);
       container.appendChild(outer);
+
       barBox.appendChild(container);
     });
 
@@ -171,6 +174,7 @@ function updateExpectationBars(base,predict,ai){
 
 // ===============================
 // 決まり手
+// ===============================
 function updateKimarite(base){
 
   const rows = document.querySelectorAll(".kimarite-row");
@@ -179,20 +183,18 @@ function updateKimarite(base){
 
     const baseVal = base[i] || 0;
 
-    let v = Math.round(baseVal * 0.85 + Math.random()*10);
-
+    let v = Math.round(baseVal*0.85 + Math.random()*10);
     v = Math.max(1,Math.min(100,v));
 
-    const bar = row.querySelector(".bar div");
-    const value = row.querySelector(".value");
+    row.querySelector(".bar div").style.width = v + "%";
+    row.querySelector(".value").textContent = v + "%";
 
-    if(bar) bar.style.width = v + "%";
-    if(value) value.textContent = v + "%";
   });
 }
 
 // ===============================
 // 展開タイプ
+// ===============================
 function updateRaceTypeByAI(ai){
 
   const inner = ai[0];
@@ -201,194 +203,151 @@ function updateRaceTypeByAI(ai){
 
   let type="";
 
-  if(inner > middle+10 && inner > outer+15){
-    type="イン逃げ主導型";
-  }
-  else if(middle > inner && middle > outer){
-    type="中枠攻め合い型";
-  }
-  else if(outer > inner && outer > middle){
-    type="外伸び波乱型";
-  }
-  else if(Math.max(...ai) - Math.min(...ai) < 8){
-    type="超混戦型";
-  }
-  else{
-    type="バランス型";
-  }
+  if(inner>middle+10 && inner>outer+15) type="イン逃げ主導型";
+  else if(middle>inner && middle>outer) type="中枠攻め合い型";
+  else if(outer>inner && outer>middle) type="外伸び波乱型";
+  else if(Math.max(...ai)-Math.min(...ai)<8) type="超混戦型";
+  else type="バランス型";
 
-  document.getElementById("race-type").textContent =
-    "展開タイプ : " + type;
+  document.getElementById("race-type").textContent="展開タイプ : "+type;
 }
 
 // ===============================
-// 展開解析（記者風コメント強化）
+// 展開解析（記者風）
+// ===============================
 function updateAnalysis(ai){
 
-  const order = ai
-    .map((v,i)=>({v,i:i+1}))
-    .sort((a,b)=>b.v-a.v);
+  const order = ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
 
-  const main  = order[0].i;
-  const sub   = order[1].i;
-  const third= order[2].i;
+  const main=order[0].i;
+  const sub=order[1].i;
+  const third=order[2].i;
 
   let text="";
 
   if(main===1){
-
     text=`スタート踏み込む1コースが先マイ体勢。
 握って回る${sub}コースが差しで続き内有利の決着濃厚。
 ${third}コースは展開待ちで三着争いまで。
 外枠勢は展開向かず厳しい一戦となりそうだ。`;
-
   }
   else if(main<=3){
-
     text=`${main}コースが攻めて主導権を奪う展開。
 ${sub}コースが内から抵抗し激しい攻防戦。
 ${third}コースが展開突いて浮上。
 波乱含みのレース展開となりそうだ。`;
-
   }
   else{
-
     text=`外枠勢が果敢に仕掛け主導権争い。
 ${main}コースのまくり差しが決まる可能性。
 ${sub}コースが続き高配当も視野。
 イン勢は苦戦必至の流れだ。`;
-
   }
 
-  document.querySelector(".analysis-text").textContent = text;
+  document.querySelector(".analysis-text").textContent=text;
 }
 // ===============================
-// 買い目（逃げ重複完全排除＋9点ユニーク）
+// 買い目（重複完全排除）
 function updateBets(ai){
 
-  const sorted = ai
-    .map((v,i)=>({v,i:i+1}))
-    .sort((a,b)=>b.v-a.v);
+  const sorted = ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
 
-  const main   = sorted[0].i;
-  const sub    = sorted[1].i;
-  const third  = sorted[2].i;
+  const main = sorted[0].i;
+  const sub = sorted[1].i;
+  const third = sorted[2].i;
 
-  const all = [1,2,3,4,5,6];
+  const all=[1,2,3,4,5,6];
 
-  let bets = [];
+  let bets=[];
 
-  // ===== 本命系 =====
+  // 本命・対抗
   bets.push(`${main}-${sub}-${third}`);
   bets.push(`${main}-${third}-${sub}`);
   bets.push(`${sub}-${main}-${third}`);
-
-  // ===== 対抗系 =====
   bets.push(`${sub}-${third}-${main}`);
   bets.push(`${third}-${main}-${sub}`);
   bets.push(`${third}-${sub}-${main}`);
 
-  // ===== 逃げ固定（1着=1のみ・完全重複防止）=====
+  // 逃げ固定（1着=1）
   all.forEach(a=>{
     all.forEach(b=>{
-      if(a !== 1 && b !== 1 && a !== b){
+      if(a!==1 && b!==1 && a!==b){
         bets.push(`1-${a}-${b}`);
       }
     });
   });
 
-  // ===== 完全ユニーク化 → 上位9点 =====
-  bets = [...new Set(bets)].slice(0,9);
+  bets=[...new Set(bets)].slice(0,9);
 
-  const cols = document.querySelectorAll(".bet-col");
+  const cols=document.querySelectorAll(".bet-col");
 
   cols.forEach((col,j)=>{
-
-    const items = col.querySelectorAll(".bet-item");
-
+    const items=col.querySelectorAll(".bet-item");
     items.forEach((el,i)=>{
-      el.textContent = bets[j*3 + i] || "";
+      el.textContent = bets[j*3+i] || "";
     });
-
   });
 }
 
 // ===============================
-// 的中率シュミレーション（バー確実表示・間隔調整・％正常化）
+// 的中率シミュレーション
 function updateHitRateSimulation(base,predict,ai){
 
-  const rows = document.querySelectorAll(".hitrate-row");
+  const rows=document.querySelectorAll(".hitrate-row");
 
   rows.forEach((row,i)=>{
 
-    let rate = Math.round((base[i] + predict[i] + ai[i]) / 3);
-    rate = Math.max(1, Math.min(100, rate));
+    let rate=Math.round((base[i]+predict[i]+ai[i])/3);
+    rate=Math.max(1,Math.min(100,rate));
 
-    const valueBox = row.querySelector(".hitrate-value");
-    const barWrap  = row.querySelector(".hitrate-bar");
-    const barInner = barWrap.querySelector("div");
+    row.querySelector(".hitrate-value").textContent = rate+"%";
 
-    // ===== %表示 =====
-    if(valueBox){
-      valueBox.textContent = rate + "%";
-      valueBox.style.marginLeft = "8px";
-    }
+    const bar=row.querySelector(".hitrate-bar div");
 
-    // ===== バー外枠 =====
-    barWrap.style.flex = "1";
-    barWrap.style.marginLeft = "12px";
-    barWrap.style.border = "1px solid #333";
-    barWrap.style.height = "14px";
-    barWrap.style.borderRadius = "4px";
-    barWrap.style.background = "#ddd";
-    barWrap.style.minWidth = "140px";   // ←確実に見える幅
+    bar.style.width = rate + "%";
+    bar.style.background = courseColors[i];
 
-    // ===== バー本体 =====
-    barInner.style.height = "100%";
-    barInner.style.width = rate + "%";
-    barInner.style.background = courseColors[i];
-    barInner.style.borderRadius = "4px";
+    row.querySelector(".hitrate-bar").style.border="1px solid #333";
+    row.querySelector(".hitrate-bar").style.height="14px";
+    row.querySelector(".hitrate-bar").style.borderRadius="4px";
+    row.querySelector(".hitrate-bar").style.background="#ddd";
   });
 }
 
 // ===============================
-// 信頼度メーター（完全維持）
+// 信頼度メーター
 function updateTrustMeter(ai){
 
-  const max = Math.max(...ai);
-  const min = Math.min(...ai);
+  const max=Math.max(...ai);
+  const min=Math.min(...ai);
 
-  let solidity = Math.round((max - min) * 1.5);
+  let solidity=Math.round((max-min)*1.5);
 
-  const avg = ai.reduce((a,b)=>a+b,0) / 6;
+  const avg=ai.reduce((a,b)=>a+b,0)/6;
 
-  let variance = Math.round(
-    ai.reduce((s,v)=> s + Math.abs(v - avg), 0) / 6 * 1.8
+  let variance=Math.round(
+    ai.reduce((s,v)=>s+Math.abs(v-avg),0)/6*1.8
   );
 
-  solidity = Math.min(100,solidity);
-  variance = Math.min(100,variance);
+  solidity=Math.min(100,solidity);
+  variance=Math.min(100,variance);
 
-  let trust = Math.round(solidity - variance * 0.6);
+  let trust=Math.round(solidity-variance*0.6);
+  trust=Math.max(0,Math.min(100,trust));
 
-  trust = Math.max(0, Math.min(100, trust));
-
-  let box = document.getElementById("trustMeter");
+  let box=document.getElementById("trustMeter");
 
   if(!box){
-
-    box = document.createElement("div");
-
-    box.id = "trustMeter";
-    box.style.margin = "16px 10px";
-    box.style.padding = "12px";
-    box.style.border = "2px solid #333";
-    box.style.borderRadius = "8px";
-
+    box=document.createElement("div");
+    box.id="trustMeter";
+    box.style.margin="16px 10px";
+    box.style.padding="12px";
+    box.style.border="2px solid #333";
+    box.style.borderRadius="8px";
     document.getElementById("playerScreen").appendChild(box);
   }
 
-  box.innerHTML = `
+  box.innerHTML=`
     <h2>信頼度メーター</h2>
     <p>堅さスコア：${solidity}</p>
     <p>荒れ指数：${variance}</p>
