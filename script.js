@@ -2,125 +2,100 @@
 // 24場名 + JSONファイル紐付け
 // ===============================
 const stadiums = [
-  { name:"桐生", file:"kiryu.json" },
-  { name:"戸田", file:"toda.json" },
-  { name:"江戸川", file:"edogawa.json" },
-  { name:"平和島", file:"heiwajima.json" },
-  { name:"多摩川", file:"tamagawa.json" },
-  { name:"浜名湖", file:"hamanako.json" },
-  { name:"蒲郡", file:"gamagori.json" },
-  { name:"常滑", file:"tokoname.json" },
-  { name:"津", file:"tsu.json" },
-  { name:"三国", file:"mikuni.json" },
-  { name:"びわこ", file:"biwako.json" },
-  { name:"住之江", file:"suminoe.json" },
-  { name:"尼崎", file:"amagasaki.json" },
-  { name:"鳴門", file:"naruto.json" },
-  { name:"丸亀", file:"marugame.json" },
-  { name:"児島", file:"kojima.json" },
-  { name:"宮島", file:"miyajima.json" },
-  { name:"徳山", file:"tokuyama.json" },
-  { name:"下関", file:"shimonoseki.json" },
-  { name:"若松", file:"wakamatsu.json" },
-  { name:"芦屋", file:"ashiya.json" },
-  { name:"福岡", file:"fukuoka.json" },
-  { name:"唐津", file:"karatsu.json" },
-  { name:"大村", file:"omura.json" }
+  { name:"桐生", file:"data/stadiums/kiryu.json" },
+  { name:"戸田", file:"data/stadiums/toda.json" },
+  { name:"江戸川", file:"data/stadiums/edogawa.json" },
+  { name:"平和島", file:"data/stadiums/heiwajima.json" },
+  { name:"多摩川", file:"data/stadiums/tamagawa.json" },
+  { name:"浜名湖", file:"data/stadiums/hamanako.json" },
+  { name:"蒲郡", file:"data/stadiums/gamagori.json" },
+  { name:"常滑", file:"data/stadiums/tokoname.json" },
+  { name:"津", file:"data/stadiums/tsu.json" },
+  { name:"三国", file:"data/stadiums/mikuni.json" },
+  { name:"びわこ", file:"data/stadiums/biwako.json" },
+  { name:"住之江", file:"data/stadiums/suminoe.json" },
+  { name:"尼崎", file:"data/stadiums/amagasaki.json" },
+  { name:"鳴門", file:"data/stadiums/naruto.json" },
+  { name:"丸亀", file:"data/stadiums/marugame.json" },
+  { name:"児島", file:"data/stadiums/kojima.json" },
+  { name:"宮島", file:"data/stadiums/miyajima.json" },
+  { name:"徳山", file:"data/stadiums/tokuyama.json" },
+  { name:"下関", file:"data/stadiums/shimonoseki.json" },
+  { name:"若松", file:"data/stadiums/wakamatsu.json" },
+  { name:"芦屋", file:"data/stadiums/ashiya.json" },
+  { name:"福岡", file:"data/stadiums/fukuoka.json" },
+  { name:"唐津", file:"data/stadiums/karatsu.json" },
+  { name:"大村", file:"data/stadiums/omura.json" }
 ];
 
+// ===============================
+// コース色固定
 // ===============================
 const courseColors = ["#ffffff","#000000","#ff0000","#0000ff","#ffff00","#00ff00"];
 
 // ===============================
+// 初期表示
+// ===============================
 const stadiumGrid = document.querySelector(".stadium-grid");
 const raceGrid = document.querySelector(".race-grid");
 
-let currentStadiumIndex = 0;
-let currentTrend = [60,50,45,40,35,30]; // デフォルト
-
-// ===============================
-// 初期表示
-// ===============================
 stadiums.forEach((stadium,i)=>{
-  const div=document.createElement("div");
-  div.className="stadium";
-  div.textContent=stadium.name;
-  div.onclick=()=>selectStadium(i);
+  const div = document.createElement("div");
+  div.className = "stadium";
+  div.textContent = stadium.name;
+  div.onclick = () => selectStadium(i);
   stadiumGrid.appendChild(div);
 });
 
 for(let i=1;i<=12;i++){
-  const div=document.createElement("div");
-  div.className="race";
-  div.textContent=i+"R";
-  div.onclick=()=>selectRace(i);
+  const div = document.createElement("div");
+  div.className = "race";
+  div.textContent = i + "R";
+  div.onclick = () => selectRace(i);
   raceGrid.appendChild(div);
 }
 
-document.getElementById("backBtn").onclick=()=>{
+document.getElementById("backBtn").onclick = () => {
   document.getElementById("raceScreen").classList.add("hidden");
   document.getElementById("stadiumScreen").classList.remove("hidden");
 };
 
 // ===============================
-// 場選択 → JSON読み込み
+// 画面遷移
 // ===============================
-async function selectStadium(i){
+let currentStadiumIndex = 0;
 
-  currentStadiumIndex=i;
-
+function selectStadium(i){
+  currentStadiumIndex = i;
   document.getElementById("stadiumScreen").classList.add("hidden");
   document.getElementById("raceScreen").classList.remove("hidden");
-
-  document.getElementById("raceTitle").textContent=stadiums[i].name;
-
-  try{
-    const res = await fetch(`/data/stadiums/${stadiums[i].file}`);
-    const data = await res.json();
-
-    // 👉 kiryu.json の trend をそのまま使用
-    currentTrend = data.trend;
-
-    console.log("読み込み成功:", data);
-
-  }catch(e){
-    console.warn("JSON読み込み失敗 → デフォルト使用", e);
-    currentTrend = [60,50,45,40,35,30];
-  }
+  document.getElementById("raceTitle").textContent = stadiums[i].name;
 }
 
-// ===============================
-function selectRace(){
+async function selectRace(){
   document.getElementById("raceScreen").classList.add("hidden");
   document.getElementById("playerScreen").classList.remove("hidden");
-  calcAllWithTrend();
+  await calcAllWithJSON(currentStadiumIndex);
 }
 
 // ===============================
-// メイン計算（JSON連動）
+// JSON連動メイン計算
 // ===============================
-function calcAllWithTrend(){
+async function calcAllWithJSON(stadiumIndex){
 
-  let base=[], predict=[], ai=[];
-  const trend=currentTrend;
+  const file = stadiums[stadiumIndex].file;
+  let jsonData = [];
 
-  for(let i=0;i<6;i++){
-
-    const courseBias=[18,6,2,-3,-8,-12][i];
-
-    let b=Math.round(45+Math.random()*30+courseBias);
-    let p=Math.round(trend[i]+Math.random()*12-6);
-
-    b=Math.max(1,Math.min(100,b));
-    p=Math.max(1,Math.min(100,p));
-
-    let a=Math.round(b*0.45+p*0.35+trend[i]*0.2);
-    a=Math.max(1,Math.min(100,a));
-
-    base.push(b);
-    predict.push(p);
-    ai.push(a);
+  try{
+    const resp = await fetch(file);
+    jsonData = await resp.json();
+  }catch(e){
+    console.error("JSON取得エラー:", e);
   }
+
+  const base = jsonData.base || [50,50,50,50,50,50];
+  const predict = jsonData.predict || [50,50,50,50,50,50];
+  const ai = jsonData.ai || [50,50,50,50,50,50];
 
   updateExpectationBars(base,predict,ai);
   updateKimarite(base);
@@ -132,174 +107,195 @@ function calcAllWithTrend(){
 }
 
 // ===============================
-// 総合期待度
+// 総合期待度（3本バー＋ラベル付き）
 // ===============================
 function updateExpectationBars(base,predict,ai){
-
-  const labels=["実績","予測","AI"];
+  const labels = ["実績","予測","AI"];
 
   document.querySelectorAll(".expectation-row").forEach((row,i)=>{
-
-    const box=row.querySelector(".expectation-bar");
-    box.innerHTML="";
+    const barBox = row.querySelector(".expectation-bar");
+    barBox.innerHTML = "";
 
     [base[i],predict[i],ai[i]].forEach((val,j)=>{
+      const container = document.createElement("div");
+      container.style.display="flex";
+      container.style.alignItems="center";
+      container.style.marginBottom="2px";
 
-      const c=document.createElement("div");
-      c.style.display="flex";
-      c.style.alignItems="center";
-      c.style.marginBottom="2px";
+      const label = document.createElement("span");
+      label.textContent = labels[j];
+      label.style.width="40px";
+      label.style.fontSize="12px";
+      label.style.marginRight="6px";
 
-      const l=document.createElement("span");
-      l.textContent=labels[j];
-      l.style.width="40px";
-      l.style.fontSize="12px";
+      const outer = document.createElement("div");
+      outer.style.flex="1";
+      outer.style.height="14px";
+      outer.style.border="1px solid #333";
+      outer.style.borderRadius="4px";
+      outer.style.background="#ddd";
 
-      const o=document.createElement("div");
-      o.style.flex="1";
-      o.style.height="14px";
-      o.style.border="1px solid #333";
-      o.style.background="#ddd";
+      const bar = document.createElement("div");
+      bar.style.height="100%";
+      bar.style.width = val + "%";
+      bar.style.background = courseColors[i];
 
-      const b=document.createElement("div");
-      b.style.height="100%";
-      b.style.width=val+"%";
-      b.style.background=courseColors[i];
+      outer.appendChild(bar);
+      container.appendChild(label);
+      container.appendChild(outer);
 
-      o.appendChild(b);
-      c.appendChild(l);
-      c.appendChild(o);
-      box.appendChild(c);
+      barBox.appendChild(container);
     });
 
-    row.querySelector(".expectation-value").textContent=ai[i]+"%";
+    row.querySelector(".expectation-value").textContent = ai[i] + "%";
   });
 }
 
+// ===============================
+// 決まり手
 // ===============================
 function updateKimarite(base){
-
-  document.querySelectorAll(".kimarite-row").forEach((row,i)=>{
-    let v=Math.round(base[i%6]*0.85+Math.random()*10);
-    v=Math.max(1,Math.min(100,v));
-    row.querySelector(".bar div").style.width=v+"%";
-    row.querySelector(".value").textContent=v+"%";
+  const rows = document.querySelectorAll(".kimarite-row");
+  rows.forEach((row,i)=>{
+    const baseVal = base[i] || 0;
+    let v = Math.round(baseVal*0.85 + Math.random()*10);
+    v = Math.max(1,Math.min(100,v));
+    row.querySelector(".bar div").style.width = v + "%";
+    row.querySelector(".value").textContent = v + "%";
   });
 }
 
 // ===============================
+// 展開タイプ
+// ===============================
 function updateRaceTypeByAI(ai){
-
-  const inner=ai[0];
-  const middle=(ai[1]+ai[2]+ai[3])/3;
-  const outer=(ai[4]+ai[5])/2;
-
+  const inner = ai[0];
+  const middle = (ai[1]+ai[2]+ai[3])/3;
+  const outer = (ai[4]+ai[5])/2;
   let type="";
-
-  if(inner>middle+10&&inner>outer+15) type="イン逃げ主導型";
-  else if(middle>inner&&middle>outer) type="中枠攻め合い型";
-  else if(outer>inner&&outer>middle) type="外伸び波乱型";
+  if(inner>middle+10 && inner>outer+15) type="イン逃げ主導型";
+  else if(middle>inner && middle>outer) type="中枠攻め合い型";
+  else if(outer>inner && outer>middle) type="外伸び波乱型";
   else if(Math.max(...ai)-Math.min(...ai)<8) type="超混戦型";
   else type="バランス型";
-
   document.getElementById("race-type").textContent="展開タイプ : "+type;
 }
 
 // ===============================
+// 展開解析（記者風 強化版）
+// ===============================
 function updateAnalysis(ai){
+  const order = ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
+  const main = order[0].i;
+  const second = order[1].i;
+  const third = order[2].i;
+  const gap12 = order[0].v - order[1].v;
+  const gap23 = order[1].v - order[2].v;
 
-  const order=ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
+  let text = "";
 
-  const m=order[0].i;
-  const s=order[1].i;
-  const t=order[2].i;
-
-  let text="";
-
-  if(m===1){
-    text=`1コース主導。${s}が続き${t}が三着争い。`;
-  }else if(m<=3){
-    text=`${m}コース攻勢。激しい主導権争い。`;
-  }else{
-    text=`外枠仕掛け波乱含み。高配当注意。`;
+  // イン主導型
+  if(main===1){
+    text = gap12>12 ?
+      "1コースが頭一つ抜けた存在。イン逃げ濃厚で相手探しの一戦となりそう。" :
+      "1コースが主導権を握るが後続も接近。差し・まくりの攻防に注目。";
+  }
+  // 中枠主導型
+  else if(main<=3){
+    text = gap12>10 ?
+      `${main}コースが鋭く攻勢。一気のまくり切りで主導権掌握の可能性大。` :
+      "中枠勢が拮抗。スタート次第で隊形が大きく入れ替わる混戦模様。";
+  }
+  // 外枠波乱型
+  else{
+    text = gap12>8 ?
+      `${main}コースの外伸びが際立つ。豪快な一撃で高配当演出も。` :
+      "外枠勢が虎視眈々。展開ひとつで波乱決着も十分。";
   }
 
-  document.querySelector(".analysis-text").textContent=text;
+  if(gap23<6){
+    text += " 三着争いは接戦でヒモ荒れ注意。";
+  }
+
+  document.querySelector(".analysis-text").textContent = text;
 }
 
 // ===============================
+// 買い目（重複完全排除）
 function updateBets(ai){
-
-  const s=ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
-
-  const m=s[0].i, sub=s[1].i, t=s[2].i;
-
-  let bets=[
-    `${m}-${sub}-${t}`,`${m}-${t}-${sub}`,
-    `${sub}-${m}-${t}`,`${sub}-${t}-${m}`,
-    `${t}-${m}-${sub}`,`${t}-${sub}-${m}`
-  ];
-
-  for(let a=2;a<=6;a++){
-    for(let b=2;b<=6;b++){
-      if(a!==b) bets.push(`1-${a}-${b}`);
-    }
-  }
-
+  const sorted = ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
+  const main = sorted[0].i;
+  const sub = sorted[1].i;
+  const third = sorted[2].i;
+  const all=[1,2,3,4,5,6];
+  let bets=[];
+  bets.push(`${main}-${sub}-${third}`);
+  bets.push(`${main}-${third}-${sub}`);
+  bets.push(`${sub}-${main}-${third}`);
+  bets.push(`${sub}-${third}-${main}`);
+  bets.push(`${third}-${main}-${sub}`);
+  bets.push(`${third}-${sub}-${main}`);
+  all.forEach(a=>{
+    all.forEach(b=>{
+      if(a!==1 && b!==1 && a!==b){
+        bets.push(`1-${a}-${b}`);
+      }
+    });
+  });
   bets=[...new Set(bets)].slice(0,9);
-
-  document.querySelectorAll(".bet-col").forEach((col,j)=>{
-    col.querySelectorAll(".bet-item").forEach((el,i)=>{
-      el.textContent=bets[j*3+i]||"";
+  const cols=document.querySelectorAll(".bet-col");
+  cols.forEach((col,j)=>{
+    const items=col.querySelectorAll(".bet-item");
+    items.forEach((el,i)=>{
+      el.textContent = bets[j*3+i] || "";
     });
   });
 }
 
 // ===============================
+// 的中率シミュレーション
+// ===============================
 function updateHitRateSimulation(base,predict,ai){
-
-  document.querySelectorAll(".hitrate-row").forEach((row,i)=>{
-
+  const rows=document.querySelectorAll(".hitrate-row");
+  rows.forEach((row,i)=>{
     let rate=Math.round((base[i]+predict[i]+ai[i])/3);
     rate=Math.max(1,Math.min(100,rate));
-
-    row.querySelector(".hitrate-value").textContent=rate+"%";
+    row.querySelector(".hitrate-value").textContent = rate+"%";
 
     const bar=row.querySelector(".hitrate-bar div");
-    bar.style.width=rate+"%";
-    bar.style.background=courseColors[i];
+    bar.style.width = rate + "%";
+    bar.style.background = courseColors[i];
 
-    const box=row.querySelector(".hitrate-bar");
-    box.style.border="1px solid #333";
-    box.style.height="14px";
-    box.style.background="#ddd";
+    const container=row.querySelector(".hitrate-bar");
+    container.style.border="1px solid #333";
+    container.style.height="14px";
+    container.style.borderRadius="4px";
+    container.style.background="#ddd";
   });
 }
 
 // ===============================
+// 信頼度メーター
+// ===============================
 function updateTrustMeter(ai){
-
   const max=Math.max(...ai);
   const min=Math.min(...ai);
-
-  let solidity=Math.min(100,Math.round((max-min)*1.5));
-
+  let solidity=Math.round((max-min)*1.5);
   const avg=ai.reduce((a,b)=>a+b,0)/6;
-
-  let variance=Math.min(100,Math.round(
-    ai.reduce((s,v)=>s+Math.abs(v-avg),0)/6*1.8
-  ));
-
-  let trust=Math.max(0,Math.min(100,Math.round(solidity-variance*0.6)));
+  let variance=Math.round(ai.reduce((s,v)=>s+Math.abs(v-avg),0)/6*1.8);
+  solidity=Math.min(100,solidity);
+  variance=Math.min(100,variance);
+  let trust=Math.round(solidity-variance*0.6);
+  trust=Math.max(0,Math.min(100,trust));
 
   let box=document.getElementById("trustMeter");
-
   if(!box){
     box=document.createElement("div");
     box.id="trustMeter";
     box.style.margin="16px 10px";
     box.style.padding="12px";
     box.style.border="2px solid #333";
+    box.style.borderRadius="8px";
     document.getElementById("playerScreen").appendChild(box);
   }
 
@@ -312,11 +308,15 @@ function updateTrustMeter(ai){
 }
 
 // ===============================
-// 日付
+// 本日の日付 自動表示
 // ===============================
 function updateTodayDate(){
-  const n=new Date();
-  const el=document.getElementById("todayDate");
-  if(el) el.textContent=`${n.getFullYear()}年${n.getMonth()+1}月${n.getDate()}日`;
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const el = document.getElementById("todayDate");
+  if(el) el.textContent = `${y}年${m}月${d}日`;
 }
+
 updateTodayDate();
