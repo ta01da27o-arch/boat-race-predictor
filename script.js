@@ -354,3 +354,22 @@ function updateTrustMeter(ai){
     <p><strong>総合信頼度：${trust}%</strong></p>
   `;
 }
+// ===============================
+// 本日の日付 自動表示
+// ===============================
+function updateTodayDate(){
+
+  const now = new Date();
+
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+
+  const el = document.getElementById("todayDate");
+
+  if(el){
+    el.textContent = `${y}年${m}月${d}日`;
+  }
+}
+
+updateTodayDate();
