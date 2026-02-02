@@ -1,0 +1,19 @@
+{
+  "stadium": "桐生",
+
+  "course_trend": [62, 48, 42, 36, 30, 24],
+
+  "motor_rate": [60, 52, 46, 40, 33, 28],
+
+  "feature": {
+    "nige_strong": true,
+    "makuri_strong": false,
+    "sashi_normal": true
+  },
+
+  "environment": {
+    "wind_direction": "north",
+    "wind_speed": 3,
+    "temperature": 26
+  }
+}
