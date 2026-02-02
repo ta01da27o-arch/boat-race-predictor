@@ -1,19 +1,125 @@
 {
-  "stadium": "桐生",
-
-  "course_trend": [62, 48, 42, 36, 30, 24],
-
-  "motor_rate": [60, 52, 46, 40, 33, 28],
-
-  "feature": {
-    "nige_strong": true,
-    "makuri_strong": false,
-    "sashi_normal": true
+  "stadium": {
+    "name": "桐生",
+    "features": {
+      "water": "淡水",
+      "straight_length": 427,
+      "turn_radius": 43,
+      "inside_advantage": 0.75,
+      "comment": "イン有利で逃げが決まりやすい水面"
+    }
   },
 
   "environment": {
-    "wind_direction": "north",
-    "wind_speed": 3,
-    "temperature": 26
+    "weather": "晴れ",
+    "wind_direction": "追い風",
+    "wind_speed": 3.0,
+    "temperature": 18,
+    "wave_height": 2
+  },
+
+  "motor_stats": {
+    "1": 40,
+    "2": 38,
+    "3": 35,
+    "4": 33,
+    "5": 30,
+    "6": 28
+  },
+
+  "course_trend": {
+    "1": { "win": 58, "place": 78 },
+    "2": { "win": 17, "place": 45 },
+    "3": { "win": 11, "place": 33 },
+    "4": { "win": 7,  "place": 24 },
+    "5": { "win": 4,  "place": 15 },
+    "6": { "win": 3,  "place": 9  }
+  },
+
+  "players": {
+    "1": {
+      "number": 4320,
+      "name": "山田太郎",
+      "grade": "A1",
+      "avg_st": 0.14,
+      "win_rate": 6.85,
+      "kimarite": {
+        "逃げ": 45,
+        "差し": 25,
+        "捲り": 15,
+        "捲差": 10,
+        "その他": 5
+      }
+    },
+    "2": {
+      "number": 3789,
+      "name": "佐藤次郎",
+      "grade": "B1",
+      "avg_st": 0.18,
+      "win_rate": 5.92,
+      "kimarite": {
+        "逃げ": 10,
+        "差し": 35,
+        "捲り": 30,
+        "捲差": 15,
+        "その他": 10
+      }
+    },
+    "3": {
+      "number": 4001,
+      "name": "鈴木三郎",
+      "grade": "A2",
+      "avg_st": 0.16,
+      "win_rate": 6.20,
+      "kimarite": {
+        "逃げ": 20,
+        "差し": 30,
+        "捲り": 25,
+        "捲差": 15,
+        "その他": 10
+      }
+    },
+    "4": {
+      "number": 4102,
+      "name": "高橋四郎",
+      "grade": "B1",
+      "avg_st": 0.19,
+      "win_rate": 5.40,
+      "kimarite": {
+        "逃げ": 8,
+        "差し": 28,
+        "捲り": 35,
+        "捲差": 20,
+        "その他": 9
+      }
+    },
+    "5": {
+      "number": 4203,
+      "name": "田中五郎",
+      "grade": "B2",
+      "avg_st": 0.21,
+      "win_rate": 4.90,
+      "kimarite": {
+        "逃げ": 5,
+        "差し": 20,
+        "捲り": 40,
+        "捲差": 25,
+        "その他": 10
+      }
+    },
+    "6": {
+      "number": 4304,
+      "name": "伊藤六郎",
+      "grade": "B1",
+      "avg_st": 0.20,
+      "win_rate": 5.10,
+      "kimarite": {
+        "逃げ": 3,
+        "差し": 18,
+        "捲り": 42,
+        "捲差": 27,
+        "その他": 10
+      }
+    }
   }
 }
