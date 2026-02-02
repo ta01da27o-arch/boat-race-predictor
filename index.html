@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>競艇展開予想</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<!-- ===================== -->
+<!-- ① 24場グリッド -->
+<!-- ===================== -->
+<div id="stadiumScreen">
+<h1>場選択</h1>
+
+<!-- ★ 本日の日付（追加） -->
+<div id="todayDate" style="
+  text-align:left;
+  font-size:14px;
+  margin:6px 0 10px 4px;
+  font-weight:bold;
+"></div>
+
+<div class="stadium-grid"></div>
+</div>
+
+<!-- ===================== -->
+<!-- ② レース番号 -->
+<!-- ===================== -->
+<div id="raceScreen" class="hidden">
+
+<div class="race-header">
+<button id="backBtn" class="back-btn">戻る</button>
+<h2 id="raceTitle"></h2>
+</div>
+
+<div class="race-grid"></div>
+</div>
+
+<!-- ===================== -->
+<!-- ③ 選手番号入力 -->
+<!-- ===================== -->
+<div id="playerScreen" class="hidden">
+
+<h2>選手番号入力</h2>
+
+<div class="player-grid">
+
+<div class="course-box c1">
+<span class="course-no">1</span>
+<input type="number" class="player-input" />
+<span class="player-name">選手名</span>
+</div>
+
+<div class="course-box c2">
+<span class="course-no">2</span>
+<input type="number" class="player-input" />
+<span class="player-name">選手名</span>
+</div>
+
+<div class="course-box c3">
+<span class="course-no">3</span>
+<input type="number" class="player-input" />
+<span class="player-name">選手名</span>
+</div>
+
+<div class="course-box c4">
+<span class="course-no">4</span>
+<input type="number" class="player-input" />
+<span class="player-name">選手名</span>
+</div>
+
+<div class="course-box c5">
+<span class="course-no">5</span>
+<input type="number" class="player-input" />
+<span class="player-name">選手名</span>
+</div>
+
+<div class="course-box c6">
+<span class="course-no">6</span>
+<input type="number" class="player-input" />
+<span class="player-name">選手名</span>
+</div>
+
+</div>
+
+<!-- ===================== -->
+<!-- ④ 決まり手 -->
+<!-- ===================== -->
+<section class="kimarite-section">
+
+<h2>決まり手</h2>
+
+<div class="kimarite-course c1">
+<div class="kimarite-row"><span class="label">逃げ</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">差され</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">捲られ</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">捲差</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+</div>
+
+<div class="kimarite-course c2">
+<div class="kimarite-row"><span class="label">逃がし</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">差し</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">捲り</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+</div>
+
+<div class="kimarite-course c3">
+<div class="kimarite-row"><span class="label">差し</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">捲り</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">捲差</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+</div>
+
+<div class="kimarite-course c4">
+<div class="kimarite-row"><span class="label">差し</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">捲り</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">捲差</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+</div>
+
+<div class="kimarite-course c5">
+<div class="kimarite-row"><span class="label">差し</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">捲り</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">捲差</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+</div>
+
+<div class="kimarite-course c6">
+<div class="kimarite-row"><span class="label">差し</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">捲り</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+<div class="kimarite-row"><span class="label">捲差</span><div class="bar"><div></div></div><span class="value">0%</span></div>
+</div>
+
+</section>
+
+<!-- ===================== -->
+<!-- ⑤ 総合期待度 -->
+<!-- ===================== -->
+<section id="expectationSection">
+
+<h2>総合期待度</h2>
+
+<div class="expectation-list">
+
+<div class="expectation-row c1"><span class="course-no">1</span><div class="expectation-bar"></div><span class="expectation-value">0%</span></div>
+<div class="expectation-row c2"><span class="course-no">2</span><div class="expectation-bar"></div><span class="expectation-value">0%</span></div>
+<div class="expectation-row c3"><span class="course-no">3</span><div class="expectation-bar"></div><span class="expectation-value">0%</span></div>
+<div class="expectation-row c4"><span class="course-no">4</span><div class="expectation-bar"></div><span class="expectation-value">0%</span></div>
+<div class="expectation-row c5"><span class="course-no">5</span><div class="expectation-bar"></div><span class="expectation-value">0%</span></div>
+<div class="expectation-row c6"><span class="course-no">6</span><div class="expectation-bar"></div><span class="expectation-value">0%</span></div>
+
+</div>
+</section>
+
+<div id="race-type" class="race-type-box"></div>
+
+<!-- ===================== -->
+<!-- ⑦ 展開解析 -->
+<!-- ===================== -->
+<section id="analysisSection">
+<h2>展開解析</h2>
+<div class="analysis-box">
+<p class="analysis-text"></p>
+</div>
+</section>
+
+<!-- ===================== -->
+<!-- ⑧ 買い目 -->
+<!-- ===================== -->
+<section id="betSection">
+
+<h2>買い目</h2>
+
+<div class="bet-box bet-grid">
+
+<div class="bet-col">
+<div class="bet-title">本命</div>
+<div class="bet-item"></div>
+<div class="bet-item"></div>
+<div class="bet-item"></div>
+</div>
+
+<div class="bet-col">
+<div class="bet-title">対抗</div>
+<div class="bet-item"></div>
+<div class="bet-item"></div>
+<div class="bet-item"></div>
+</div>
+
+<div class="bet-col">
+<div class="bet-title">逃げ</div>
+<div class="bet-item"></div>
+<div class="bet-item"></div>
+<div class="bet-item"></div>
+</div>
+
+</div>
+</section>
+
+<!-- ===================== -->
+<!-- ⑨ 的中率（修正済み） -->
+<!-- ===================== -->
+<section id="hitRateSection">
+
+<h2>的中率シミュレーション</h2>
+
+<div class="hitrate-list">
+
+<div class="hitrate-row c1">
+<span class="course-no">1</span>
+<span class="hitrate-value">0%</span>
+<div class="hitrate-bar" style="height:14px; background:#ddd; border-radius:4px;">
+<div style="height:100%; width:0%;"></div>
+</div>
+</div>
+
+<div class="hitrate-row c2">
+<span class="course-no">2</span>
+<span class="hitrate-value">0%</span>
+<div class="hitrate-bar" style="height:14px; background:#ddd; border-radius:4px;">
+<div style="height:100%; width:0%;"></div>
+</div>
+</div>
+
+<div class="hitrate-row c3">
+<span class="course-no">3</span>
+<span class="hitrate-value">0%</span>
+<div class="hitrate-bar" style="height:14px; background:#ddd; border-radius:4px;">
+<div style="height:100%; width:0%;"></div>
+</div>
+</div>
+
+<div class="hitrate-row c4">
+<span class="course-no">4</span>
+<span class="hitrate-value">0%</span>
+<div class="hitrate-bar" style="height:14px; background:#ddd; border-radius:4px;">
+<div style="height:100%; width:0%;"></div>
+</div>
+</div>
+
+<div class="hitrate-row c5">
+<span class="course-no">5</span>
+<span class="hitrate-value">0%</span>
+<div class="hitrate-bar" style="height:14px; background:#ddd; border-radius:4px;">
+<div style="height:100%; width:0%;"></div>
+</div>
+</div>
+
+<div class="hitrate-row c6">
+<span class="course-no">6</span>
+<span class="hitrate-value">0%</span>
+<div class="hitrate-bar" style="height:14px; background:#ddd; border-radius:4px;">
+<div style="height:100%; width:0%;"></div>
+</div>
+</div>
+
+</div>
+</section>
+
+<script src="script.js"></script>
+</body>
+  </html>
