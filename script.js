@@ -29,8 +29,12 @@ const stadiums = [
 ];
 
 // ===============================
+// コース色固定
+// ===============================
 const courseColors = ["#ffffff","#000000","#ff0000","#0000ff","#ffff00","#00ff00"];
 
+// ===============================
+// 初期表示
 // ===============================
 const stadiumGrid = document.querySelector(".stadium-grid");
 const raceGrid = document.querySelector(".race-grid");
@@ -56,6 +60,8 @@ document.getElementById("backBtn").onclick = () => {
   document.getElementById("stadiumScreen").classList.remove("hidden");
 };
 
+// ===============================
+// 画面遷移
 // ===============================
 let currentStadiumIndex = 0;
 
@@ -91,18 +97,6 @@ async function calcAllWithJSON(stadiumIndex){
   const predict = jsonData.predict || [50,50,50,50,50,50];
   const ai = jsonData.ai || [50,50,50,50,50,50];
 
-  // ===============================
-  // ✅ モーター補正（NaN完全防止版）
-  // ===============================
-  const motors = jsonData.motor_stats || {};
-
-  for(let i=1;i<=6;i++){
-    if(typeof motors[i] === "number"){
-      ai[i-1] += motors[i] * 0.2;
-    }
-  }
-  // ===============================
-
   updateExpectationBars(base,predict,ai);
   updateKimarite(base);
   updateRaceTypeByAI(ai);
@@ -111,240 +105,93 @@ async function calcAllWithJSON(stadiumIndex){
   updateHitRateSimulation(base,predict,ai);
   updateTrustMeter(ai);
 }
-
 // ===============================
-// 総合期待度
-// ===============================
-function updateExpectationBars(base,predict,ai){
+  // 追加ロジック① 天候カーブ補正
+  // ===============================
+  const weather = jsonData.weather || {
+    wind: 0,
+    wave: 0,
+    rain: 0
+  };
 
-  const labels = ["実績","予測","AI"];
+  const weatherCurve = (v)=>{
+    return Math.sign(v) * Math.pow(Math.abs(v),1.3);
+  };
 
-  document.querySelectorAll(".expectation-row").forEach((row,i)=>{
+  const windEffect = weatherCurve(weather.wind) * 0.8;
+  const waveEffect = weatherCurve(weather.wave) * 0.6;
+  const rainEffect = weatherCurve(weather.rain) * 0.4;
 
-    const barBox = row.querySelector(".expectation-bar");
-    barBox.innerHTML = "";
+  // ===============================
+  // 追加ロジック② コース特徴補正
+  // ===============================
+  const courseFeature = jsonData.courseFeature || [
+    1.12, // 1コース有利
+    1.05,
+    1.00,
+    0.97,
+    0.94,
+    0.90
+  ];
 
-    [base[i],predict[i],ai[i]].forEach((val,j)=>{
+  // ===============================
+  // 追加ロジック③ 過去平均との差分補正
+  // ===============================
+  const pastAvg = jsonData.pastAvg || [50,50,50,50,50,50];
 
-      const container = document.createElement("div");
-      container.style.display="flex";
-      container.style.alignItems="center";
-      container.style.marginBottom="2px";
+  // ===============================
+  // AIへ統合反映（既存AIを壊さず加算）
+  // ===============================
+  for(let i=0;i<6;i++){
 
-      const label = document.createElement("span");
-      label.textContent = labels[j];
-      label.style.width="40px";
-      label.style.fontSize="12px";
-      label.style.marginRight="6px";
+    // 天候は外ほど影響大
+    const weatherPower = (i+1)/6;
 
-      const outer = document.createElement("div");
-      outer.style.flex="1";
-      outer.style.height="14px";
-      outer.style.border="1px solid #333";
-      outer.style.borderRadius="4px";
-      outer.style.background="#ddd";
+    ai[i] =
+      ai[i]
+      * courseFeature[i]
+      + (windEffect + waveEffect + rainEffect) * weatherPower
+      + (ai[i] - pastAvg[i]) * 0.6;
 
-      const bar = document.createElement("div");
-      bar.style.height="100%";
-      bar.style.width = val + "%";
-      bar.style.background = courseColors[i];
+    // 安全ガード
+    if(isNaN(ai[i])) ai[i]=50;
 
-      outer.appendChild(bar);
-      container.appendChild(label);
-      container.appendChild(outer);
-
-      barBox.appendChild(container);
-    });
-
-    row.querySelector(".expectation-value").textContent = ai[i] + "%";
-  });
-}
-
-// ===============================
-function updateKimarite(base){
-  const rows = document.querySelectorAll(".kimarite-row");
-  rows.forEach((row,i)=>{
-    const baseVal = base[i] || 0;
-    let v = Math.round(baseVal*0.85 + Math.random()*10);
-    v = Math.max(1,Math.min(100,v));
-    row.querySelector(".bar div").style.width = v + "%";
-    row.querySelector(".value").textContent = v + "%";
-  });
-}
-
-// ===============================
-function updateRaceTypeByAI(ai){
-
-  const inner = ai[0];
-  const middle = (ai[1]+ai[2]+ai[3])/3;
-  const outer = (ai[4]+ai[5])/2;
-
-  let type="";
-
-  if(inner>middle+10 && inner>outer+15) type="イン逃げ主導型";
-  else if(middle>inner && middle>outer) type="中枠攻め合い型";
-  else if(outer>inner && outer>middle) type="外伸び波乱型";
-  else if(Math.max(...ai)-Math.min(...ai)<8) type="超混戦型";
-  else type="バランス型";
-
-  document.getElementById("race-type").textContent="展開タイプ : "+type;
-}
-
-// ===============================
-function updateAnalysis(ai){
-
-  const sorted = ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
-
-  const main = sorted[0];
-  const second = sorted[1];
-  const third = sorted[2];
-
-  const gap12 = main.v - second.v;
-  const gap23 = second.v - third.v;
-
-  let text="";
-
-  if(main.i===1){
-    if(gap12>15) text+="インが完全主導権。逃げ切り濃厚で相手探しの一戦。";
-    else text+="インが先手も後続迫る。差し・まくりの攻防に注目。";
+    ai[i] = Math.round(Math.max(1,Math.min(100,ai[i])));
   }
-  else if(main.i<=3){
-    if(gap12>12) text+=`${main.i}コースの攻め鋭く、一気のまくり主体。`;
-    else text+="中枠勢拮抗でスタート勝負。";
-  }
-  else{
-    if(gap12>10) text+=`${main.i}コースの外伸び強烈で波乱含み。`;
-    else text+="外枠勢も互角で混戦。";
+  // ===============================
+  // 追加ロジック④ モーター評価反映
+  // ===============================
+  const motor = jsonData.motor || [50,50,50,50,50,50];
+
+  for(let i=0;i<6;i++){
+    const motorBoost = (motor[i] - 50) * 0.35;
+    ai[i] = ai[i] + motorBoost;
   }
 
-  if(gap12<6) text+=` 相手争い激戦で${second.i}コース中心。`;
-  else text+=` 相手筆頭は${second.i}コース。`;
+  // ===============================
+  // 追加ロジック⑤ 全体バランス正規化
+  // ===============================
+  let sum = ai.reduce((a,b)=>a+b,0);
 
-  if(gap23<5) text+=" 三着はヒモ荒れ注意。";
-  else text+=` 三着候補は${third.i}コース優勢。`;
+  if(sum > 0){
+    const targetTotal = 300; // 平均50×6を基準に収束
 
-  if(main.v>75 && gap12>12) text+=" 堅め決着濃厚。";
-  else if(Math.max(...ai)-Math.min(...ai)<10) text+=" 大波乱警戒。";
-  else text+=" 本命中心だが波乱余地あり。";
-
-  document.querySelector(".analysis-text").textContent=text;
-}
-
-// ===============================
-function updateBets(ai){
-
-  const sorted = ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
-
-  const main = sorted[0].i;
-  const sub = sorted[1].i;
-  const third = sorted[2].i;
-
-  const all=[1,2,3,4,5,6];
-  let bets=[];
-
-  bets.push(`${main}-${sub}-${third}`);
-  bets.push(`${main}-${third}-${sub}`);
-  bets.push(`${sub}-${main}-${third}`);
-  bets.push(`${sub}-${third}-${main}`);
-  bets.push(`${third}-${main}-${sub}`);
-  bets.push(`${third}-${sub}-${main}`);
-
-  all.forEach(a=>{
-    all.forEach(b=>{
-      if(a!==1 && b!==1 && a!==b){
-        bets.push(`1-${a}-${b}`);
-      }
-    });
-  });
-
-  bets=[...new Set(bets)].slice(0,9);
-
-  const cols=document.querySelectorAll(".bet-col");
-
-  cols.forEach((col,j)=>{
-    const items=col.querySelectorAll(".bet-item");
-    items.forEach((el,i)=>{
-      el.textContent=bets[j*3+i]||"";
-    });
-  });
-}
-
-// ===============================
-function updateHitRateSimulation(base,predict,ai){
-
-  const rows=document.querySelectorAll(".hitrate-row");
-
-  rows.forEach((row,i)=>{
-
-    let rate=Math.round((base[i]+predict[i]+ai[i])/3);
-    rate=Math.max(1,Math.min(100,rate));
-
-    row.querySelector(".hitrate-value").textContent=rate+"%";
-
-    const bar=row.querySelector(".hitrate-bar div");
-    bar.style.width=rate+"%";
-    bar.style.background=courseColors[i];
-
-    const container=row.querySelector(".hitrate-bar");
-    container.style.border="1px solid #333";
-    container.style.height="14px";
-    container.style.borderRadius="4px";
-    container.style.background="#ddd";
-  });
-}
-
-// ===============================
-function updateTrustMeter(ai){
-
-  const max=Math.max(...ai);
-  const min=Math.min(...ai);
-
-  let solidity=Math.round((max-min)*1.5);
-
-  const avg=ai.reduce((a,b)=>a+b,0)/6;
-
-  let variance=Math.round(
-    ai.reduce((s,v)=>s+Math.abs(v-avg),0)/6*1.8
-  );
-
-  solidity=Math.min(100,solidity);
-  variance=Math.min(100,variance);
-
-  let trust=Math.round(solidity-variance*0.6);
-  trust=Math.max(0,Math.min(100,trust));
-
-  let box=document.getElementById("trustMeter");
-
-  if(!box){
-    box=document.createElement("div");
-    box.id="trustMeter";
-    box.style.margin="16px 10px";
-    box.style.padding="12px";
-    box.style.border="2px solid #333";
-    box.style.borderRadius="8px";
-    document.getElementById("playerScreen").appendChild(box);
+    for(let i=0;i<6;i++){
+      ai[i] = ai[i] / sum * targetTotal;
+    }
   }
 
-  box.innerHTML=`
-    <h2>信頼度メーター</h2>
-    <p>堅さスコア：${solidity}</p>
-    <p>荒れ指数：${variance}</p>
-    <p><strong>総合信頼度：${trust}%</strong></p>
-  `;
-}
+  // ===============================
+  // 追加ロジック⑥ 最終ガード処理
+  // ===============================
+  for(let i=0;i<6;i++){
 
-// ===============================
-function updateTodayDate(){
+    if(isNaN(ai[i]) || !isFinite(ai[i])){
+      ai[i] = 50;
+    }
 
-  const now=new Date();
+    ai[i] = Math.round(ai[i]);
 
-  const y=now.getFullYear();
-  const m=now.getMonth()+1;
-  const d=now.getDate();
-
-  const el=document.getElementById("todayDate");
-
-  if(el) el.textContent=`${y}年${m}月${d}日`;
-}
-
-updateTodayDate();
+    if(ai[i] < 1) ai[i] = 1;
+    if(ai[i] > 100) ai[i] = 100;
+  }
