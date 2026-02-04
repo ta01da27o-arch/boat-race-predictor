@@ -135,9 +135,9 @@ if(!window.aiLearning){
 // ===============================
 const startSkill = [1.10,1.06,1.02,0.98,0.94,0.90][i];
 
-// /* ===============================
-   展開有利不利補正（風速×風向×水面×脚質）
-=============================== */
+// ===============================
+// 展開有利不利補正（風速×風向×水面×脚質）
+// ===============================
 
 // 風向 0=無風 1=追い風 2=向かい風
 const windType = Math.floor(Math.random()*3);
@@ -145,7 +145,7 @@ const windType = Math.floor(Math.random()*3);
 // 風速（0〜10m想定）
 const windSpeed = Math.random() * 10;
 
-// 水面荒れ（0=穏やか 1=荒れ）
+// 水面荒れ（0=穏やか〜1=荒れ）
 const waterRough = Math.random();
 
 // 脚質分類
@@ -154,32 +154,43 @@ const styleType = i === 0 ? "inner" :
 
 let tacticalFactor = 1;
 
-// ===== 風向×脚質 =====
-
-// 追い風 → イン強化
-if(windType === 1){
+// ---- 風向補正 ----
+if(windType === 1){ // 追い風
   if(styleType === "inner") tacticalFactor += 0.04 * (windSpeed/5);
   if(styleType === "outer") tacticalFactor -= 0.03 * (windSpeed/5);
 }
 
-// 向かい風 → 外伸び
-if(windType === 2){
+if(windType === 2){ // 向かい風
   if(styleType === "outer") tacticalFactor += 0.04 * (windSpeed/5);
   if(styleType === "inner") tacticalFactor -= 0.03 * (windSpeed/5);
 }
 
-// ===== 水面荒れ補正 =====
-
-// 荒れるほどイン不利
+// ---- 水面荒れ補正 ----
 tacticalFactor -= waterRough * 0.06 * (i === 0 ? 1 : 0.4);
 
-// 外は荒れ耐性
 if(styleType === "outer"){
   tacticalFactor += waterRough * 0.03;
 }
 
-// ===== 暴走防止 =====
+// ---- 範囲制限 ----
 tacticalFactor = Math.max(0.85, Math.min(1.15, tacticalFactor));
+
+// ===============================
+// AI最終評価値 計算（←ここが重要）
+// ===============================
+
+b = Math.max(1,Math.min(100,b));
+p = Math.max(1,Math.min(100,p));
+
+let a = Math.round(
+ (b*0.45 + p*0.35 + trend[i]*0.2)
+ * weatherFactor
+ * courseFactor
+ * startSkill
+ * tacticalFactor
+);
+
+a = Math.max(1, Math.min(100, a));
 
 /* ===============================
    決まり手 実効化（排他型モデル）
