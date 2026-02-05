@@ -349,8 +349,6 @@ updateAnalysis(ai);
 updateBets(ai);
 updateHitRateSimulation(base,predict,ai);
 
-window.autoPicks = window.autoBets;
-
 /* ===============================
    自動買い目生成（AI予想エンジン）
 =============================== */
