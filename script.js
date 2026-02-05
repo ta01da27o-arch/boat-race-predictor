@@ -419,17 +419,27 @@ setTimeout(()=>{
 
   const rows = document.querySelectorAll(".expectation-row");
 
-  rows.forEach((row)=>{
+  rows.forEach((row,i)=>{
 
     const box = row.querySelector(".expectation-bar");
 
-    // 強制的に全部緑にするテスト
-    box.style.background = "linear-gradient(135deg,#e8fff0,#b6f5c8)";
-    box.style.border = "2px solid #2ecc71";
-    box.style.boxShadow = "0 0 10px rgba(46,204,113,0.6)";
-    box.style.padding = "6px";
-    box.style.borderRadius = "6px";
-    box.style.opacity = "1";
+    if(window.profitFlags && window.profitFlags[i]){
+
+      box.style.background = "linear-gradient(135deg,#e8fff0,#b6f5c8)";
+      box.style.border = "2px solid #2ecc71";
+      box.style.boxShadow = "0 0 10px rgba(46,204,113,0.6)";
+      box.style.padding = "6px";
+      box.style.borderRadius = "6px";
+      box.style.opacity = "1";
+
+    }else{
+
+      box.style.background = "#f5f5f5";
+      box.style.border = "1px solid #ccc";
+      box.style.boxShadow = "none";
+      box.style.opacity = "0.6";
+
+    }
 
   });
 
