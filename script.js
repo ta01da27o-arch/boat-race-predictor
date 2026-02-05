@@ -333,14 +333,9 @@ let expectedValues = oddsModel.map(odds=>{
   return hitP * odds;
 });
 
-// プラス期待値判定
-let profitable = expectedValues.map(ev=>ev >= 1);
-
-// グローバル保存
+// グローバル保存（安定版）
 window.expectedValues = expectedValues;
-
-// 数値を確実に扱って期待値判定を安定化
-window.profitFlags = expectedValues.map(ev => Number(ev) >= 1);
+window.profitFlags = expectedValues.map(ev => Number(ev) >= 0.9);
 
 window.latestAI = [...ai]; // コピー保存
 
