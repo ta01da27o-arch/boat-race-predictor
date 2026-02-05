@@ -335,6 +335,8 @@ let profitable = expectedValues.map(ev=>ev >= 1);
 window.expectedValues = expectedValues;
 window.profitFlags = profitable;
 
+window.latestAI = [...ai]; // コピー保存
+
 // ===== UI更新 =====
 
 updateExpectationBars(base,predict,ai);
@@ -343,52 +345,63 @@ updateRaceTypeByAI(ai);
 updateAnalysis(ai);
 updateBets(ai);
 updateHitRateSimulation(base,predict,ai);
-updateTrustMeter(ai);
+
+window.autoPicks = window.autoBets;
 
 /* ===============================
-   自動買い目生成（期待値プラス艇のみ）
+   自動買い目生成（AI予想エンジン）
 =============================== */
 
-let picks = [];
+let buyList = [];
 
-if(window.profitFlags){
+// ベース資金（自由に変えてOK）
+const totalMoney = 1000;
 
-  window.profitFlags.forEach((flag,i)=>{
-    if(flag){
-      picks.push(i+1); // 艇番は1〜6
-    }
+// プラス期待値艇だけ抽出
+window.expectedValues.forEach((ev,i)=>{
+
+  if(window.profitFlags[i]){
+
+    buyList.push({
+      course: i+1,
+      ai: ai[i],
+      ev: ev
+    });
+
+  }
+
+});
+
+// 何もなければ上位AIから保険買い
+if(buyList.length === 0){
+
+  const sorted = ai
+    .map((v,i)=>({course:i+1, ai:v}))
+    .sort((a,b)=>b.ai - a.ai)
+    .slice(0,2);
+
+  sorted.forEach(v=>{
+    buyList.push({
+      course: v.course,
+      ai: v.ai,
+      ev: 1
+    });
   });
 
 }
 
-// グローバル保存
-window.autoPicks = picks;
+// AI評価合計
+const sumAI = buyList.reduce((s,v)=>s+v.ai,0);
 
-// ===== 簡易買い目ロジック =====
+// 資金配分
+buyList.forEach(v=>{
+  v.bet = Math.round(totalMoney * (v.ai / sumAI));
+});
 
-let betSuggestions = [];
-
-if(picks.length >= 1){
-
-  // 本命（最強AI評価）
-  let main = picks.reduce((best,cur)=>{
-    return ai[cur-1] > ai[best-1] ? cur : best;
-  }, picks[0]);
-
-  betSuggestions.push(`単勝：${main}`);
-
-  if(picks.length >= 2){
-    betSuggestions.push(`2連複：${main}-${picks[1]}`);
-  }
-
-  if(picks.length >= 3){
-    betSuggestions.push(`穴：${main}-${picks[2]}`);
-  }
+// グローバル保存（UIや拡張用）
+window.autoBets = buyList;
 
 }
-
-// 保存
-window.betSuggestions = betSuggestions;
 
 /* ===============================
    期待値プラス艇 色分け表示（確実版）
@@ -431,20 +444,24 @@ setTimeout(()=>{
 
 if(!window.betAmounts) window.betAmounts = [];
 
-const totalBank = 10000; // 仮想資金（自由に変更OK）
+const totalBank = 10000; // 仮想資金
 
-window.betAmounts = ai.map((v,i)=>{
+// latestAI が無い場合も落ちない安全構造
+window.betAmounts = (window.latestAI || []).map((v,i)=>{
 
-  if(!window.profitFlags[i]) return 0;
+  if(!window.profitFlags || !window.profitFlags[i]) return 0;
 
-  const odds = window.expectedValues[i] / ((window.hitExpectation||50)/100);
+  const hitP = (window.hitExpectation || 50) / 100;
+
+  // 想定オッズ逆算
+  const odds = window.expectedValues[i] / hitP;
 
   let ratio = (window.expectedValues[i] - 1) / (odds - 1);
 
-  // 安全係数（半分）
+  // 安全係数（半分ケリー）
   ratio *= 0.5;
 
-  if(ratio < 0) ratio = 0;
+  if(ratio < 0 || !isFinite(ratio)) ratio = 0;
 
   return Math.round(totalBank * ratio);
 });
