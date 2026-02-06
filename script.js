@@ -579,44 +579,34 @@ function updateRaceTypeByAI(ai){
 // ===============================
 function updateAnalysis(ai){
 
-  if(!window.expectedValues) return;
+  const order = ai.map((v,i)=>({v,i:i+1})).sort((a,b)=>b.v-a.v);
 
-  const ev = window.expectedValues;
+  const main=order[0].i;
+  const sub=order[1].i;
+  const third=order[2].i;
 
-  const maxEV = Math.max(...ev);
-  const sorted = [...ev].sort((a,b)=>b-a);
+  let text="";
 
-  let comment = "";
-
-  // 期待値が1艇だけ突出
-  if(maxEV > sorted[1] * 1.5){
-
-    const idx = ev.indexOf(maxEV) + 1;
-    comment = `🔥 ${idx}コース中心の堅め展開`;
-
+  if(main===1){
+    text=`スタート踏み込む1コースが先マイ体勢。
+握って回る${sub}コースが差しで続き内有利の決着濃厚。
+${third}コースは展開待ちで三着争いまで。
+外枠勢は展開向かず厳しい一戦となりそうだ。`;
   }
-
-  // 複数艇プラス期待値
-  else if(window.profitFlags.filter(v=>v).length >= 3){
-
-    comment = "⚡ 高配当狙える混戦レース";
-
+  else if(main<=3){
+    text=`${main}コースが攻めて主導権を奪う展開。
+${sub}コースが内から抵抗し激しい攻防戦。
+${third}コースが展開突いて浮上。
+波乱含みのレース展開となりそうだ。`;
   }
-
-  // ほぼ期待値なし
-  else if(maxEV < 1){
-
-    comment = "⚠ 荒れ注意・見送り推奨";
-
-  }
-
   else{
-
-    comment = "📊 標準的な展開";
-
+    text=`外枠勢が果敢に仕掛け主導権争い。
+${main}コースのまくり差しが決まる可能性。
+${sub}コースが続き高配当も視野。
+イン勢は苦戦必至の流れだ。`;
   }
 
-  document.getElementById("analysisText").textContent = comment;
+  document.querySelector(".analysis-text").textContent=text;
 }
 // ===============================
 // 買い目（重複完全排除）
