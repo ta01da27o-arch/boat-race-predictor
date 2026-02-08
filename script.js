@@ -635,25 +635,8 @@ function updateAnalysis(ai){
       `📊 力関係は拮抗。` +
       `決まり手次第で主導権が入れ替わる展開。`;
   }
-/* ===== 水面・風評価 ===== */
-let waterComment = "";
 
-if(window.windSpeed >= 5){
-  waterComment = "強風水面でスタートが乱れやすい。";
-}
-else if(window.windDir === "向かい" && escapeAvg >= 55){
-  waterComment = "向かい風でインは過信禁物。";
-}
-else if(window.windDir === "追い" && escapeAvg >= 55){
-  waterComment = "追い風がイン逃げを後押し。";
-}
-else if(window.waveLevel >= 2){
-  waterComment = "水面が荒れ、差し・捲りが届きやすい。";
-}
-else{
-  waterComment = "水面は比較的安定。";
-}
-el.textContent = comment + waterComment;
+  el.textContent = comment;
 
 
   console.log("analysis updated", comment);
